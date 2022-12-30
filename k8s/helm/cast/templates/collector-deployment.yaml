@@ -1,0 +1,51 @@
+# Copyright 2022 Corsha.
+# Licensed under the Apache License, Version 2.0 (the 'License');
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#      http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an 'AS IS' BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast-collector
+  labels:
+    app: cast-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cast-collector
+  template:
+    metadata:
+      labels:
+        app: cast-collector
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: collector
+        image:  "{{ .Values.collector.image.repository }}:{{ .Values.collector.image.tag | default $.Chart.Version }}"
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgresql
+                key: password
+          - name: PGUSER
+            value: {{ .Values.postgresql.auth.username }}
+          - name: PGDATABASE
+            value: {{ .Values.postgresql.auth.database }}
+          - name: PGHOST
+            value: {{ .Release.Name }}-postgresql
+        {{ range $name, $value := .Values.collector.env }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+        {{ end }}

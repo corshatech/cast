@@ -1,0 +1,52 @@
+
+name: Create CAST Helm Release
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.10.0
+
+      # We do this because we want the Chart.yaml version and appVersion to be updated with the build version
+      - name: Package Helm chart
+        run: |
+          rm -rf .cr-release-packages
+          mkdir -p .cr-release-packages
+
+          helm dependency update k8s/helm/cast
+          helm package -d .cr-release-packages k8s/helm/cast --version=${{ github.ref_name }} --app-version=${{ github.ref_name }}
+
+      # This updates our index.yaml on the gh-pages branch for the helm repo
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@89fff88708b622fd94e14e4b34c71711292da7b9
+        with:
+          skip_packaging: true
+          config: cr.yaml
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      # Uploads helm chart to existing tag release for convenience
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            .cr-release-packages/cast-${{ github.ref_name }}.tgz
+          append_body: true
+

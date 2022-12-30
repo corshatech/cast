@@ -1,0 +1,34 @@
+run:
+  timeout: 5m
+  build-tags:
+    - integration
+    - nomtls
+
+linters-settings:
+  govet:
+    check-shadowing: true
+  maligned:
+    suggest-new: true
+  goconst:
+    min-len: 2
+    min-occurrences: 2
+  misspell:
+    locale: US
+  goimports:
+    local-prefixes: github.com/corshatech
+
+linters:
+  enable:
+    - misspell
+    - goimports
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - goconst
+    - gocritic
+    - gocyclo
+    - gosec
+    - prealloc
+    - exportloopref
+    - unconvert

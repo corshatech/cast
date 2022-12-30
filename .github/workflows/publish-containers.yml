@@ -7,7 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push-image:
@@ -17,10 +16,10 @@ jobs:
       matrix:
         include:
           - dockerfile: ./collector/Dockerfile
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/collector
+            image: ghcr.io/corshatech/cast/collector
             context: .
           - dockerfile: ./ui/Dockerfile
-            image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ui
+            image: ghcr.io/corshatech/cast/ui
             context: ui
     permissions:
       contents: read

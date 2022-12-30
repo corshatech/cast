@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast-ui
+  labels:
+    app: cast-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cast-ui
+  template:
+    metadata:
+      labels:
+        app: cast-ui
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: ui
+        image:  "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default $.Chart.Version }}"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 3000
+            name: http
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-postgresql
+                key: password
+          - name: PGUSER
+            value: {{ .Values.postgresql.auth.username }}
+          - name: PGDATABASE
+            value: {{ .Values.postgresql.auth.database }}
+          - name: PGHOST
+            value: {{ .Release.Name }}-postgresql
+        {{ range $name, $value := .Values.collector.env }}
+          - name: {{ $name | quote }}
+            value: {{ $value | quote }}
+        {{ end }}

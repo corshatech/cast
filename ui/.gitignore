@@ -1,0 +1,35 @@
+# Dependencies
+/node_modules
+
+# Testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# Storybook
+storybook-static
+
+# for the nyc command
+.nyc_output
+
+# Prod
+/build
+
+# Miscellaneous
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Environment
+.env*.local
+
+# Typescript
+*.tsbuildinfo
+next-env.d.ts

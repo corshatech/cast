@@ -1,0 +1,49 @@
+# See: https://github.com/Kapernikov/skaffold-helm-tutorial/
+apiVersion: skaffold/v3
+kind: Config
+metadata:
+  name: cast
+build:
+  local:
+    push: false
+  artifacts:
+    -
+      image: collector
+      context: .
+      platforms:
+        - "linux/amd64"
+      docker:
+        dockerfile: collector/Dockerfile
+    -
+      image: ui
+      context: ui
+      platforms:
+        - "linux/amd64"
+      docker:
+        dockerfile: ui/Dockerfile
+deploy:
+  helm:
+    releases:
+    - name: cast
+      chartPath: k8s/helm/cast
+      namespace: cast
+      createNamespace: true
+      setValues:
+        postgresql.auth.password: "dev-password"
+        "imagePullSecrets[0].name": "regcred"
+      setValueTemplates:
+        collector.image.repository: "{{ .IMAGE_REPO }}"
+        collector.image.tag: "dev@{{ .IMAGE_DIGEST }}"
+
+        ui.image.repository: "{{ .IMAGE_REPO2 }}"
+        ui.image.tag: "dev@{{ .IMAGE_DIGEST2 }}"
+
+portForward:
+  - resourceType: service
+    resourceName: cast-service
+    port: 80
+    localPort: 3000
+  - resourceType: service
+    resourceName: cast-postgresql
+    port: 5432
+    localPort: 5432

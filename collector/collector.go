@@ -87,7 +87,6 @@ func exportRecords() error {
 	pgUser := requiredEnv(postgresUserEnv)
 	pgPass := requiredEnv(postgresPassEnv)
 	dbName := requiredEnv(dbNameEnv)
-	// TODO: look into sslmode
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", pgHost, pgPort, pgUser, pgPass, dbName)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
@@ -98,9 +97,26 @@ func exportRecords() error {
 		}).WithError(err).Info("Failed to open postgres database connection.")
 		return err
 	}
-	log.Info("Established connection to postgres database.")
+
+	// wait for postgres database to be ready before continuing
+	for i := 0; i < 5; i++ {
+		if i > 0 {
+			log.Infof("Unable to reach postgres database. Retrying in %vs", 5)
+			time.Sleep(5 * time.Second)
+		}
+		err := db.Ping()
+		if err == nil {
+			break
+		}
+	}
+	if err != nil {
+		log.WithError(err).Info("Failed to reach postgres database.")
+		return err
+	}
 
 	defer db.Close()
+
+	log.Info("Established connection to postgres database.")
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -118,6 +134,8 @@ func exportRecords() error {
 	log.Info("Established connection to kubeshark database.")
 
 	defer c.Close()
+
+	log.Info("Collector is ready to export records.")
 
 	go func() {
 		log.Info("Starting export of records.")
@@ -142,11 +160,14 @@ func exportRecords() error {
 
 			for i := 0; i < retryAttempts; i++ {
 				if i > 0 {
-					log.WithError(err1).Info("Error inserting entry into postgres database.")
+					log.WithError(err1).Infof("Error inserting entry into postgres database. Retrying in %vs.", retryDelay)
 					time.Sleep(retryDelay * time.Second)
 				}
 				_, err1 = db.Exec(sqlStatement, finalMessage)
 				if err1 == nil {
+					if i > 0 {
+						log.Info("Record successfully inserted into postgres database. Continuing export.")
+					}
 					break
 				}
 			}

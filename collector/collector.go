@@ -104,7 +104,7 @@ func exportRecords() error {
 			log.Infof("Unable to reach postgres database. Retrying in %vs", 5)
 			time.Sleep(5 * time.Second)
 		}
-		err := db.Ping()
+		err = db.Ping()
 		if err == nil {
 			break
 		}

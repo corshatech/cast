@@ -75,14 +75,14 @@ helm repo add corshatech https://corshatech.github.io/cast
 helm install my-release corshatech/cast
 ```
 
-If you want to customize the helm chart a YAML file that specifies the values for the parameters can be provided while installing the chart. Check the [Parameters](#parameters) section below.
+If you want to customize the helm chart, a YAML file that specifies the values for the parameters can be provided while installing the chart. Check the [Helm Parameters](#helm-parameters) section below for more information.
 
 > :memo:
 > If you are re-installing CAST in a previously used namespace, you will need to delete the `data-cast-postgresql-0` PVC in order to remove the cached postgres password from the previous CAST deployment. 
 >``` 
 >kubectl delete pvc data-cast-postgresql-0 
 >```
-> This can be avoided by setting `postgresql.auth.password` as decribed in the [Parameters](#parameters) section below.
+> This can be avoided by setting `postgresql.auth.password` as described in the [Helm Parameters](#helm-parameters) section.
 
 ### Uninstalling the Chart
 

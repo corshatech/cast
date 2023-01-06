@@ -77,6 +77,13 @@ helm install my-release corshatech/cast
 
 If you want to customize the helm chart a YAML file that specifies the values for the parameters can be provided while installing the chart. Check the [Parameters](#parameters) section below.
 
+> :memo:
+> If you are re-installing CAST in a previously used namespace, you will need to delete the `data-cast-postgresql-0` PVC in order to remove the cached postgres password from the previous CAST deployment. 
+>``` 
+>kubectl delete pvc data-cast-postgresql-0 
+>```
+> This can be avoided by setting `postgresql.auth.password` as decribed in the [Parameters](#parameters) section below.
+
 ### Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
@@ -121,8 +128,9 @@ When installing a chart, you may provide a yaml file that edits certain paramete
 | Name                                                       | Description                                                                                                                                                                           | Value |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | `global.imagePullSecrets`                                  | Global Docker registry secret names as an array                                                                                                                                       | `[]`  |
-| `postgres.auth.username`                                      | Postgres db username                                                                                                                                          | `""`  |
-| `postgres.auth.database`                                      | Postgres database name                                                                                                                                          | `""`  |
+| `postgresql.auth.username`                                      | Postgres db username                                                                                                                                          | `""`  |
+| `postgresql.auth.database`                                      | Postgres database name                                                                                                                                          | `""`  |
+| `postgresql.auth.password`                                      | Postgres database password. If this is not set, a random password will be generated.                                                                                                                                    | `""`  |
 | `collector.env.PGPORT`                                      | Which port postgres is using                                                                                                                                          | `""`  |
 | `collector.env.WEBSOCKET_URL`                                      | The web socket Kubeshark has attached to                                                                                                                                          | `""`  |
 | `collector.image.tag`                                      | The tag of the cast/collector image                                                                                                                                          | `""`  |

@@ -31,7 +31,7 @@ Authentication.  These security concerns are broken up and explained here.
 
 ### Credential Reuse
 Today API Clients authenticate to API services using an authentication scheme involving 
-bearer credentials. These credentials are generally come in the form of static, multi-use secrets such as a username/password, bearer tokens, 
+bearer credentials. These credentials generally come in the form of static, multi-use secrets such as a username/password, bearer tokens, 
 and client PKI certificates. These largely static keys, tokens, and certs are vulnerable to credential theft because as long as you possess the credential, you can use it to gain access to API services.  The bearer model does not take into account how the credential was obtained, i.e. perhaps stolen, or pin access to only trusted clients.  This weakness requires that API credentials like these must be kept as 
 safe as possible, not shared, regularly rotated, and always created with tight expiry windows. OWASP has recognized these Identification and Authentication Failures in their 
 Annual "Top 10" vulnerabilities, stating "Where possible, implement multi-factor authentication to

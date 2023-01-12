@@ -31,3 +31,5 @@ coverage.out
 /build/package/collector
 /.log/
 /.scratch/
+
+super-linter.log

@@ -26,14 +26,14 @@ and does not store or export any unhashed cryptographic material.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Evaluated Security Concerns
-CAST is designed to evaluate security concerns revolving around API Communication and 
-Authentication.  These security concerns are broken up and explained here.
+CAST is designed to evaluate security concerns revolving around API Communication and
+Authentication. These security concerns are broken up and explained here.
 
 ### Credential Reuse
-Today API Clients authenticate to API services using an authentication scheme involving 
-bearer credentials. These credentials are generally come in the form of static, multi-use secrets such as a username/password, bearer tokens, 
-and client PKI certificates. These largely static keys, tokens, and certs are vulnerable to credential theft because as long as you possess the credential, you can use it to gain access to API services.  The bearer model does not take into account how the credential was obtained, i.e. perhaps stolen, or pin access to only trusted clients.  This weakness requires that API credentials like these must be kept as 
-safe as possible, not shared, regularly rotated, and always created with tight expiry windows. OWASP has recognized these Identification and Authentication Failures in their 
+Today API Clients authenticate to API services using an authentication scheme involving
+bearer credentials. These credentials are generally come in the form of static, multi-use secrets such as a username/password, bearer tokens,
+and client PKI certificates. These largely static keys, tokens, and certs are vulnerable to credential theft because as long as you possess the credential, you can use it to gain access to API services.  The bearer model does not take into account how the credential was obtained, i.e. perhaps stolen, or pin access to only trusted clients.
+This weakness requires that API credentials like these must be kept as safe as possible, not shared, regularly rotated, and always created with tight expiry windows. OWASP has recognized these Identification and Authentication Failures in their
 Annual "Top 10" vulnerabilities, stating "Where possible, implement multi-factor authentication to
 prevent automated credential stuffing, brute force, and stolen credential reuse attacks." - [OWASP Top 10](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/).
 
@@ -53,7 +53,7 @@ Installation of the CAST tool can be broken up into two sections:
 - Installing the CAST tooling that leverages Kubeshark's taps
 
 ### Install Kubeshark
-Installation of Kubeshark is straightforward and can be found on their website here:
+Installation of Kubeshark is straightforward and can be found on their site here:
 [Kubeshark Installation](https://docs.kubeshark.co/en/install)
 
 After installation is complete, tap the Namespaces or Clusters you wish CAST to evaluate
@@ -63,7 +63,7 @@ kubeshark tap -n <YOUR_NAMESPACE>
 
 
 ### Install CAST
-Cast images are hosted on Github's Container Registry. First, you must follow their very 
+Cast images are hosted on Github's Container Registry. First, you must follow their very
 simple documentation on how to log in:
 [Authenticating to the Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)
 
@@ -78,8 +78,8 @@ helm install my-release corshatech/cast
 If you want to customize the helm chart, a YAML file that specifies the values for the parameters can be provided while installing the chart. Check the [Helm Parameters](#helm-parameters) section below for more information.
 
 > :memo:
-> If you are re-installing CAST in a previously used namespace, you will need to delete the `data-cast-postgresql-0` PVC in order to remove the cached postgres password from the previous CAST deployment. 
->``` 
+> If you are re-installing CAST in a previously used namespace, you will need to delete the `data-cast-postgresql-0` PVC in order to remove the cached postgres password from the previous CAST deployment.
+>```bash
 >kubectl delete pvc data-cast-postgresql-0 
 >```
 > This can be avoided by setting `postgresql.auth.password` as described in the [Helm Parameters](#helm-parameters) section.
@@ -102,12 +102,12 @@ The UI is automatically hosted with the cast UI.  To reach it, you will need to 
 pod.
 
 First, get the name of the cast UI pod via:
-```
+```bash
 kubectl get pods -n <YOUR_NAMESPACE>
 ```
 
 Second, connect to the pod service via:
-```
+```bash
 kubectl port-forward -n <YOUR_NAMESPACE> <CAST_POD_NAME> 3000:3000
 ```
 
@@ -141,7 +141,7 @@ When installing a chart, you may provide a yaml file that edits certain paramete
 
 Specify each parameter using the --set key=value[,key=value] argument to helm install. For example,
 
-```
+```bash
     helm install my-release --set ui.env.PGPORT=5432 corshatech/cast
 ```
 
@@ -149,7 +149,7 @@ The above command sets the PGPORT variable to 5432.
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
-```
+```bash
     helm install my-release -f values.yaml corshatech/cast
 ```
 
@@ -169,7 +169,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+> [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

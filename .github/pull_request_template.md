@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file -->
 Before you submit your PR, make sure you check each of the following:
 
 1. [ ] I have read the [Contributing Guidelines](./CONTRIBUTING.md) and signed the [Contributor License Agreement](./CLA.md).

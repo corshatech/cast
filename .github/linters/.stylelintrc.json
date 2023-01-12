@@ -1,17 +1,1 @@
-{
-  "extends": [
-    "stylelint-config-standard-scss"
-  ],
-  "customSyntax":"postcss-scss",
-  "plugins": ["stylelint-scss"],
-  "rules": {
-    "selector-pseudo-class-no-unknown": [
-      true,
-      { "ignorePseudoClasses": "export" }
-    ],
-    "property-no-unknown": [true, { "ignoreSelectors": [":export"] }],
-    "value-list-comma-newline-after":null,
-    "declaration-colon-newline-after":null,
-    "property-case":null
-  }
-}
+../../ui/.stylelintrc.json

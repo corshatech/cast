@@ -32,11 +32,11 @@ import (
 
 const (
 	websocketURLEnv = "WEBSOCKET_URL"
-	postgresHostEnv  = "PGHOST"
-	postgresPortEnv  = "PGPORT"
-	postgresUserEnv  = "PGUSER"
-	postgresPassEnv  = "PGPASSWORD" /* #nosec */
-	dbNameEnv        = "PGDATABASE"
+	postgresHostEnv = "PGHOST"
+	postgresPortEnv = "PGPORT"
+	postgresUserEnv = "PGUSER"
+	postgresPassEnv = "PGPASSWORD" /* #nosec */
+	dbNameEnv       = "PGDATABASE"
 )
 
 const (
@@ -127,8 +127,8 @@ func exportRecords() error {
 	errc := make(chan error)
 
 	// Connecting to kubeshark database through kubeshark-api-server websocket
-	websockertURL := requiredEnv(websockertURLEnv)
-	c, _, err := websocket.DefaultDialer.Dial(websockertURL, nil)
+	websocketURL := requiredEnv(websocketURLEnv)
+	c, _, err := websocket.DefaultDialer.Dial(websocketURL, nil)
 	if err != nil {
 		log.WithError(err).Info("Failed to connect to kubeshark.")
 		return err

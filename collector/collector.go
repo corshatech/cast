@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	websockertURLEnv = "WEBSOCKET_URL"
+	websocketURLEnv = "WEBSOCKET_URL"
 	postgresHostEnv  = "PGHOST"
 	postgresPortEnv  = "PGPORT"
 	postgresUserEnv  = "PGUSER"

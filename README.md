@@ -1,4 +1,6 @@
 # CAST
+[![Codecov](https://img.shields.io/codecov/c/github/corshatech/cast?style=for-the-badge)](https://codecov.io/gh/corshatech/cast/)
+
 CAST is an API security tool being developed to evaluate Kubernetes API traffic for authentication
 vulnerabilities such as reused credentials.
 

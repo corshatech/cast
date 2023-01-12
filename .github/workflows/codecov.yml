@@ -1,0 +1,40 @@
+name: Running Code Coverage
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.18'
+
+    - name: Install node dependencies
+      working-directory: ./ui
+      run: npm install
+
+    - name: Generate node coverage report
+      working-directory: ./ui
+      run: npm run test:ci
+
+    - name: Generate go coverage report
+      run: make test
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with: 
+        files: ./coverage.out,./ui/coverage/coverage-final.json

@@ -59,7 +59,8 @@ To release the chart, you just need to create a docker release. GitHub actions w
 
 ## Linting
 
-Pull requests must pass a [Super-Linter](https://github.com/github/super-linter) check before being merged. To run Super-Linter locally, use the command ```make super-linter```.
+Pull requests must pass a [Super-Linter](https://github.com/github/super-linter) check before being merged.
+If you would like to test your changes with the linter, we have a make script that runs Super-Linter locally using docker. You can use it with the command ```make super-linter```.
 
 ## Communication
 

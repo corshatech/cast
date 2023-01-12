@@ -61,6 +61,7 @@ jobs:
           VALIDATE_TYPESCRIPT_STANDARD: false
           VALIDATE_KUBERNETES_KUBEVAL: false
           VALIDATE_SQLFLUFF: false
+          VALIDATE_MARKDOWN: false
           JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
           VALIDATE_YAML: false

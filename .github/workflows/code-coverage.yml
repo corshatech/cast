@@ -1,6 +1,9 @@
 name: Running Code Coverage
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -54,13 +57,9 @@ jobs:
           ui/coverage/badge.svg
           README.md
 
-    - name: Create Pull Request
-      if: steps.verify-changed-files.outputs.files_changed == 'true' || go_config == 'true'
-      uses: peter-evans/create-pull-request@v3
-      with:
-        base: "main"
-        title: "Updated coverage badge"
-        branch: "chore/update-coverage-badge"
-        commit-message: "Updated coverage badge."
-        body: "Updated coverage badge."
-        token: ${{ github.token }}
+    - name: Push changes
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ github.token }}
+          branch: ${{ github.head_ref }}

@@ -66,6 +66,8 @@ jobs:
         run: |
           sed -i 's/>Coverage/>Node Coverage/g' docs/badge.svg
           sed -i 's/"Coverage/"Node Coverage/' docs/badge.svg
+          sed -i 's/width="106"/width="166"/g' docs/badge.svg
+          sed -i 's/width="63"/width="123"/g' docs/badge.svg
 
       - name: Commit changes
         if: steps.verify-changed-files.outputs.files_changed == 'true'

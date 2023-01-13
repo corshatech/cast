@@ -51,7 +51,7 @@ jobs:
         uses: tj-actions/coverage-badge-go@v2
         with:
           filename: coverage.out
-          text: Go_Coverage
+          text: Coverage
 
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v12
@@ -60,14 +60,6 @@ jobs:
           files: |
             README.md
             docs/badge.svg
-
-      - name: update node badge display text
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
-        run: |
-          sed -i 's/>Coverage/>Node Coverage/g' docs/badge.svg
-          sed -i 's/"Coverage/"Node Coverage/' docs/badge.svg
-          sed -i 's/width="106"/width="166"/g' docs/badge.svg
-          sed -i 's/width="63"/width="123"/g' docs/badge.svg
 
       - name: Commit changes
         if: steps.verify-changed-files.outputs.files_changed == 'true'

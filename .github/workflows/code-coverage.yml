@@ -1,0 +1,77 @@
+name: Code Coverage
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: code-coverage
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.18'
+
+      - name: Install node dependencies
+        working-directory: ./ui
+        run: npm install
+
+      - name: Generate node coverage report
+        working-directory: ./ui
+        run: npm run test:coverage
+
+      - name: Generate node coverage badge
+        uses: tj-actions/coverage-badge-js@v1.3
+        with:
+          report_path: ui/coverage/coverage-summary.json
+          output_path: docs/badge.svg
+
+      - name: Generate go coverage report
+        run: |
+          make test
+          go tool cover -func=coverage.out -o=coverage.out
+
+      - name: Go Coverage Badge
+        uses: tj-actions/coverage-badge-go@v2
+        with:
+          filename: coverage.out
+          text: Coverage
+
+      - name: Verify Changed files
+        uses: tj-actions/verify-changed-files@v12
+        id: verify-changed-files
+        with:
+          files: |
+            README.md
+            docs/badge.svg
+
+      - name: Commit changes
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md docs/badge.svg
+          git commit -m "chore: Updated coverage badge."
+
+      - name: Push changes
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ github.token }}
+          branch: ${{ github.head_ref }}

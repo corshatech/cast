@@ -34,11 +34,11 @@ jobs:
       working-directory: ./ui
       run: npm run test:ci
 
-    - name: Generate coverage badge
-      uses: tj-actions/coverage-badge-js@v1.3
-      with:
-        report_path: ui/coverage/coverage-final.json
-        output_path: ui/coverage/badge.svg
+    # - name: Generate coverage badge
+    #   uses: tj-actions/coverage-badge-js@v1.3
+    #   with:
+    #     report_path: ui/coverage/coverage-final.json
+    #     output_path: ui/coverage/badge.svg
 
     - name: Generate go coverage report
       run: make test

@@ -37,7 +37,6 @@ jobs:
     - name: Generate coverage badge
       uses: tj-actions/coverage-badge-js@v1.3
       with:
-        text: GO Coverage
         report_path: ui/coverage/coverage-final.json
         output_path: ui/coverage/badge.svg
 

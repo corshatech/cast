@@ -42,7 +42,9 @@ jobs:
     #     output_path: ui/coverage/badge.svg
 
     - name: Generate go coverage report
-      run: make test
+      run: |
+        make test
+        go tool cover -func=coverage.out -o=coverage.out
 
     - name: Go Coverage Badge
       uses: tj-actions/coverage-badge-go@v2

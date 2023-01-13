@@ -1,0 +1,66 @@
+name: Running Code Coverage
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.18'
+
+    - name: Install node dependencies
+      working-directory: ./ui
+      run: npm install
+
+    - name: Generate node coverage report
+      working-directory: ./ui
+      run: npm run test:ci
+
+    - name: Generate coverage badge
+      uses: tj-actions/coverage-badge-js@v1.3
+      with:
+        text: GO Coverage
+        report_path: ui/coverage/coverage-final.json
+        output_path: ui/coverage/badge.svg
+
+    - name: Generate go coverage report
+      run: make test
+
+    - name: Go Coverage Badge
+      uses: tj-actions/coverage-badge-go@v2
+      with:
+        filename: coverage.out
+
+    - name: Verify Changed files
+      uses: tj-actions/verify-changed-files@v6.1
+      id: verify-changed-files
+      with:
+        files: |
+          ui/coverage/badge.svg
+          README.md
+
+    - name: Create Pull Request
+      if: steps.verify-changed-files.outputs.files_changed == 'true' || go_config == 'true'
+      uses: peter-evans/create-pull-request@v3
+      with:
+        base: "main"
+        title: "Updated coverage badge"
+        branch: "chore/update-coverage-badge"
+        commit-message: "Updated coverage badge."
+        body: "Updated coverage badge."
+        token: ${{ github.token }}

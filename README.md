@@ -1,5 +1,5 @@
 # CAST
-Backend Go Coverage: ![Coverage](https://img.shields.io/badge/Coverage-0.0%25-red)  Frontend Javascript Coverage: ![Coverage](./docs/badge.svg)
+![Coverage](https://img.shields.io/badge/Coverage-0.0%25-red)
 
 CAST is an API security tool being developed to evaluate Kubernetes API traffic for authentication
 vulnerabilities such as reused credentials.

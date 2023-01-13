@@ -36,11 +36,11 @@ jobs:
         working-directory: ./ui
         run: npm run test:coverage
 
-      - name: Generate coverage badge
+      - name: Generate node coverage badge
         uses: tj-actions/coverage-badge-js@v1.3
         with:
           report_path: ui/coverage/coverage-summary.json
-          output_path: ui/coverage/badge.svg
+          output_path: docs/badge.svg
 
       - name: Generate go coverage report
         run: |
@@ -51,7 +51,7 @@ jobs:
         uses: tj-actions/coverage-badge-go@v2
         with:
           filename: coverage.out
-          text: Go Coverage
+          text: Go_Coverage
 
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v12
@@ -59,7 +59,7 @@ jobs:
         with:
           files: |
             README.md
-            ui/coverage/badge.svg
+            docs/badge.svg
 
       - name: Commit changes
         if: steps.verify-changed-files.outputs.files_changed == 'true'

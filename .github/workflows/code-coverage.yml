@@ -58,8 +58,8 @@ jobs:
         id: verify-changed-files
         with:
           files: |
-          README.md
-          ui/coverage/badge.svg
+            README.md
+            ui/coverage/badge.svg
 
       - name: Commit changes
         if: steps.verify-changed-files.outputs.files_changed == 'true'

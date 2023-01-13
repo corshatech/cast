@@ -64,7 +64,7 @@ jobs:
       - name: update node badge display text
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: |
-          sed -i 's/>Coverage/>Node Coverage/' docs/badge.svg
+          sed -i 's/>Coverage/>Node Coverage/g' docs/badge.svg
           sed -i 's/"Coverage/"Node Coverage/' docs/badge.svg
 
       - name: Commit changes

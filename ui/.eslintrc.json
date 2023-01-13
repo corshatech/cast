@@ -1,6 +1,9 @@
 {
     "extends": [
-      "plugin:@typescript-eslint/recommended"
+      "plugin:@typescript-eslint/recommended",
+      "plugin:storybook/recommended",
+      "prettier",
+      "next/core-web-vitals"
     ],
     "ignorePatterns": ["next-env.d.ts", "next.config.js"],
     "rules": {

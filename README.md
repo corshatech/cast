@@ -1,4 +1,5 @@
 # CAST
+![Go_Coverage](https://img.shields.io/badge/Go_Coverage-0.0%25-red)
 ![Go_Coverage](https://img.shields.io/badge/Go-0.0%25-red)
 ![Node_Coverage](./docs/badge.svg)
 

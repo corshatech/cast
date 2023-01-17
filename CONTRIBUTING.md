@@ -57,11 +57,6 @@ skaffold dev --platform=linux/amd64 --port-forward --namespace "$NAMESPACE" --de
 
 To release the chart, you just need to create a docker release. GitHub actions will do the rest.
 
-## Linting
-
-Pull requests must pass a [Super-Linter](https://github.com/github/super-linter) check before being merged.
-If you would like to test your changes with the linter, we have a make script that runs Super-Linter locally using docker. You can use it with the command ```make super-linter```.
-
 ## Communication
 
 If you have any questions or concerns, please email Max at max@corsha.com.

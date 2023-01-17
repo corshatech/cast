@@ -35,13 +35,6 @@ lint-helm:
 	helm dependency update k8s/helm/cast
 	helm lint k8s/helm/cast
 
-super-linter:
-	docker run --rm \
-    -e RUN_LOCAL=true \
-	-e USE_FIND_ALGORITHM=true \
-    --env-file "super-linter.env" \
-    -v $(PWD):/tmp/lint github/super-linter:slim-v4
-
 clean:
 	$(GO) clean ./...
 	$(RM) -rf build

@@ -25,14 +25,33 @@ export interface Analysis {
   /** A number used for sorting analyses in the UI, sorted ascending */
   priority: number;
 
+  /** An RFC3339-format timestamp of when this analysis most recently completed executing; i.e. its last-updated time */
+  lastUpdated: string;
+
   /** The result of the analysis */
   findings: Finding[];
 }
 
 /** The set of severity levels */
 export const Severity = ["none", "low", "medium", "high", "critical"] as const;
+
 /** The severity of a finding. */
 export type Severity = typeof Severity[number];
+
+/** When a finding occurred. It might be a time span or at an instant */
+export type OccurredAt =
+  | {
+      /** The start date and time formatted as a UTC RFC-3339 string */
+      start: string;
+
+      /** The end date and time formatted as a UTC RFC-3339 string */
+      end;
+      string;
+    }
+  | {
+      /** The instant the finding occurred formatted as a UTC RFC-3339 string */
+      at: string;
+    };
 
 export interface Finding {
   /** Internal identifier for the finding */
@@ -47,9 +66,28 @@ export interface Finding {
   /** Human-readable brief description of finding / infraction */
   description: string;
 
+  /** When the infraction occurred
+   *
+   * An RFC3339-format timestamp. Optional. If present, represents
+   * the time that an infraction occurred, if available and if
+   * different from DetectedAt. For example, when examining API logs,
+   * OccurredAt may indicate the timestamp from the logs while
+   * DetectedAt indicates the time that CAST processed the
+   * incident.
+   */
+  occurredAt: OccurredAt?;
+
+  /** The time when this Finding was generated
+   *
+   * An RFC3339-format timestamp of when this Finding was generated internally by CAST; i.e.
+   */
+  detectedAt: string;
+
+  /** How severe the finding is */
   severity: Severity;
 
-  /**
+  /** The detailed human-readable report
+   *
    * A raw string field that can be used to display additional
    * free-form information in the UI about the finding in
    * CommonMark */
@@ -63,6 +101,5 @@ export type AnalysisFunction = () => Promise<Analysis>;
 
 export async function runAllAnalyses(analyses: AnalysisFunction[]): Promise<Analysis[]> {
   const promises = analyses.map(f => f());
-  const result = await Promise.all(promises);
-  return result.sort((x, y) => x.priority - y.priority);
+  return await Promise.all(promises);
 }

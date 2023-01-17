@@ -24,10 +24,3 @@ test("runAllFindings runs all findings", async () => {
   const results = await runAllAnalyses([runner1, runner2]);
   expect(results).toStrictEqual([analysis1, analysis2]);
 });
-
-test("runAllFindings runs and sorts all findings", async () => {
-  // The order should be the same
-  expect(await runAllAnalyses([runner1, runner2])).toStrictEqual(
-    await runAllAnalyses([runner2, runner1]),
-  );
-});

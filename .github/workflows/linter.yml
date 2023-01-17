@@ -9,6 +9,34 @@ permissions:
   contents: read
 
 jobs:
+  eslint:
+    name: Lint TS,JS,SCSS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run eslint
+        working-directory: ./ui
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+        run: | 
+          npm ci
+          npm run lint
+  golint:
+    name: Lint Go Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+
+      - name: Go lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+          args: --timeout=5m
   lint-helm:
     name: Lint Helm Charts
     runs-on: ubuntu-latest
@@ -33,39 +61,3 @@ jobs:
 
       - name: Run chart-testing (lint)
         run: ct lint --chart-dirs "k8s/helm/cast" --all --target-branch ${{ github.event.repository.default_branch }}
-  super-linter:
-    # Name the Job
-    name: Lint Code Base
-    # Set the agent to run on
-    runs-on: ubuntu-latest
-
-    steps:
-      ##########################
-      # Checkout the code base #
-      ##########################
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          # Full git history is needed to get a proper
-          # list of changed files within `super-linter`
-          fetch-depth: 0
-
-      ################################
-      # Run Linter against code base #
-      ################################
-      - name: Lint Code Base
-        uses: github/super-linter/slim@v4
-        env:
-          VALIDATE_ALL_CODEBASE: true
-          VALIDATE_JAVASCRIPT_STANDARD: false
-          VALIDATE_TYPESCRIPT_STANDARD: false
-          VALIDATE_KUBERNETES_KUBEVAL: false
-          VALIDATE_SQLFLUFF: false
-          VALIDATE_MARKDOWN: false
-          JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.json
-          VALIDATE_YAML: false
-          VALIDATE_GITHUB_ACTIONS: false
-          VALIDATE_DOCKERFILE_HADOLINT: false
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

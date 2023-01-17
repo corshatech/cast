@@ -21,13 +21,13 @@ const analysis2 = {
 const runner2 = (): Promise<Analysis> => Promise.resolve(analysis2);
 
 test("runAllFindings runs all findings", async () => {
-  const results = await runAllAnalyses([runner1(), runner2()]);
+  const results = await runAllAnalyses([runner1, runner2]);
   expect(results).toStrictEqual([analysis1, analysis2]);
 });
 
 test("runAllFindings runs and sorts all findings", async () => {
   // The order should be the same
-  expect(await runAllAnalyses([runner1(), runner2()])).toStrictEqual(
-    await runAllAnalyses([runner2(), runner1()]),
+  expect(await runAllAnalyses([runner1, runner2])).toStrictEqual(
+    await runAllAnalyses([runner2, runner1]),
   );
 });

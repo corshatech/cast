@@ -9,7 +9,6 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-
 /**
  * Analysis describes the results of an analysis type
  **/
@@ -30,12 +29,17 @@ export interface Analysis {
   findings: Finding[];
 }
 
-/** */
-export type Severity = "info" | "low" | "warn" | "highest";
+/** The set of severity levels */
+export const Severity = ["none", "low", "medium", "high", "critical"] as const;
+/** The severity of a finding. */
+export type Severity = typeof Severity[number];
 
 export interface Finding {
   /** Internal identifier for the finding */
-  id: string; 
+  id: string;
+
+  /** Internal type label for the finding */
+  type: string;
 
   /** Human readable name for the Type - frontend */
   name: string;
@@ -45,18 +49,20 @@ export interface Finding {
 
   severity: Severity;
 
-  /** 
-    * A raw string field that can be used to display additional
-    * free-form information in the UI about the finding in
-    * CommonMark */
+  /**
+   * A raw string field that can be used to display additional
+   * free-form information in the UI about the finding in
+   * CommonMark */
   detail: string;
 }
-
 
 /** 
     Evaluates and sort all analyses in ascending order based on priority
 */
-export async function runAllAnalyses(analyses: Promise<Analysis>[]): Promise<Analysis[]> {
-  const result = await Promise.all(analyses);
-  return result.sort((x,y) => x.priority - y.priority);
+export type AnalysisFunction = () => Promise<Analysis>;
+
+export async function runAllAnalyses(analyses: AnalysisFunction[]): Promise<Analysis[]> {
+  const promises = analyses.map(f => f());
+  const result = await Promise.all(promises);
+  return result.sort((x, y) => x.priority - y.priority);
 }

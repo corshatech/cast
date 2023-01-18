@@ -19,13 +19,13 @@ In order to contribute to CAST, you will need to sign Corsha's [Contributor Lice
 
 We use docker-desktop and Skaffold for local development:
 
-```
+```bash
 # deploy to the cast namespace
 skaffold dev --platform=linux/amd64 --port-forward --kube-context docker-desktop
 
 
 # OR deploy to a custom namespace
-$ skaffold dev --platform=linux/amd64 --port-forward --kube-context docker-desktop --namespace "<NS>"
+skaffold dev --platform=linux/amd64 --port-forward --kube-context docker-desktop --namespace "<NS>"
 ```
 
 Skaffold will watch for changes and redeploy the application to docker-desktop.
@@ -33,7 +33,7 @@ Skaffold will watch for changes and redeploy the application to docker-desktop.
 Now that Cast is up, we can run a Kubeshark tap on all the pods locally
 
 
-```
+```bash
 kubectl config use-context docker-desktop
 kubeshark tap -A
 ```
@@ -48,14 +48,14 @@ Then set ```build.local.push: true``` in ```skaffold.yaml```.
 
 After that preliminary setup is done, we can iterate on the chart using the remote cluster in the same way we did with docker-desktop. We just need to change the docker registry with the `--default-repo` argument.
 
-```
-$ kubectl config use-context "$KUBE_CONTEXT"
-$ skaffold dev --platform=linux/amd64 --port-forward --namespace "$NAMESPACE" --default-repo="$REPO"
+```bash
+kubectl config use-context "$KUBE_CONTEXT"
+skaffold dev --platform=linux/amd64 --port-forward --namespace "$NAMESPACE" --default-repo="$REPO"
 ```
 
 ## Releasing
 
-To release the chart, you just need to create a docker release. Github actions will do the rest.
+To release the chart, you just need to create a docker release. GitHub actions will do the rest.
 
 ## Communication
 

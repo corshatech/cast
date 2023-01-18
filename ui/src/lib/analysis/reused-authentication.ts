@@ -39,10 +39,10 @@ data->'request'->'headers'->>'Authorization' IN (
 `;
 
 interface Row {
-  auth_header: string,
-  absolute_uri: string,
-  src_ip: string,
-  timestamp: number,
+  auth_header: string;
+  absolute_uri: string;
+  src_ip: string;
+  timestamp: number;
 }
 
 /** group the rows by their auth header */
@@ -50,9 +50,7 @@ function groupByAuthHeader(rows: Row[]): Record<string, Row[]> {
   const groups: Record<string, Row[]> = {};
 
   rows.forEach((row: Row) => {
-    groups[row.auth_header] = [
-      ...(groups[row.auth_header] ?? []), row
-    ];
+    groups[row.auth_header] = [...(groups[row.auth_header] ?? []), row];
   });
 
   return groups;
@@ -91,13 +89,14 @@ export type QueryFunction = () => Promise<Row[]>;
 export type NowFunction = () => string;
 
 /** runnerPure is the AnalysisFunction free of external dependencies
-*
-* This function allows for dependency injection during unit testing
-*/
+ *
+ * This function allows for dependency injection during unit testing
+ */
 export async function runnerPure(now: NowFunction, query: QueryFunction): Promise<Analysis> {
   const lastUpdated = now();
-  const findings = Object.entries(groupByAuthHeader(await query()))
-    .map(([id, rows]) => rowsToFinding(lastUpdated, id, rows));
+  const findings = Object.entries(groupByAuthHeader(await query())).map(([id, rows]) =>
+    rowsToFinding(lastUpdated, id, rows),
+  );
 
   return {
     id: "reused-authentication",

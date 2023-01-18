@@ -5,13 +5,10 @@ import { runner as reusedAuthentication } from "../../lib/analysis/reused-authen
 const analysisFunctions: AnalysisFunction[] = [reusedAuthentication];
 
 export type AnalysesResponse = {
-  analyses: Analysis[],
-}
+  analyses: Analysis[];
+};
 
-const handler = async (
-  _req: NextApiRequest,
-  res: NextApiResponse<AnalysesResponse>,
-) => {
+const handler = async (_req: NextApiRequest, res: NextApiResponse<AnalysesResponse>) => {
   const analyses: Analysis[] = await runAllAnalyses(analysisFunctions);
   res.status(200).json({ analyses });
 };

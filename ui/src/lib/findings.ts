@@ -93,11 +93,10 @@ export interface Finding {
   detail: string;
 }
 
-/** 
-    Evaluates and sort all analyses in ascending order based on priority
-*/
+/** A function that produces an analysis result */
 export type AnalysisFunction = () => Promise<Analysis>;
 
+/** Evaluates all analysis functions */
 export async function runAllAnalyses(analyses: AnalysisFunction[]): Promise<Analysis[]> {
   const promises = analyses.map(f => f());
   return await Promise.all(promises);

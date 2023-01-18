@@ -48,5 +48,4 @@ jobs:
         with:
           files: |
             .cr-release-packages/cast-${{ github.ref_name }}.tgz
-          append_body: true
 

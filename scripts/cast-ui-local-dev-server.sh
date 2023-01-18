@@ -47,11 +47,11 @@ then
 fi
 
 cat > ./ui/.env.local <<HERE
-PGSQL_USER=postgres
-PGSQL_PASSWORD=password
-PGSQL_HOST=127.0.0.1
-PGSQL_PORT=5432
-PGSQL_DATABASE=traffic
+PGUSER=postgres
+PGPASSWORD=password
+PGHOST=127.0.0.1
+PGPORT=5432
+PGDATABASE=traffic
 HERE
 
 echo "Created and started CAST dev db."

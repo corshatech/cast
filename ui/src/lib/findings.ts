@@ -25,7 +25,8 @@ export interface Analysis {
   /** A number used for sorting analyses in the UI, sorted ascending */
   priority: number;
 
-  /** An RFC3339-format timestamp of when this analysis most recently completed executing; i.e. its last-updated time */
+  /** An RFC3339-format timestamp of when this analysis most recently
+   * completed executing; i.e. its last-updated time */
   lastUpdated: string;
 
   /** The result of the analysis */
@@ -40,18 +41,16 @@ export type Severity = typeof Severity[number];
 
 /** When a finding occurred. It might be a time span or at an instant */
 export type OccurredAt =
-  | {
-      /** The start date and time formatted as a UTC RFC-3339 string */
-      start: string;
+  {
+    /** The start date and time formatted as a UTC RFC-3339 string */
+    start: string;
 
-      /** The end date and time formatted as a UTC RFC-3339 string */
-      end;
-      string;
-    }
-  | {
-      /** The instant the finding occurred formatted as a UTC RFC-3339 string */
-      at: string;
-    };
+    /** The end date and time formatted as a UTC RFC-3339 string */
+    end: string;
+  } | {
+    /** The instant the finding occurred formatted as a UTC RFC-3339 string */
+    at: string;
+  }
 
 export interface Finding {
   /** Internal identifier for the finding */
@@ -75,7 +74,7 @@ export interface Finding {
    * DetectedAt indicates the time that CAST processed the
    * incident.
    */
-  occurredAt: OccurredAt?;
+  occurredAt?: OccurredAt;
 
   /** The time when this Finding was generated
    *

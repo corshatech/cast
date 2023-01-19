@@ -24,6 +24,11 @@ jobs:
         run: | 
           npm ci
           npm run lint
+          npm run build
+      - name: Run npm run build
+        working-directory: ./ui
+        run: |
+          npm run build
   golint:
     name: Lint Go Code
     runs-on: ubuntu-latest

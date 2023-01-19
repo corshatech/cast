@@ -77,6 +77,7 @@ ${markdownLines}
   return {
     id: id,
     type: "reused-authentication",
+    name: "Reused Authentication",
     description: "",
     occurredAt: occurredAt,
     detectedAt: detectedAt,

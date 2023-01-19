@@ -90,7 +90,7 @@ export interface Finding {
    *
    * A raw string field that can be used to display additional
    * free-form information in the UI about the finding in
-   * CommonMark */
+   * Github-flavored Markdown */
   detail: string;
 }
 

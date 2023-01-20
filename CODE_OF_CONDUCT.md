@@ -20,9 +20,11 @@ Asking questions early avoids many problems later, so we encourage questions, al
 
 Whether we are participating as professionals or volunteers, we value professionalism in all interactions, and take responsibility for our own speech. Be kind to others. Harassment and other exclusionary behavior are not acceptable.
 
-Over time, hundreds or thousands of people will read what you write. Writing a short email means people can understand the conversation as efficiently as possible. Short emails should always strive to be empathetic, welcoming, friendly and patient. When a long explanation is necessary, consider adding a summary at the top of the message. Try to bring new ideas to a conversation so that each email adds something unique to the thread. Try to stay on topic, especially in discussions that are already fairly long.
+Over time, hundreds or thousands of people will read what you write. Writing a short email means people can understand the conversation as efficiently as possible. Short emails should always strive to be empathetic, welcoming, friendly and patient. When a long explanation is necessary, consider adding a summary at the top of the message.
+Try to bring new ideas to a conversation so that each email adds something unique to the thread. Try to stay on topic, especially in discussions that are already fairly long.
 
-Members of every project come and go. When somebody leaves or disengages from the Project they should tell people they are leaving and take the proper steps to ensure that others can pick up where they left off. In doing so, they should remain respectful of those who continue to participate in the project and should not misrepresent the project's goals or achievements. Likewise, Project members should respect any individual's choice to leave the project.
+Members of every project come and go. When somebody leaves or disengages from the Project they should tell people they are leaving and take the proper steps to ensure that others can pick up where they left off. In doing so, they should remain respectful of those who continue to participate in the project and should not misrepresent the project's goals or achievements.
+Likewise, Project members should respect any individual's choice to leave the project.
 
 ## Diversity Statement
 
@@ -32,6 +34,7 @@ Though we welcome people fluent in all languages, the Project development takes 
 
 ## Reporting Guidelines
 
-While all participants should adhere to this code of conduct, we recognize that sometimes people may have a bad day, or be unaware of some of the code's guidelines. When that happens, you may reply to them and point out this code of conduct. Such messages may be in public or in private, whatever is most appropriate. However, regardless of whether the message is public or not, it should still adhere to the relevant parts of this code of conduct; in particular, it should not be abusive or disrespectful.  Always assume good faith. Should there be difficulties in dealing with the situation, you may report your compliance issues in confidence to legal@corsha.com.
+While all participants should adhere to this code of conduct, we recognize that sometimes people may have a bad day, or be unaware of some of the code's guidelines. When that happens, you may reply to them and point out this code of conduct. Such messages may be in public or in private, whatever is most appropriate.
+However, regardless of whether the message is public or not, it should still adhere to the relevant parts of this code of conduct; in particular, it should not be abusive or disrespectful.  Always assume good faith. Should there be difficulties in dealing with the situation, you may report your compliance issues in confidence to legal@corsha.com.
 
 If the violation is in documentation or code, for example inappropriate pronoun usage or word choice within official documentation, report these privately to the project in question at legal@corsha.com, and, if you have sufficient ability within the project, resolve or remove the concerning material, being mindful of the perspective of the person originally reporting the issue.

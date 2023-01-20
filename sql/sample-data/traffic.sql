@@ -110,8 +110,29 @@ INSERT INTO traffic (occurred_at, data) VALUES
 	"timestamp": 1674047523000
 }'),
 
+<<<<<<< HEAD
 -- request with 1 JWT in Auth header
 ('2023-01-17 18:59:29.360797553', '{
+=======
+('{
+	"protocol": {
+		"name": "http"
+	},
+	"request": {
+		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"headers": {
+			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//XyzzY"
+		}
+	},
+  "src":{
+    "ip":"10.22.8.11"
+  },
+	"id": "000000000000000000000090",
+	"timestamp": 1669237256611
+}'),
+-- request with 1 JWT in Auth header
+('{
+>>>>>>> 28aa723 (detectJwts function)
    "protocol":{
       "name":"http",
       "version":"1.1",
@@ -185,7 +206,11 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "elapsedTime":3
 }'),
 -- request with 1 JWT in Auth header and 1 in cookies
+<<<<<<< HEAD
 ('2023-01-17 18:59:29.360797553', '{
+=======
+('{
+>>>>>>> 28aa723 (detectJwts function)
    "protocol":{
       "name":"http",
       "version":"1.1",
@@ -259,7 +284,11 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "elapsedTime":3
 }'),
 -- request with 1 JWT with invalid signature in Auth header, 1 in request body, 1 inserted into the method field
+<<<<<<< HEAD
 ('2023-01-17 18:59:29.360797553', '{
+=======
+('{
+>>>>>>> 28aa723 (detectJwts function)
    "protocol":{
       "name":"http",
       "version":"1.1",

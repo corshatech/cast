@@ -265,6 +265,7 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, error) {
 }
 
 func detectJwts(request []byte) []string {
-	matches := jwtRegex.FindAllString(string(request), -1)
+	r := regexp.MustCompile(`eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/]*`)
+	matches := r.FindAllString(string(request), -1)
 	return matches
 }

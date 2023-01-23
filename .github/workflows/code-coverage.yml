@@ -57,7 +57,14 @@ jobs:
           NODE_COLOR=red
           if (( $(echo "$NODE_COV 85.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=green; elif (( $(echo "$NODE_COV 70.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=yellow; fi
           sed -i -r "s/Node%20Coverage-\(.*\)%\(.*\)/Node%20Coverage-$NODE_COV%$NODE_COLOR)/" README.md
+          cat README.md
 
+      - name: Set coverage badges
+        run: |
+          echo "----TEST____"
+          cat README.md
+
+        
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v12
         id: verify-changed-files

@@ -56,7 +56,7 @@ jobs:
             docs/badge.svg
 
       - name: Set coverage badges
-       if: steps.verify-changed-files.outputs.files_changed == 'true'
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: |
           GO_COV=`sed -n -e 's/total:\t(statements)\t\(.*\)%/\1/p' < coverage.out`
           GO_COLOR=red

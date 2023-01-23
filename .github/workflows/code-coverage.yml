@@ -55,7 +55,7 @@ jobs:
             coverage.out
             docs/badge.svg
 
-      - name: Set Coverage Badges
+      - name: Set coverage badges
        if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: |
           GO_COV=`sed -n -e 's/total:\t(statements)\t\(.*\)%/\1/p' < coverage.out`
@@ -66,7 +66,6 @@ jobs:
           NODE_COLOR=red
           if (( $(echo "$NODE_COV 85.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=green; elif (( $(echo "$NODE_COV 70.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=yellow; fi
           sed -i -r "s/Node%20Coverage-\(.*\)%\(.*\)/Node%20Coverage-$NODE_COV%$NODE_COLOR)/" README.md
-
 
       - name: Commit changes
         if: steps.verify-changed-files.outputs.files_changed == 'true'

@@ -45,6 +45,8 @@ const (
 	retryDelay    = 3
 )
 
+const jwtRegex = `eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/]*`
+
 type ProtocolSummary struct {
 	Name string `messagestruct:"name"`
 }
@@ -261,7 +263,7 @@ func handleMessage(message []byte) ([]byte, error) {
 }
 
 func detectJwts(request []byte) []string {
-	r := regexp.MustCompile(`eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/]*`)
+	r := regexp.MustCompile(jwtRegex)
 	matches := r.FindAllString(string(request), -1)
 	return matches
 }

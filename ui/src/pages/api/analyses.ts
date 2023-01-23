@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Analysis, AnalysisFunction, runAllAnalyses } from "lib/findings";
 import { runner as reusedAuthentication } from "../../lib/analysis/reused-authentication";
+import { runner as urlpassword } from "../../lib/analysis/urlpassword";
 
-const analysisFunctions: AnalysisFunction[] = [reusedAuthentication];
+const analysisFunctions: AnalysisFunction[] = [reusedAuthentication, urlpassword];
 
 export type AnalysesResponse = {
   analyses: Analysis[];

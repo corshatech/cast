@@ -34,6 +34,7 @@ test("runner works", async () => {
       {
         id: "auth-header-1",
         type: "reused-authentication",
+        name: "Reused Authentication",
         description: "",
         occurredAt: { start: "2023-01-01T13:12:01.000Z", end: "2023-01-01T13:12:05.000Z" },
         detectedAt: "2023-01-17T13:12:00Z",

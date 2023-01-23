@@ -16,3 +16,11 @@ CREATE TABLE IF NOT EXISTS traffic (
 );
 
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);
+
+-- The urlpassword table is used by the analysis/urlpassword package
+-- DROP TABLE IF EXISTS urlpassword
+-- If the row exists, that means the traffic entry has a password in the URL
+CREATE TABLE IF NOT EXISTS urlpassword (
+  traffic_id uuid,
+  field text
+);

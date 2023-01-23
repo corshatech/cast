@@ -15,7 +15,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -31,7 +31,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -48,7 +48,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -65,7 +65,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -82,7 +82,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//XyzzY"
 		}
@@ -93,3 +93,32 @@ INSERT INTO traffic (data) VALUES
 	"id": "000000000000000000000094",
 	"timestamp": 1669237256615
 }');
+
+INSERT INTO traffic (id, data)
+VALUES
+('f11b745f-e0ef-41ac-af95-1f69e5a17c76',
+'{
+   "request": {
+     "absoluteURI": "http://example.com/url-1"
+   },
+   "src": {
+     "ip": "192.0.2.2"
+   },
+   "timestamp": 1672578721000
+}'),
+('32df382a-cce8-4816-b057-25e4b145e6eb',
+'{
+   "request": {
+     "absoluteURI": "http://example.com/url-2"
+   },
+   "src": {
+     "ip": "192.0.2.3"
+   },
+   "timestamp": 1672578723000
+}');
+
+INSERT INTO urlpassword (traffic_id, field)
+VALUES
+('f11b745f-e0ef-41ac-af95-1f69e5a17c76', 'password'),
+('f11b745f-e0ef-41ac-af95-1f69e5a17c76', 'pass'),
+('32df382a-cce8-4816-b057-25e4b145e6eb', 'passwd');

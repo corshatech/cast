@@ -1,4 +1,4 @@
-/* Copyright 2023 Corsha.
+/* Copyright 2022 Corsha.
    Licensed under the Apache License, Version 2.0 (the 'License');
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -22,66 +22,45 @@ export type AnalysisResponse = {
 };
 
 const query = `
-SELECT DISTINCT
-  data->'request'->'headers'->>'Authorization' as auth_header,
-  data->'request'->>'absoluteUri' as absolute_uri,
+SELECT
+id,
+  data->'request'->>'absoluteURI' as absolute_uri,
   data->'src'->>'ip' as src_ip,
-  data->'timestamp' as timestamp
-FROM traffic WHERE
-data->'request'->'headers'->>'Authorization' IN (
-  SELECT
-    data->'request'->'headers'->>'Authorization' as auth_header
-  FROM traffic
-  WHERE data->'request'->'headers'->>'Authorization' is not null
-  GROUP BY auth_header
-  HAVING count(distinct data->'src'->>'ip') > 1
-)
+  data->'timestamp' as timestamp,
+  array_agg(urlpassword.field) as password_fields
+FROM traffic INNER JOIN urlpassword ON traffic.id = urlpassword.traffic_id
+GROUP BY id, absolute_uri, src_ip, timestamp
 `;
 
 interface Row {
-  auth_header: string;
+  id: string;
   absolute_uri: string;
   src_ip: string;
   timestamp: number;
+  password_fields: string[];
 }
 
-/** group the rows by their auth header */
-function groupByAuthHeader(rows: Row[]): Record<string, Row[]> {
-  const groups: Record<string, Row[]> = {};
-
-  rows.forEach((row: Row) => {
-    groups[row.auth_header] = [...(groups[row.auth_header] ?? []), row];
-  });
-
-  return groups;
-}
-
-function rowToMarkdownTableRow(row: Row): string {
-  const date = new Date(row.timestamp).toISOString();
-  return `| ${date} | ${row.absolute_uri} | ${row.src_ip} |`;
-}
-
-function rowsToFinding(detectedAt: string, id: string, rows: Row[]): Finding {
-  const sortedRows = rows.sort((x, y) => x.timestamp - y.timestamp);
+function rowToFinding(detectedAt: string, row: Row): Finding {
   const occurredAt = {
-    start: new Date(sortedRows[0].timestamp).toISOString(),
-    end: new Date(sortedRows[sortedRows.length - 1].timestamp).toISOString(),
+    at: new Date(row.timestamp).toISOString(),
   };
-  const markdownLines = sortedRows.map(rowToMarkdownTableRow).join("\n");
+  const fieldsList = row.password_fields.map((x) => `  - ${x}`).join("\n");
   const detail = `
-| Timestamp | Absolute URI | Source IP |
-| --- | --- | --- |
-${markdownLines}
+- Absolute URI: ${row.absolute_uri}
+- Source IP: ${row.src_ip}
+- Password URL Parameter:
+${fieldsList}
 `;
 
+
   return {
-    id: id,
-    type: "reused-authentication",
-    name: "Reused Authentication",
-    description: "",
+    id: row.id,
+    type: "urlpassword",
+    name: "Password in Query String",
+    description: `Potential password in query string for ${row.absolute_uri}`,
     occurredAt: occurredAt,
     detectedAt: detectedAt,
-    severity: "medium",
+    severity: "high",
     detail: detail,
   };
 }
@@ -95,14 +74,12 @@ export type NowFunction = () => string;
  */
 export async function runnerPure(now: NowFunction, query: QueryFunction): Promise<Analysis> {
   const lastUpdated = now();
-  const findings = Object.entries(groupByAuthHeader(await query())).map(([id, rows]) =>
-    rowsToFinding(lastUpdated, id, rows),
-  );
+  const findings = (await query()).map(row => rowToFinding(lastUpdated, row));
 
   return {
-    id: "reused-authentication",
-    name: "Reused Authentication",
-    description: "",
+    id: "urlpassword",
+    name: "Password in Query String",
+    description: "Potential password in query string",
     priority: 1,
     lastUpdated: lastUpdated,
     findings: findings,

@@ -24,6 +24,9 @@ build:
 deploy:
   helm:
     releases:
+    - name: httpbin
+      namespace: cast
+      remoteChart: https://matheusfm.dev/charts/httpbin-0.1.1.tgz
     - name: cast
       chartPath: k8s/helm/cast
       namespace: cast
@@ -33,10 +36,10 @@ deploy:
         "imagePullSecrets[0].name": "regcred"
       setValueTemplates:
         collector.image.repository: "{{ .IMAGE_REPO }}"
-        collector.image.tag: "dev@{{ .IMAGE_DIGEST }}"
+        collector.image.tag: "{{ .IMAGE_TAG }}"
 
         ui.image.repository: "{{ .IMAGE_REPO2 }}"
-        ui.image.tag: "dev@{{ .IMAGE_DIGEST2 }}"
+        ui.image.tag: "{{ .IMAGE_TAG2 }}"
 
 portForward:
   - resourceType: service
@@ -47,3 +50,8 @@ portForward:
     resourceName: cast-postgresql
     port: 5432
     localPort: 5432
+
+  - resourceType: service
+    resourceName: httpbin
+    port: 80
+    localPort: 8080

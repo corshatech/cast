@@ -28,12 +28,17 @@ cast:
 tidy:
 	$(GO) mod tidy
 
-lint: lint-helm
-	golangci-lint run --verbose --deadline=5m
-
+lint: lint-helm lint-ui lint-go
+	
 lint-helm:
 	helm dependency update k8s/helm/cast
 	helm lint k8s/helm/cast
+
+lint-ui:
+	cd ./ui && npm ci && npm run lint
+
+lint-go:
+	golangci-lint run --verbose --deadline=5m
 
 clean:
 	$(GO) clean ./...

@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"regexp"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -257,4 +258,10 @@ func handleMessage(message []byte) ([]byte, error) {
 		return nil, err
 	}
 	return editedMessage, nil
+}
+
+func detectJwts(request []byte) []string {
+	r := regexp.MustCompile(`eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/]*`)
+	matches := r.FindAllString(string(request), -1)
+	return matches
 }

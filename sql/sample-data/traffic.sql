@@ -15,7 +15,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -31,7 +31,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -48,7 +48,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -65,7 +65,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -82,7 +82,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//XyzzY"
 		}

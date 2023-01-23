@@ -1,33 +1,3 @@
 {
-    "extends": [
-      "plugin:@typescript-eslint/recommended",
-      "plugin:storybook/recommended",
-      "prettier",
-      "next/core-web-vitals"
-    ],
-    "ignorePatterns": ["next-env.d.ts", "next.config.js"],
-    "rules": {
-      "quotes": [1, "double"],
-      "semi": [1, "always"],
-      "object-curly-spacing": [1, "always"],
-      "multiline-comment-style": ["warn", "bare-block"],
-      "max-len": [
-        "warn",
-        {
-          "code": 120,
-          "comments": 100, 
-          "tabWidth": 2,
-          "ignoreUrls": true,
-          "ignoreTemplateLiterals": true,
-          "ignoreRegExpLiterals": true
-        }
-      ],
-      "prefer-const": "error",
-      "no-unused-vars": "off",
-      "no-console": "error",
-      "@typescript-eslint/no-unused-vars": ["error"],
-      "@typescript-eslint/no-explicit-any": ["error", { "ignoreRestArgs": true }],
-      "arrow-body-style": ["error", "as-needed"]
-    }
-  }
-  
+  "extends": "next/core-web-vitals"
+}

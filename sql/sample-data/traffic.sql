@@ -15,7 +15,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -31,7 +31,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -39,8 +39,8 @@ INSERT INTO traffic (data) VALUES
   "src":{
     "ip":"10.22.8.8"
   },
-	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
+	"id": "000000000000000000000091",
+	"timestamp": 1669237256612
 }'),
 
 ('{
@@ -48,7 +48,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -56,8 +56,8 @@ INSERT INTO traffic (data) VALUES
   "src":{
     "ip":"10.22.8.9"
   },
-	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
+	"id": "000000000000000000000092",
+	"timestamp": 1669237256613
 }'),
 
 ('{
@@ -65,7 +65,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
@@ -73,8 +73,8 @@ INSERT INTO traffic (data) VALUES
   "src":{
     "ip":"10.22.8.10"
   },
-	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
+	"id": "000000000000000000000093",
+	"timestamp": 1669237256614
 }'),
 
 ('{
@@ -82,7 +82,7 @@ INSERT INTO traffic (data) VALUES
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+		"absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
 		"headers": {
 			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//XyzzY"
 		}

@@ -1,9 +1,12 @@
 # CAST
+![Go Coverage](https://img.shields.io/badge/Go%20Coverage-1.9%25-red)
+![Node Coverage](https://img.shields.io/badge/Node%20Coverage-100%25-green)
+
 CAST is an API security tool being developed to evaluate Kubernetes API traffic for authentication
 vulnerabilities such as reused credentials.
 
 Deployed as a Helm package, CAST produces a web report of API vulnerabilities
-and does not store or export any unhashed cryptographic material.
+and does not store or export any un-hashed cryptographic material.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

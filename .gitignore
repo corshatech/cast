@@ -28,6 +28,7 @@ config/
 
 /cmd/cast
 coverage.out
+/docs/badge.svg
 /build/package/collector
 /.log/
 /.scratch/

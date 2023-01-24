@@ -22,14 +22,13 @@ test("runner works", async () => {
         timestamp: 1672578725000,
       },
     ]);
-  const now = () => "2023-01-17T13:12:00Z";
-  const results = await runnerPure(now, query);
+  const results = await runnerPure(query);
   expect(results).toStrictEqual({
     id: "reused-authentication",
     name: "Reused Authentication",
     description: "",
     priority: 1,
-    lastUpdated: "2023-01-17T13:12:00Z",
+    lastUpdated: "2023-01-17T13:12:00.000Z",
     findings: [
       {
         id: "auth-header-1",
@@ -37,7 +36,7 @@ test("runner works", async () => {
         name: "Reused Authentication",
         description: "",
         occurredAt: { start: "2023-01-01T13:12:01.000Z", end: "2023-01-01T13:12:05.000Z" },
-        detectedAt: "2023-01-17T13:12:00Z",
+        detectedAt: "2023-01-17T13:12:00.000Z",
         severity: "medium",
         detail: `
 | Timestamp | Absolute URI | Source IP |

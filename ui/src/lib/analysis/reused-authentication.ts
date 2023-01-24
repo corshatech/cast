@@ -78,7 +78,6 @@ ${markdownLines}
 }
 
 export type QueryFunction = () => Promise<Row[]>;
-export type NowFunction = () => string;
 
 /** runnerPure is the AnalysisFunction free of external dependencies
  *

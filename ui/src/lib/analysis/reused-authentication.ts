@@ -70,23 +70,23 @@ ${markdownLines}
     type: "reused-authentication",
     name: "Reused Authentication",
     description: "",
-    occurredAt: occurredAt,
-    detectedAt: detectedAt,
     severity: "medium",
-    detail: detail,
+    occurredAt,
+    detectedAt,
+    detail,
   };
 }
 
 export type QueryFunction = () => Promise<Row[]>;
-export type NowFunction = () => string;
 
 /** runnerPure is the AnalysisFunction free of external dependencies
  *
  * This function allows for dependency injection during unit testing
  */
-export async function runnerPure(now: NowFunction, query: QueryFunction): Promise<Analysis> {
-  const lastUpdated = now();
-  const findings = Object.entries(groupByAuthHeader(await query())).map(([id, rows]) =>
+export async function runnerPure(query: QueryFunction): Promise<Analysis> {
+  const rows = await query();
+  const lastUpdated = new Date().toISOString();
+  const findings = Object.entries(groupByAuthHeader(rows)).map(([id, rows]) =>
     rowsToFinding(lastUpdated, id, rows),
   );
 
@@ -95,13 +95,12 @@ export async function runnerPure(now: NowFunction, query: QueryFunction): Promis
     name: "Reused Authentication",
     description: "",
     priority: 1,
-    lastUpdated: lastUpdated,
-    findings: findings,
+    lastUpdated,
+    findings,
   };
 }
 
 export async function runner(): Promise<Analysis> {
-  const now = () => new Date().toISOString();
   const queryFunction = async () => (await conn.query(query, [])).rows;
-  return runnerPure(now, queryFunction);
+  return runnerPure(queryFunction);
 }

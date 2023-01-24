@@ -42,7 +42,7 @@ prevent automated credential stuffing, brute force, and stolen credential reuse 
 
 Unfortunately, because of the growing API ecosystems across cloud and hybrid environments, the incredible, rapid adoption of Kubernetes, and the exciting race to automate, API credentials often have poor security hygiene. This provides an expansive and growing attack vector where adversaries can use this scale and hygiene to their advantage.
 
-CAST is a tool to hopefully help you shine a light into the corners and crevices of kubernetes-based API credential usage whether your API clients and services are running in cloud, your own data-centers, or even on premise.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
+CAST is a tool to hopefully help you shine a light into the corners and crevices of kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on premise.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
 
 ## Prerequisites
 

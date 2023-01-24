@@ -11,7 +11,7 @@
 		"storybook": "start-storybook -p 6006",
 		"build-storybook": "build-storybook",
 		"test": "jest --watch",
-		"test:ci": "jest --coverage --ci",
+		"test:ci": "jest --ci",
 		"test:coverage": "jest --coverage && nyc report -t coverage --reporter=json-summary",
 		"coverage": "nyc report --reporter=lcov"
 	},

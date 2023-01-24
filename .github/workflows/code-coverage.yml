@@ -49,7 +49,7 @@ jobs:
       
       - name: Set coverage badges
         run: |
-          GO_COV=`sed -n -e 's/total:\t(statements)\t\(.*\)%/\1/p' < coverage.out`
+          GO_COV=`cat coverage.out | grep -Eo '[0-9\.]*%' | tail -1 | sed 's/%//'`
           GO_COLOR=red
           if (( $(echo "$GO_COV 85.0" | awk '{print ($1 > $2)}') )); then GO_COLOR=green; elif (( $(echo "$GO_COV 70.0" | awk '{print ($1 > $2)}') )); then GO_COLOR=yellow; fi
           sed -i -e "s/Go%20Coverage-\(.*\)%25-\(.*\)/Go%20Coverage-$GO_COV%25-$GO_COLOR)/" README.md

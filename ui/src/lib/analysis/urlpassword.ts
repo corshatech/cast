@@ -58,36 +58,35 @@ ${fieldsList}
     type: "urlpassword",
     name: "Password in Query String",
     description: `Potential password in query string for ${row.absolute_uri}`,
-    occurredAt: occurredAt,
-    detectedAt: detectedAt,
     severity: "high",
-    detail: detail,
+    occurredAt,
+    detectedAt,
+    detail,
   };
 }
 
 export type QueryFunction = () => Promise<Row[]>;
-export type NowFunction = () => string;
 
 /** runnerPure is the AnalysisFunction free of external dependencies
  *
  * This function allows for dependency injection during unit testing
  */
-export async function runnerPure(now: NowFunction, query: QueryFunction): Promise<Analysis> {
-  const lastUpdated = now();
-  const findings = (await query()).map(row => rowToFinding(lastUpdated, row));
+export async function runnerPure(query: QueryFunction): Promise<Analysis> {
+  const rows = await query();
+  const lastUpdated = new Date().toISOString();
+  const findings = rows.map(row => rowToFinding(lastUpdated, row));
 
   return {
     id: "urlpassword",
     name: "Password in Query String",
     description: "Potential password in query string",
     priority: 1,
-    lastUpdated: lastUpdated,
-    findings: findings,
+    lastUpdated,
+    findings,
   };
 }
 
 export async function runner(): Promise<Analysis> {
-  const now = () => new Date().toISOString();
   const queryFunction = async () => (await conn.query(query, [])).rows;
-  return runnerPure(now, queryFunction);
+  return runnerPure(queryFunction);
 }

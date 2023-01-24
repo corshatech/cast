@@ -19,14 +19,13 @@ test("runner works", async () => {
       },
     ]);
 
-  const now = () => "2023-01-17T13:12:00Z";
-  const results = await runnerPure(now, query);
+  const results = await runnerPure(query);
   expect(results).toStrictEqual({
     id: "urlpassword",
     name: "Password in Query String",
     description: "Potential password in query string",
     priority: 1,
-    lastUpdated: "2023-01-17T13:12:00Z",
+    lastUpdated: "2023-01-17T13:12:00.000Z",
     findings: [
       {
         id: "id-1",
@@ -34,7 +33,7 @@ test("runner works", async () => {
         name: "Password in Query String",
         description: "Potential password in query string for /url-1",
         occurredAt: { at: "2023-01-01T13:12:01.000Z" },
-        detectedAt: "2023-01-17T13:12:00Z",
+        detectedAt: "2023-01-17T13:12:00.000Z",
         severity: "high",
         detail: `
 - Absolute URI: /url-1
@@ -50,7 +49,7 @@ test("runner works", async () => {
         name: "Password in Query String",
         description: "Potential password in query string for /url-2",
         occurredAt: { at: "2023-01-01T13:12:03.000Z" },
-        detectedAt: "2023-01-17T13:12:00Z",
+        detectedAt: "2023-01-17T13:12:00.000Z",
         severity: "high",
         detail: `
 - Absolute URI: /url-2

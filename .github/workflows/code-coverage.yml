@@ -52,19 +52,13 @@ jobs:
           GO_COV=`sed -n -e 's/total:\t(statements)\t\(.*\)%/\1/p' < coverage.out`
           GO_COLOR=red
           if (( $(echo "$GO_COV 85.0" | awk '{print ($1 > $2)}') )); then GO_COLOR=green; elif (( $(echo "$GO_COV 70.0" | awk '{print ($1 > $2)}') )); then GO_COLOR=yellow; fi
-          sed -i -r "s/Go%20Coverage-\(.*\)%25-\(.*\)/Go%20Coverage-$GO_COV%25-$GO_COLOR)/" README.md
+          sed -i -e "s/Go%20Coverage-\(.*\)%25-\(.*\)/Go%20Coverage-$GO_COV%25-$GO_COLOR)/" README.md
           NODE_COV=`cat docs/badge.svg | grep -Eo '[0-9\.]*%' | head -1 | sed 's/%//'`
           NODE_COLOR=red
           if (( $(echo "$NODE_COV 85.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=green; elif (( $(echo "$NODE_COV 70.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=yellow; fi
-          sed -i -r "s/Node%20Coverage-\(.*\)%\(.*\)/Node%20Coverage-$NODE_COV%$NODE_COLOR)/" README.md
+          sed -i -e "s/Node%20Coverage-\(.*\)%25-\(.*\)/Node%20Coverage-$NODE_COV%25-$NODE_COLOR)/" README.md
           cat README.md
-
-      - name: Set coverage badges
-        run: |
-          echo "----TEST____"
-          cat README.md
-
-        
+      
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v12
         id: verify-changed-files

@@ -1,4 +1,4 @@
-/* Copyright 2022 Corsha.
+/* Copyright 2023 Corsha.
    Licensed under the Apache License, Version 2.0 (the 'License');
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -42,16 +42,16 @@ export type Severity = typeof Severity[number];
 /** When a finding occurred. It might be a time span or at an instant */
 export type OccurredAt =
   | {
-      /** The start date and time formatted as a UTC RFC-3339 string */
-      start: string;
+    /** The start date and time formatted as a UTC RFC-3339 string */
+    start: string;
 
-      /** The end date and time formatted as a UTC RFC-3339 string */
-      end: string;
-    }
+    /** The end date and time formatted as a UTC RFC-3339 string */
+    end: string;
+  }
   | {
-      /** The instant the finding occurred formatted as a UTC RFC-3339 string */
-      at: string;
-    };
+    /** The instant the finding occurred formatted as a UTC RFC-3339 string */
+    at: string;
+  };
 
 export interface Finding {
   /** Internal identifier for the finding */

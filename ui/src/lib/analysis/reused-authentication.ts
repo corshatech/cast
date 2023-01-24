@@ -12,19 +12,10 @@
 import { Analysis, Finding } from "lib/findings";
 import conn from "../../lib/db";
 
-export type AuthenticationUseRecord = {
-  absoluteUri: string;
-  srcIp: string;
-};
-
-export type AnalysisResponse = {
-  groups: Record<string, AuthenticationUseRecord[]>;
-};
-
 const query = `
 SELECT DISTINCT
   data->'request'->'headers'->>'Authorization' as auth_header,
-  data->'request'->>'absoluteUri' as absolute_uri,
+  data->'request'->>'absoluteURI' as absolute_uri,
   data->'src'->>'ip' as src_ip,
   data->'timestamp' as timestamp
 FROM traffic WHERE

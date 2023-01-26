@@ -17,11 +17,7 @@ export function FeatureComponent() {
   }
 
   if (error) {
-    return (
-      <div>
-        <Button variant="lg">Click Me</Button>
-      </div>
-    );
+    return <div>Error</div>;
   }
 
   return (

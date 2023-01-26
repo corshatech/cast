@@ -40,7 +40,7 @@ describe("Feature Component", () => {
 
   it("should show error when fetch fails", () => {
     render(<FeatureComponent />);
-    const error = screen.getByText("your error is");
+    const error = screen.getByText("Error");
 
     expect(error).toBeInTheDocument();
   });

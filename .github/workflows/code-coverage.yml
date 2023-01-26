@@ -46,13 +46,13 @@ jobs:
         run: |
           make test
           go install github.com/axw/gocov/gocov@v1.1.0
+          gocov convert coverage.out > c.out
 
       - name: Publish code coverage
         uses: paambaati/codeclimate-action@v3.2.0
         env:
           CC_TEST_REPORTER_ID: 6171d8bd9b3c3a65ec23588397d36a5630bc1a74561eec25349639794655bcdc
         with:
-          coverageCommand: gocov convert coverage.out > c.out
           coverageLocations: |
             ${{github.workspace}}/c.out:gocov
             ${{github.workspace}}/ui/coverage/*.lcov:lcov

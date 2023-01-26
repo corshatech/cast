@@ -53,7 +53,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 6171d8bd9b3c3a65ec23588397d36a5630bc1a74561eec25349639794655bcdc
         with:
-          coverageCommand: gocov convert coverage.out;
+          coverageCommand: gocov convert coverage.out
           coverageLocations: |
             ${{github.workspace}}/coverage.out:gocov
             ${{github.workspace}}/ui/coverage/*.lcov:lcov

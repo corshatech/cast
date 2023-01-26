@@ -46,37 +46,12 @@ jobs:
         run: |
           make test
           go tool cover -func=coverage.out -o=coverage.out
-      
-      - name: Set coverage badges
-        run: |
-          GO_COV=`cat coverage.out | grep -Eo '[0-9\.]*%' | tail -1 | sed 's/%//'`
-          GO_COLOR=red
-          if (( $(echo "$GO_COV 85.0" | awk '{print ($1 > $2)}') )); then GO_COLOR=green; elif (( $(echo "$GO_COV 70.0" | awk '{print ($1 > $2)}') )); then GO_COLOR=yellow; fi
-          sed -i -e "s/Go%20Coverage-\(.*\)%25-\(.*\)/Go%20Coverage-$GO_COV%25-$GO_COLOR)/" README.md
-          NODE_COV=`cat docs/badge.svg | grep -Eo '[0-9\.]*%' | head -1 | sed 's/%//'`
-          NODE_COLOR=red
-          if (( $(echo "$NODE_COV 85.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=green; elif (( $(echo "$NODE_COV 70.0" | awk '{print ($1 > $2)}') )); then NODE_COLOR=yellow; fi
-          sed -i -e "s/Node%20Coverage-\(.*\)%25-\(.*\)/Node%20Coverage-$NODE_COV%25-$NODE_COLOR)/" README.md
-          cat README.md
-      
-      - name: Verify Changed files
-        uses: tj-actions/verify-changed-files@v12
-        id: verify-changed-files
-        with:
-          files: |
-            README.md
 
-      - name: Commit changes
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add README.md
-          git commit -m "chore: Updated coverage badge."
-
-      - name: Push changes
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
-        uses: ad-m/github-push-action@master
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.2.0
+        env:
+          CC_TEST_REPORTER_ID: 6171d8bd9b3c3a65ec23588397d36a5630bc1a74561eec25349639794655bcdc
         with:
-          github_token: ${{ github.token }}
-          branch: ${{ github.head_ref }}
+          coverageLocations: |
+            ${{github.workspace}}/ui/*.lcov:lcov
+

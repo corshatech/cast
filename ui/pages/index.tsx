@@ -16,7 +16,7 @@ export default function Dashboard() {
         <h2 className="text-3xl text-blue-500" data-testid="title">
           CAST Dashboard
         </h2>
-        <p>Lorem Ipsum blah blah blah</p>
+        <p>Lorem Ipsum</p>
         <FeatureComponent />
       </main>
     </>

@@ -17,13 +17,17 @@ export function FeatureComponent() {
   }
 
   if (error) {
-    return <div>your error is {error.msg}</div>;
+    return (
+      <div>
+        <Button variant="lg">Click Me</Button>
+      </div>
+    );
   }
 
   return (
     <div>
-      <div className="text-3xl">A Title</div>
-      <Button className="px-6 py-2 space-x-3">Click Me</Button>
+      <div className="text-3xl rounded-smd">A Title</div>
+      <Button variant="lg">Click Me</Button>
     </div>
   );
 }

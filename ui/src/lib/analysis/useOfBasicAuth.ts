@@ -1,5 +1,5 @@
 import { Analysis, UseOfBasicAuth } from "lib/findings";
-import conn from "../../lib/db";
+import conn from "../db";
 
 const query = `
 SELECT DISTINCT
@@ -44,15 +44,17 @@ export async function runnerPure(query: () => Promise<Row[]>): Promise<Analysis>
             srcPort: "",
             URI: "",
         }
-    }
-  };
-  return finding;
-});
+      }
+    };
+    return finding;
+  });
 
   return {
     id: "reused-auth",
     title: "Reused Authentication",
-    description: "",
+    description: "HTTP Basic Auth is insecure if used over plain HTTP. " + 
+    "Ensure that all uses of Basic Auth are configured to only occur over TLS. " + 
+    "Consider using another, more secure kind of authentication if possible, such as tokens.",
     reportedAt: (new Date()).toISOString(),
     severity: "medium",
     findings,

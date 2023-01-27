@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Analysis, AnalysisFunction, runAllAnalyses } from "lib/findings";
 import { runner as reusedAuthentication } from "../../lib/analysis/reused-authentication";
-import { useOfBasicAuth } from "lib/analysis/basicAuth";
+import { useOfBasicAuth } from "lib/analysis/useOfBasicAuth";
 
 const analysisFunctions: AnalysisFunction[] = [reusedAuthentication, useOfBasicAuth];
 

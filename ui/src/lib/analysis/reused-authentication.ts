@@ -9,63 +9,126 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, /* Finding */ } from "lib/findings";
+import { Analysis, Finding, ReusedAuthentication } from "lib/findings";
 import conn from "../../lib/db";
 
 const query = `
-SELECT DISTINCT
-  data->'request'->'headers'->>'Authorization' as auth_header,
-  data->'request'->>'absoluteURI' as absolute_uri,
-  data->'src'->>'ip' as src_ip,
-  data->'timestamp' as timestamp
-FROM traffic WHERE
-data->'request'->'headers'->>'Authorization' IN (
+select
+  reused.auth,
+  srcCount.count,
+  authTimespan.min_timestamp,
+  authTimespan.max_timestamp,
+  sampleRequest.src->>'ip' as src_ip,
+  sampleRequest.src->>'port' as src_port,
+  sampleRequest.dst->>'ip' as dst_ip,
+  sampleRequest.dst->>'port' as dst_port,
+  sampleRequest.URI,
+  sampleRequest.timestamp
+FROM
+
+-- find all auth headers that have multiple sources
+(
   SELECT
-    data->'request'->'headers'->>'Authorization' as auth_header
+    data->'request'->'headers'->>'Authorization' as auth
   FROM traffic
-  WHERE data->'request'->'headers'->>'Authorization' is not null
-  GROUP BY auth_header
-  HAVING count(distinct data->'src'->>'ip') > 1
-)
+  WHERE
+    data->'request'->'headers'->>'Authorization' is not null
+  GROUP BY
+    auth
+  HAVING
+    count(distinct data->'src') > 1
+) as reused,
+
+-- find min and max timestamps for each reused auth header
+LATERAL (
+SELECT
+    min(t.occurred_at) as min_timestamp,
+    max(t.occurred_at) as max_timestamp
+FROM traffic as t
+WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
+GROUP BY reused.auth
+) as authTimespan,
+
+-- find the request counts for each source that reused the auth header
+LATERAL (
+  SELECT
+    t.data->'src' as src,
+    reused.auth as auth,
+    count(*) as count
+  FROM traffic AS t
+  WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
+  GROUP BY t.data->'src', reused.auth
+) as srcCount,
+
+-- find the most recent request made by each source that reused the auth header
+LATERAL (
+  SELECT
+   t.data->'src' as src,
+   t.data->'dst' as dst,
+   t.data->'request'->'absoluteURI' as URI,
+   t.occurred_at as timestamp
+   FROM traffic t
+   WHERE
+     srcCount.src = t.data->'src'
+   AND
+     srcCount.auth = t.data->'request'->'headers'->>'Authorization'
+   ORDER BY t.occurred_at DESC
+   LIMIT 1
+) as sampleRequest
 `;
 
 interface Row {
-  auth_header: string;
-  absolute_uri: string;
+  auth: string;
+  count: number;
+  min_timestamp: Date;
+  max_timestamp: Date;
   src_ip: string;
-  timestamp: number;
+  src_port: string;
+  dst_ip: string;
+  dst_port: string;
+  URI: string;
+  timestamp: Date;
 }
 
 /** group the rows by their auth header */
-/*
-  function groupByAuthHeader(rows: Row[]): Record<string, Row[]> {
+function groupByAuthHeader(rows: Row[]): Record<string, Row[]> {
   const groups: Record<string, Row[]> = {};
 
   rows.forEach((row: Row) => {
-    groups[row.auth_header] = [...(groups[row.auth_header] ?? []), row];
+    groups[row.auth] = [...(groups[row.auth] ?? []), row];
   });
 
   return groups;
 }
 
-function rowsToFinding(detectedAt: string, id: string, rows: Row[]): Finding {
-  const sortedRows = rows.sort((x, y) => x.timestamp - y.timestamp);
+function rowsToFinding(detectedAt: string, auth: string, rows: Row[]): Finding {
   const occurredAt = {
-    start: new Date(sortedRows[0].timestamp).toISOString(),
-    end: new Date(sortedRows[sortedRows.length - 1].timestamp).toISOString(),
+    start: rows[0].min_timestamp.toISOString(),
+    end: rows[0].max_timestamp.toISOString(),
   };
+  const inRequests: ReusedAuthentication["data"]["inRequests"] = rows.map(x => ({
+    srcIp: x.src_ip,
+    srcPort: x.src_port,
+    proto: "tcp",
+    destIp: x.dst_ip,
+    destPort: x.dst_port,
+    URI: x.URI,
+    at: x.timestamp.toISOString(),
+    count: x.count,
+  }));
+
   return {
     type: "reused-auth",
     name: "Reused Authentication",
     severity: "medium",
     occurredAt,
     detectedAt,
-    detail: {
-
+    data: {
+      auth,
+      inRequests,
     },
   };
 }
-*/
 
 export type QueryFunction = () => Promise<Row[]>;
 
@@ -74,11 +137,11 @@ export type QueryFunction = () => Promise<Row[]>;
  * This function allows for dependency injection during unit testing
  */
 export async function runnerPure(query: QueryFunction): Promise<Analysis> {
-  await query();
+  const rows = await query();
   const reportedAt = new Date().toISOString();
-  // const findings = Object.entries(groupByAuthHeader(rows)).map(([id, rows]) =>
-  //   rowsToFinding(lastUpdated, id, rows),
-  // );
+  const findings = Object.entries(groupByAuthHeader(rows)).map(([id, rows]) =>
+    rowsToFinding(reportedAt, id, rows),
+  );
 
   return {
     id: "reused-auth",
@@ -86,7 +149,7 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
     description: "",
     reportedAt,
     severity: "medium",
-    findings: [],
+    findings: findings,
   };
 }
 

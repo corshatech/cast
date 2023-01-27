@@ -7,7 +7,7 @@ const analysis1 = {
   reportedAt: "2023-01-17T13:12:00.000Z",
   severity: "high",
   findings: [],
-};
+} as Analysis;
 
 const runner1 = (): Promise<Analysis> => Promise.resolve(analysis1);
 
@@ -18,7 +18,7 @@ const analysis2 = {
   reportedAt: "2023-01-17T13:12:00.000Z",
   severity: "high",
   findings: [],
-};
+} as Analysis;
 
 const runner2 = (): Promise<Analysis> => Promise.resolve(analysis2);
 

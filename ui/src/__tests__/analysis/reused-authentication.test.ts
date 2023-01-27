@@ -1,5 +1,9 @@
-// This test module has been disabled so that I can push the latest findings framework for Russ to use
-test("place holder", () => { })
+/* This test module has been disabled so that I can push the latest
+   findings framework for Russ to use
+*/
+test("place holder", () => {
+  expect(2).toStrictEqual(2);
+});
 
 /*
   import { runnerPure } from "../../lib/analysis/reused-authentication";

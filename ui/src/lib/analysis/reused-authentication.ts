@@ -9,7 +9,7 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, Finding } from "lib/findings";
+import { Analysis, /* Finding */ } from "lib/findings";
 import conn from "../../lib/db";
 
 const query = `
@@ -37,7 +37,8 @@ interface Row {
 }
 
 /** group the rows by their auth header */
-function groupByAuthHeader(rows: Row[]): Record<string, Row[]> {
+/*
+  function groupByAuthHeader(rows: Row[]): Record<string, Row[]> {
   const groups: Record<string, Row[]> = {};
 
   rows.forEach((row: Row) => {
@@ -47,35 +48,24 @@ function groupByAuthHeader(rows: Row[]): Record<string, Row[]> {
   return groups;
 }
 
-function rowToMarkdownTableRow(row: Row): string {
-  const date = new Date(row.timestamp).toISOString();
-  return `| ${date} | ${row.absolute_uri} | ${row.src_ip} |`;
-}
-
 function rowsToFinding(detectedAt: string, id: string, rows: Row[]): Finding {
   const sortedRows = rows.sort((x, y) => x.timestamp - y.timestamp);
   const occurredAt = {
     start: new Date(sortedRows[0].timestamp).toISOString(),
     end: new Date(sortedRows[sortedRows.length - 1].timestamp).toISOString(),
   };
-  const markdownLines = sortedRows.map(rowToMarkdownTableRow).join("\n");
-  const detail = `
-| Timestamp | Absolute URI | Source IP |
-| --- | --- | --- |
-${markdownLines}
-`;
-
   return {
-    id: id,
-    type: "reused-authentication",
+    type: "reused-auth",
     name: "Reused Authentication",
-    description: "",
     severity: "medium",
     occurredAt,
     detectedAt,
-    detail,
+    detail: {
+
+    },
   };
 }
+*/
 
 export type QueryFunction = () => Promise<Row[]>;
 
@@ -84,19 +74,19 @@ export type QueryFunction = () => Promise<Row[]>;
  * This function allows for dependency injection during unit testing
  */
 export async function runnerPure(query: QueryFunction): Promise<Analysis> {
-  const rows = await query();
-  const lastUpdated = new Date().toISOString();
-  const findings = Object.entries(groupByAuthHeader(rows)).map(([id, rows]) =>
-    rowsToFinding(lastUpdated, id, rows),
-  );
+  await query();
+  const reportedAt = new Date().toISOString();
+  // const findings = Object.entries(groupByAuthHeader(rows)).map(([id, rows]) =>
+  //   rowsToFinding(lastUpdated, id, rows),
+  // );
 
   return {
-    id: "reused-authentication",
-    name: "Reused Authentication",
+    id: "reused-auth",
+    title: "Reused Authentication",
     description: "",
-    priority: 1,
-    lastUpdated,
-    findings,
+    reportedAt,
+    severity: "medium",
+    findings: [],
   };
 }
 

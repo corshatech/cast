@@ -2,9 +2,10 @@ import { runAllAnalyses, Analysis } from "../lib/findings";
 
 const analysis1 = {
   id: "123-analysis",
-  name: "Test Analysis 1",
+  title: "Test Analysis 1",
   description: "The first test analysis",
-  priority: 1,
+  reportedAt: "2023-01-17T13:12:00.000Z",
+  severity: "high",
   findings: [],
 };
 
@@ -12,9 +13,10 @@ const runner1 = (): Promise<Analysis> => Promise.resolve(analysis1);
 
 const analysis2 = {
   id: "321-analysis",
-  name: "Test Analysis 2",
+  title: "Test Analysis 2",
   description: "The second test analysis",
-  priority: 2,
+  reportedAt: "2023-01-17T13:12:00.000Z",
+  severity: "high",
   findings: [],
 };
 

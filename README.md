@@ -1,6 +1,6 @@
 # CAST
 ![Go Coverage](https://img.shields.io/badge/Go%20Coverage-1.9%25-red)
-![Node Coverage](https://img.shields.io/badge/Node%20Coverage-100%25-green)
+![Node Coverage](https://img.shields.io/badge/Node%20Coverage-86.36%25-green)
 
 CAST is an API security tool being developed to evaluate Kubernetes API traffic for authentication
 vulnerabilities such as reused credentials.
@@ -42,7 +42,7 @@ prevent automated credential stuffing, brute force, and stolen credential reuse 
 
 Unfortunately, because of the growing API ecosystems across cloud and hybrid environments, the incredible, rapid adoption of Kubernetes, and the exciting race to automate, API credentials often have poor security hygiene. This provides an expansive and growing attack vector where adversaries can use this scale and hygiene to their advantage.
 
-CAST is a tool to hopefully help you shine a light into the corners and crevices of kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
+CAST is a tool to hopefully help you shine a light into the corners and crevices of kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.
 
 ## Prerequisites
 
@@ -83,7 +83,7 @@ If you want to customize the helm chart, a YAML file that specifies the values f
 > :memo:
 > If you are re-installing CAST in a previously used namespace, you will need to delete the `data-cast-postgresql-0` PVC in order to remove the cached postgres password from the previous CAST deployment.
 >```bash
->kubectl delete pvc data-cast-postgresql-0 
+>kubectl delete pvc data-cast-postgresql-0
 >```
 > This can be avoided by setting `postgresql.auth.password` as described in the [Helm Parameters](#helm-parameters) section.
 

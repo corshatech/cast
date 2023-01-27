@@ -1,11 +1,16 @@
-import { Analysis, UseOfBasicAuth } from "lib/findings";
+import { Analysis, UseOfBasicAuth, Proto } from "lib/findings";
 import conn from "../db";
 
 const query = `
 SELECT DISTINCT
   data->'request'->'headers'->>'Authorization' as auth_header,
   data->'request'->>'absoluteURI' as absolute_uri,
+  data->'protocol'->>'name' as proto,
   data->'src'->>'ip' as src_ip,
+  data->'src'->>'port' as src_port,
+  data->'dst'->>'ip' as destination_ip,
+  data->'dst'->>'port' as destination_port,
+
   data->'timestamp' as timestamp
 FROM traffic WHERE
 data->'request'->'headers'->>'Authorization' LIKE 'Basic*'
@@ -14,7 +19,11 @@ data->'request'->'headers'->>'Authorization' LIKE 'Basic*'
 interface Row {
     auth_header: string;
     absolute_uri: string;
+    protocol: string;
     src_ip: string;
+    src_port: string;
+    destination_ip: string;
+    destination_port: string;
     timestamp: number;
   }
 
@@ -37,9 +46,9 @@ export async function runnerPure(query: () => Promise<Row[]>): Promise<Analysis>
     data: {
         inRequest: {
             at: (new Date(row.timestamp)).toISOString(),
-            destIp: "",
-            destPort: "",
-            proto: "unknown", //Fill in
+            destIp: row.destination_ip,
+            destPort: row.destination_port,
+            proto: (typeof row.protocol === Proto) ? row.protocol : "unknown",
             srcIp: row.src_ip,
             srcPort: "",
             URI: "",

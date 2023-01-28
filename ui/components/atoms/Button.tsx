@@ -1,4 +1,4 @@
-export type ButtonProps = JSX.IntrinsicElements["button"] & {
+export type ButtonProps = JSX.IntrinsicElements['button'] & {
   variant?: string;
   size?: string;
 };

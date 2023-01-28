@@ -1,0 +1,9 @@
+{
+    "editor.tabSize": 2,
+    "editor.trimAutoWhitespace": true,
+    "editor.singleQuote": true,
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+}

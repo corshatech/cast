@@ -9,8 +9,8 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { NextApiRequest, NextApiResponse } from "next";
-import conn from "../../libs/db";
+import { NextApiRequest, NextApiResponse } from 'next';
+import conn from '../../libs/db';
 
 export type AuthenticationUseRecord = {
   absoluteUri: string;
@@ -39,11 +39,11 @@ const query = `
 
 const handler = async (
   req: NextApiRequest,
-  res: NextApiResponse<AnalysisResponse>
+  res: NextApiResponse<AnalysisResponse>,
 ) => {
   const result = await conn.query(query, []);
 
-  const reusedAuthentication: AnalysisResponse["reusedAuthentication"] = {};
+  const reusedAuthentication: AnalysisResponse['reusedAuthentication'] = {};
 
   result.rows.forEach(
     (row: { auth_header: string; absolute_uri: string; src_ip: string }) => {
@@ -51,7 +51,7 @@ const handler = async (
         ...(reusedAuthentication[row.auth_header] ?? []),
         { absoluteUri: row.absolute_uri, srcIp: row.src_ip },
       ];
-    }
+    },
   );
 
   res.status(200).json({ reusedAuthentication });

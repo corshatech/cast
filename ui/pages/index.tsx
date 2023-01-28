@@ -1,6 +1,6 @@
-import Head from "next/head";
+import Head from 'next/head';
 
-import { FeatureComponent } from "@/components/index";
+import { FeatureComponent } from '@/components/index';
 
 export default function Dashboard() {
   return (

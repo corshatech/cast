@@ -22,7 +22,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
 	"request": {
     "absoluteURI": "http://example.com/url-1",
 		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
 	},
   "dst": {
@@ -45,7 +45,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
 	"request": {
     "absoluteURI": "http://example.com/url-2",
 		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
 	},
   "dst": {
@@ -56,7 +56,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
   "src": {
     "ip": "192.2.0.1",
     "name": "",
-    "port": "57944"
+    "port": "57945"
   },
 	"id": "000000000000000000000091",
 	"timestamp": 1674047521000
@@ -69,7 +69,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
 	"request": {
     "absoluteURI": "http://example.com/url-1",
 		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
 	},
   "dst": {
@@ -93,7 +93,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
 	"request": {
     "absoluteURI": "http://example.com/url-1",
 		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//xyzzy"
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//xyzzy"
 		}
 	},
   "dst": {

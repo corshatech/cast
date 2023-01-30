@@ -109,6 +109,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
 	"id": "000000000000000000000093",
 	"timestamp": 1674047523000
 }'),
+
 -- request with 1 JWT in Auth header
 ('2023-01-17 18:59:29.360797553', '{
    "protocol":{

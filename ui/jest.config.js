@@ -10,6 +10,10 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 const customJestConfig = {
   testEnvironment: "jest-environment-jsdom",
+  fakeTimers: {
+    enableGlobally: true,
+    now: 1673961120000,
+  },
 };
 
 // eslint-disable-next-line max-len

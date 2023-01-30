@@ -11,7 +11,7 @@
 
 /** CAST Metadata extracted from the accompanying request */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type CASTMetadata = {
+export type CASTMetadata = {
     /**
      * JWT strings detected in the request, if any present.
      * Strings in this list may not necessarily be in any particular order,

@@ -249,12 +249,14 @@ func writeRecords(pgConnection *sql.DB, ksConnection *websocket.Conn) error {
 		return nil
 	}
 
-	sqlStatement := `INSERT INTO traffic (data) VALUES ($1)`
+	occurredAt := time.UnixMilli(msgStruct.Data.Timestamp)
+
+	sqlStatement := `INSERT INTO traffic (occurred_at, data) VALUES ($1, $2)`
 
 	err = retry.Do(
 		func() error {
 			//nolint
-			_, err = pgConnection.Exec(sqlStatement, finalMessageMap)
+			_, err = pgConnection.Exec(sqlStatement, occurredAt, finalMessageMap)
 			if err == nil {
 				log.Info("Record successfully inserted into postgres database. Continuing export.")
 			}

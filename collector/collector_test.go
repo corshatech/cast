@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"crypto/sha256"
+	"database/sql/driver"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -25,6 +26,7 @@ import (
 	"os/exec"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gorilla/websocket"
@@ -87,6 +89,13 @@ func echo(w http.ResponseWriter, r *http.Request) {
 
 var notFullEntry = []byte(`{"messageType":""}`)
 
+type AnyTime struct{}
+
+func (a AnyTime) Match(v driver.Value) bool {
+	_, ok := v.(time.Time)
+	return ok
+}
+
 func TestWriteRecords(t *testing.T) {
 
 	msgStruct := Message{}
@@ -97,7 +106,7 @@ func TestWriteRecords(t *testing.T) {
 	assert.NoError(t, err)
 	defer db.Close()
 	// expect mock insert to be successful
-	mock.ExpectExec(`INSERT INTO traffic`).WithArgs(handledJwtTest0).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(`INSERT INTO traffic`).WithArgs(AnyTime{}, handledJwtTest0).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	// Create test server with the echo handler.

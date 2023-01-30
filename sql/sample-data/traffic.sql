@@ -340,11 +340,11 @@ INSERT INTO traffic (data) VALUES
    "startTime":"2023-01-17T18:59:29.360797553Z",
    "request":{
       "bodySize":0,
-      "cookies":{
-         
-      },
+      "absoluteURI": "http://httpbin.httpbin.svc.cluster.local/headers",
+      "cookies":{},
       "headers":{
          "Accept":"*/*",
+         "Authorization":"Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
          "Connection":"close",
          "Host":"10.1.1.25:8080",
          "User-Agent":"kube-probe/1.25"
@@ -374,7 +374,6 @@ INSERT INTO traffic (data) VALUES
          
       },
       "headers":{
-         "Authorization":"Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
          "Access-Control-Allow-Credentials":"true",
          "Access-Control-Allow-Origin":"*",
          "Content-Length":"0",
@@ -389,5 +388,5 @@ INSERT INTO traffic (data) VALUES
    "requestSize":111,
    "responseSize":166,
    "elapsedTime":3
-}'),
+}')
 ;

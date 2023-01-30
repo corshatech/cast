@@ -22,7 +22,7 @@ select
   sampleRequest.src->>'port' as src_port,
   sampleRequest.dst->>'ip' as dst_ip,
   sampleRequest.dst->>'port' as dst_port,
-  sampleRequest.URI,
+  sampleRequest.uri,
   sampleRequest.timestamp
 FROM
 
@@ -36,7 +36,7 @@ FROM
   GROUP BY
     auth
   HAVING
-    count(distinct data->'src') > 1
+    count(distinct data->'src'->'ip') > 1
 ) as reused,
 
 -- find min and max timestamps for each reused auth header
@@ -52,12 +52,12 @@ GROUP BY reused.auth
 -- find the request counts for each source that reused the auth header
 LATERAL (
   SELECT
-    t.data->'src' as src,
+    t.data->'src'->'ip' as src_ip,
     reused.auth as auth,
     count(*) as count
   FROM traffic AS t
   WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
-  GROUP BY t.data->'src', reused.auth
+  GROUP BY t.data->'src'->'ip', reused.auth
 ) as srcCount,
 
 -- find the most recent request made by each source that reused the auth header
@@ -65,11 +65,11 @@ LATERAL (
   SELECT
    t.data->'src' as src,
    t.data->'dst' as dst,
-   t.data->'request'->'absoluteURI' as URI,
+   t.data->'request'->'absoluteURI' as uri,
    t.occurred_at as timestamp
    FROM traffic t
    WHERE
-     srcCount.src = t.data->'src'
+     srcCount.src_ip = t.data->'src'->'ip'
    AND
      srcCount.auth = t.data->'request'->'headers'->>'Authorization'
    ORDER BY t.occurred_at DESC
@@ -86,7 +86,7 @@ interface Row {
   src_port: string;
   dst_ip: string;
   dst_port: string;
-  URI: string;
+  uri: string;
   timestamp: Date;
 }
 
@@ -112,7 +112,7 @@ function rowsToFinding(detectedAt: string, auth: string, rows: Row[]): Finding {
     proto: "tcp",
     destIp: x.dst_ip,
     destPort: x.dst_port,
-    URI: x.URI,
+    URI: x.uri,
     at: x.timestamp.toISOString(),
     count: x.count,
   }));

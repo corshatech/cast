@@ -13,7 +13,7 @@ test("runner works", async () => {
         src_port: "57944",
         dst_ip: "10.1.0.96",
         dst_port: "8181",
-        URI: "http://example.com/url-2",
+        uri: "http://example.com/url-2",
         timestamp: new Date("2023-01-18T13:12:01.000Z"),
       },
       {
@@ -25,7 +25,7 @@ test("runner works", async () => {
         src_port: "57944",
         dst_ip: "10.1.0.96",
         dst_port: "8181",
-        URI: "http://example.com/url-1",
+        uri: "http://example.com/url-1",
         timestamp: new Date("2023-01-18T13:12:02.000Z"),
       },
     ]);

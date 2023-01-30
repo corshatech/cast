@@ -33,7 +33,7 @@ test("runner works", async () => {
   expect(results).toStrictEqual({
     id: "reused-auth",
     title: "Reused Authentication",
-    description: "",
+    description: "An analysis that finds if multiple clients are using the same Authorization HTTP header value. Clients who use the same authorization header could be evidence of stolen credentials.",
     reportedAt: "2023-01-17T13:12:00.000Z",
     severity: "medium",
     findings: [

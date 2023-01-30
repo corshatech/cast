@@ -146,10 +146,10 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
   return {
     id: "reused-auth",
     title: "Reused Authentication",
-    description: "",
-    reportedAt,
+    description: "An analysis that finds if multiple clients are using the same Authorization HTTP header value. Clients who use the same authorization header could be evidence of stolen credentials.",
     severity: "medium",
-    findings: findings,
+    reportedAt,
+    findings,
   };
 }
 

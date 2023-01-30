@@ -75,22 +75,8 @@ type Message struct {
 }
 
 func main() {
-<<<<<<< HEAD
-	err := retry.Do(
-		exportRecords,
-		retry.Attempts(retryAttempts),
-		retry.Delay(retryDelay*time.Second),
-		retry.OnRetry(func(n uint, err error) {
-			log.WithError(err).Infof("Error starting CAST. Retrying in %vs", retryDelay)
-		}),
-	)
-	if err != nil {
-		log.WithError(err).Fatal("Failed to start CAST.")
-	}
-}
-=======
+
 	var err error
->>>>>>> 8bda9b2 (collector unit tests)
 
 	pgHost := requiredEnv(postgresHostEnv)
 	pgPort := requiredEnv(postgresPortEnv)

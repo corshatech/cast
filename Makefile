@@ -34,7 +34,7 @@ tidy:
 	$(GO) mod tidy
 
 lint: lint-helm lint-ui lint-go
-	
+
 lint-helm:
 	helm dependency update k8s/helm/cast
 	helm lint k8s/helm/cast

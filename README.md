@@ -1,6 +1,6 @@
 # CAST
 ![Go Coverage](https://img.shields.io/badge/Go%20Coverage-2.1%25-red)
-![Node Coverage](https://img.shields.io/badge/Node%20Coverage-84.21%25-yellow)
+![Node Coverage](https://img.shields.io/badge/Node%20Coverage-79.59%25-yellow)
 
 CAST is an API security tool being developed to evaluate Kubernetes API traffic for authentication
 vulnerabilities such as reused credentials.
@@ -29,20 +29,20 @@ and does not store or export any un-hashed cryptographic material.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Evaluated Security Concerns
-CAST is designed to evaluate security concerns revolving around API Communication and
-Authentication. These security concerns are broken up and explained here.
+CAST is a tool to evaluate security concerns surrounding API Communication and
+Authentication. These security concerns are explained here.
 
 ### Credential Reuse
 Today API Clients authenticate to API services using an authentication scheme involving
 bearer credentials. These credentials are generally come in the form of static, multi-use secrets such as a username/password, bearer tokens,
 and client PKI certificates. These largely static keys, tokens, and certs are vulnerable to credential theft because as long as you possess the credential, you can use it to gain access to API services.  The bearer model does not take into account how the credential was obtained, i.e. perhaps stolen, or pin access to only trusted clients.
-This weakness requires that API credentials like these must be kept as safe as possible, not shared, regularly rotated, and always created with tight expiry windows. OWASP has recognized these Identification and Authentication Failures in their
+This weakness requires that API credentials like these must be kept as safe as possible, not shared, regularly rotated, and always created with tight expiry windows. The [Open Web Application Security Project (OWASP)](https://owasp.org/) has recognized these Identification and Authentication Failures in their
 Annual "Top 10" vulnerabilities, stating "Where possible, implement multi-factor authentication to
 prevent automated credential stuffing, brute force, and stolen credential reuse attacks." - [OWASP Top 10](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/).
 
-Unfortunately, because of the growing API ecosystems across cloud and hybrid environments, the incredible, rapid adoption of Kubernetes, and the exciting race to automate, API credentials often have poor security hygiene. This provides an expansive and growing attack vector where adversaries can use this scale and hygiene to their advantage.
+Unfortunately, because of the growing API ecosystems across cloud and hybrid environments; the incredible, rapid adoption of Kubernetes; and the exciting race to automate, API credentials often have poor security hygiene. This provides an expansive and growing attack vector where adversaries can use this scale and lack of security hygiene to their advantage.
 
-CAST is a tool to hopefully help you shine a light into the corners and crevices of Kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
+CAST is a tool that will help you shine a light into the dark corners of Kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
 
 ## Prerequisites
 
@@ -53,14 +53,15 @@ CAST is a tool to hopefully help you shine a light into the corners and crevices
 ## Installation
 Installation of the CAST tool can be broken up into two sections:
 - Installing Kubeshark on a Kubernetes stack
-- Installing the CAST tooling that leverages Kubeshark's taps
+- Installing the CAST tooling alongside Kubeshark's taps
 
 ### Install Kubeshark
 **CAST requires Kubeshark 37.0**. The binary can be downloaded from the release page:
 [Kubeshark Release 37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0)
 
 More information about installing Kubeshark can be found on their site:
-[Kubeshark Installation](https://docs.kubeshark.co/en/install)
+[Kubeshark Installation](https://docs.kubeshark.co/en/install). 
+NOTE: the instructions are for the latest version of Kubeshark, not 37.0 .
 
 After installation is complete, tap the Namespaces or Clusters you wish CAST to evaluate
 ```bash

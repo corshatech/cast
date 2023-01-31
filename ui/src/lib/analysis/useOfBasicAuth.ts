@@ -60,8 +60,8 @@ export async function runnerPure(query: () => Promise<Row[]>): Promise<Analysis>
   });
 
   return {
-    id: "reused-auth",
-    title: "Reused Authentication",
+    id: "use-of-basic-auth",
+    title: "Use of HTTP Basic Authentication",
     description: "HTTP Basic Auth is insecure if used over plain HTTP. " + 
     "Ensure that all uses of Basic Auth are configured to only occur over TLS. " + 
     "Consider using another, more secure kind of authentication if possible, such as tokens.",

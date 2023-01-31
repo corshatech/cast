@@ -50,10 +50,10 @@ describe("useOfBasicAuth", () => {
            "type": "use-of-basic-auth",
          },
        ],
-       "id": "reused-auth",
+       "id": "use-of-basic-auth",
        "reportedAt": "2023-01-17T13:12:00.000Z",
        "severity": "medium",
-       "title": "Reused Authentication",
+       "title": "Use of HTTP Basic Authentication",
      } as Analysis
     );
   });

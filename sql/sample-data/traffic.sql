@@ -334,7 +334,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "elapsedTime":3
 }'),
 -- request with Basic Authentication
-('{
+('2023-01-31 13:12:00.000', '{
    "protocol":{
       "name":"http",
       "version":"1.1",

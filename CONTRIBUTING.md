@@ -60,6 +60,3 @@ To release the chart, you just need to create a docker release. GitHub actions w
 ## Communication
 
 If you have any questions or concerns, please email Max at max@corsha.com.
-
-
-

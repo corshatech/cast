@@ -78,10 +78,12 @@ export type IFinding<Type extends string, DataType extends Record<string, any>> 
   data: DataType;
 };
 
+export type Proto = "tcp" | "udp" | "unknown";
+
 export interface RequestContext {
   srcIp: string;
   srcPort: string;
-  proto: "tcp" | "udp" | "unknown";
+  proto: Proto;
   destIp: string;
   destPort: string;
   URI?: string;
@@ -123,7 +125,9 @@ export type UseOfBasicAuth = IFinding<"use-of-basic-auth", {
 export type Finding = ReusedAuthentication
   | ExpiredJWT
   | PasswordInURL
-  | UseOfBasicAuth/** A function that produces an analysis result */
+  | UseOfBasicAuth
+  
+/** A function that produces an analysis result */  
 export type AnalysisFunction = () => Promise<Analysis>;
 
 /** Evaluates all analysis functions */

@@ -123,7 +123,9 @@ export type UseOfBasicAuth = IFinding<"use-of-basic-auth", {
 export type Finding = ReusedAuthentication
   | ExpiredJWT
   | PasswordInURL
-  | UseOfBasicAuth/** A function that produces an analysis result */
+  | UseOfBasicAuth
+  
+/** A function that produces an analysis result */  
 export type AnalysisFunction = () => Promise<Analysis>;
 
 /** Evaluates all analysis functions */

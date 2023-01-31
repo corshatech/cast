@@ -78,12 +78,10 @@ export type IFinding<Type extends string, DataType extends Record<string, any>> 
   data: DataType;
 };
 
-export type Proto = "tcp" | "udp" | "unknown";
-
 export interface RequestContext {
   srcIp: string;
   srcPort: string;
-  proto: Proto;
+  proto: "tcp" | "udp" | "unknown";
   destIp: string;
   destPort: string;
   URI?: string;

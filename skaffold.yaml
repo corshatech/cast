@@ -33,10 +33,10 @@ deploy:
         "imagePullSecrets[0].name": "regcred"
       setValueTemplates:
         collector.image.repository: "{{ .IMAGE_REPO }}"
-        collector.image.tag: "dev@{{ .IMAGE_DIGEST }}"
+        collector.image.tag: "{{ .IMAGE_TAG }}"
 
         ui.image.repository: "{{ .IMAGE_REPO2 }}"
-        ui.image.tag: "dev@{{ .IMAGE_DIGEST2 }}"
+        ui.image.tag: "{{ .IMAGE_TAG2 }}"
 
 portForward:
   - resourceType: service

@@ -56,8 +56,8 @@ Installation of the CAST tool can be broken up into two sections:
 - Installing the CAST tooling that leverages Kubeshark's taps
 
 ### Install Kubeshark
-Installation of Kubeshark is straightforward and can be found on their site here:
-[Kubeshark Installation](https://docs.kubeshark.co/en/install)
+CAST requires Kubeshark 37.0. The binary and instructions for installation can be found on the release page:
+[Kubeshark Release 37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0)
 
 After installation is complete, tap the Namespaces or Clusters you wish CAST to evaluate
 ```bash

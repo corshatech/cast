@@ -6,8 +6,31 @@ const analysis1 = {
   description: "The first test analysis",
   reportedAt: "2023-01-17T13:12:00.000Z",
   severity: "high",
-  findings: [],
-} as Analysis;
+  findings: [
+    {
+      type: "reused-auth",
+      name: "Reused Authentication",
+      occurredAt: { start: "2023-01-01T13:12:01.000Z", end: "2023-01-01T13:12:05.000Z" },
+      detectedAt: "2023-01-17T13:12:00.000Z",
+      severity: "high",
+      data: {
+        auth: "auth-header-1",
+        inRequests: [
+          {
+            srcIp: "192.168.2.0",
+            srcPort: "8080",
+            proto: "tcp",
+            destIp: "192.168.2.100",
+            destPort: "8080",
+            URI: "/uri-1",
+            at: "2023-01-01T13:12:01.000Z",
+            count: 1,
+          }
+        ],
+      },
+    }
+  ],
+};
 
 const runner1 = (): Promise<Analysis> => Promise.resolve(analysis1);
 
@@ -17,8 +40,32 @@ const analysis2 = {
   description: "The second test analysis",
   reportedAt: "2023-01-17T13:12:00.000Z",
   severity: "high",
-  findings: [],
-} as Analysis;
+  findings: [
+    {
+      type: "reused-auth",
+      name: "Reused Authentication",
+      description: "",
+      occurredAt: { start: "2023-01-01T13:12:01.000Z", end: "2023-01-01T13:12:05.000Z" },
+      detectedAt: "2023-01-17T13:12:00.000Z",
+      severity: "high",
+      data: {
+        auth: "auth-header-1",
+        inRequests: [
+          {
+            srcIp: "192.168.2.0",
+            srcPort: "8080",
+            proto: "tcp",
+            destIp: "192.168.2.100",
+            destPort: "8080",
+            URI: "/uri-1",
+            at: "2023-01-01T13:12:01.000Z",
+            count: 1,
+          }
+        ],
+      },
+    }
+  ],
+};
 
 const runner2 = (): Promise<Analysis> => Promise.resolve(analysis2);
 

@@ -1,61 +1,70 @@
-/* This test module has been disabled so that I can push the latest
-   findings framework for Russ to use
-*/
-test("place holder", () => {
-  expect(2).toStrictEqual(2);
-});
 
-/*
-  import { runnerPure } from "../../lib/analysis/reused-authentication";
+import { runnerPure } from "../../lib/analysis/reused-authentication";
 
-  test("runner works", async () => {
+test("runner works", async () => {
   const query = () =>
-  Promise.resolve([
-  {
-  auth_header: "auth-header-1",
-  absolute_uri: "/url-1",
-  src_ip: "192.0.2.1",
-  timestamp: 1672578721000,
-  },
-  {
-        auth_header: "auth-header-1",
-        absolute_uri: "/url-1",
-        src_ip: "192.0.2.2",
-        timestamp: 1672578723000,
+    Promise.resolve([
+      {
+        auth: "auth-header-1",
+        count: 2,
+        min_timestamp: new Date("2023-01-18T13:12:00.000Z"),
+        max_timestamp: new Date("2023-01-18T13:12:02.000Z"),
+        src_ip: "192.2.0.1",
+        src_port: "57944",
+        dst_ip: "10.1.0.96",
+        dst_port: "8181",
+        uri: "http://example.com/url-2",
+        timestamp: new Date("2023-01-18T13:12:01.000Z"),
       },
       {
-        auth_header: "auth-header-1",
-        absolute_uri: "/url-2",
-        src_ip: "192.0.2.1",
-        timestamp: 1672578725000,
+        auth: "auth-header-1",
+        count: 1,
+        min_timestamp: new Date("2023-01-18T13:12:00.000Z"),
+        max_timestamp: new Date("2023-01-18T13:12:02.000Z"),
+        src_ip: "192.2.0.2",
+        src_port: "57944",
+        dst_ip: "10.1.0.96",
+        dst_port: "8181",
+        uri: "http://example.com/url-1",
+        timestamp: new Date("2023-01-18T13:12:02.000Z"),
       },
     ]);
   const results = await runnerPure(query);
   expect(results).toStrictEqual({
-    id: "reused-authentication",
+    id: "reused-auth",
     title: "Reused Authentication",
-    description: "",
-    lastUpdated: "2023-01-17T13:12:00.000Z",
+    description: "An analysis that finds if multiple clients are using the same Authorization HTTP header value. Clients who use the same authorization header could be evidence of stolen credentials.",
+    reportedAt: "2023-01-17T13:12:00.000Z",
     severity: "medium",
     findings: [
       {
-        id: "auth-header-1",
         type: "reused-auth",
         name: "Reused Authentication",
-        description: "",
-        occurredAt: { start: "2023-01-01T13:12:01.000Z", end: "2023-01-01T13:12:05.000Z" },
+        occurredAt: { start: "2023-01-18T13:12:00.000Z", end: "2023-01-18T13:12:02.000Z" },
         detectedAt: "2023-01-17T13:12:00.000Z",
-        detail: {
+        severity: "medium",
+        data: {
           auth: "auth-header-1",
           inRequests: [
             {
-              srcIp: "192.168.2.0",
-              srcPort: "8080",
+              count: 2,
+              srcIp: "192.2.0.1",
+              srcPort: "57944",
+              destIp: "10.1.0.96",
+              destPort: "8181",
               proto: "tcp",
-              destIp: "192.168.2.100",
-              destPort: "8080",
-              URI: "/uri-1",
+              URI: "http://example.com/url-2",
+              at: "2023-01-18T13:12:01.000Z",
+            },
+            {
               count: 1,
+              srcIp: "192.2.0.2",
+              srcPort: "57944",
+              destIp: "10.1.0.96",
+              destPort: "8181",
+              proto: "tcp",
+              URI: "http://example.com/url-1",
+              at: "2023-01-18T13:12:02.000Z",
             }
           ],
         },
@@ -63,4 +72,3 @@ test("place holder", () => {
     ],
   });
 });
-*/

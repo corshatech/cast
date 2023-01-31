@@ -24,11 +24,11 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/avast/retry-go"
+	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq"
 	"github.com/mitchellh/mapstructure"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/gorilla/websocket"
 )
 
 const (
@@ -57,10 +57,15 @@ type Header struct {
 type Request struct {
 	Headers Header `messagestruct:"headers"`
 	Path    string `messagestruct:"path"`
+	// QueryString can be a map[string]string if the key is used once or
+	// map[string]string[] if the key is use multiple times
+	QueryString map[string]interface{}
 }
 type Data struct {
-	Protocol ProtocolSummary `messagestruct:"protocol"`
-	Request  Request         `messagestruct:"request"`
+	Id        string          `messagestruct:"id"`
+	Protocol  ProtocolSummary `messagestruct:"protocol"`
+	Timestamp int64           `messagestruct:"timestamp"`
+	Request   Request         `messagestruct:"request"`
 }
 
 type Message struct {
@@ -69,17 +74,14 @@ type Message struct {
 }
 
 func main() {
-	var err error
-	for i := 0; i < retryAttempts; i++ {
-		if i > 0 {
-			log.Infof("Error starting CAST. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay * time.Second)
-		}
-		err = exportRecords()
-		if err == nil {
-			break
-		}
-	}
+	err := retry.Do(
+		exportRecords,
+		retry.Attempts(retryAttempts),
+		retry.Delay(retryDelay*time.Second),
+		retry.OnRetry(func(n uint, err error) {
+			log.WithError(err).Infof("Error starting CAST. Retrying in %vs", retryDelay)
+		}),
+	)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to start CAST.")
 	}
@@ -105,21 +107,20 @@ func exportRecords() error {
 	}
 
 	// wait for postgres database to be ready before continuing
-	for i := 0; i < 5; i++ {
-		if i > 0 {
+	err = retry.Do(
+		func() error {
+			return db.Ping()
+		},
+		retry.Attempts(5),
+		retry.Delay(5*time.Second),
+		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Unable to reach postgres database. Retrying in %vs", 5)
-			time.Sleep(5 * time.Second)
-		}
-		err = db.Ping()
-		if err == nil {
-			break
-		}
-	}
+		}),
+	)
 	if err != nil {
 		log.WithError(err).Info("Failed to reach postgres database.")
 		return err
 	}
-
 	defer db.Close()
 
 	log.Info("Established connection to postgres database.")
@@ -152,37 +153,40 @@ func exportRecords() error {
 				errc <- err1
 			}
 
-			finalMessage, err1 := handleMessage(message)
+			msgStruct := Message{}
+			finalMessageMap, err1 := handleMessage(message, &msgStruct)
 			if err1 != nil {
 				log.WithError(err1).Info("Failed to process kubeshark record.")
 				errc <- err1
 			}
 
-			if finalMessage == nil {
+			if finalMessageMap == nil {
 				continue
 			}
 
-			sqlStatement := `INSERT INTO traffic (data) VALUES ($1)`
+			occurredAt := time.UnixMilli(msgStruct.Data.Timestamp)
 
-			for i := 0; i < retryAttempts; i++ {
-				if i > 0 {
-					log.WithError(err1).Infof("Error inserting entry into postgres database. Retrying in %vs.", retryDelay)
-					time.Sleep(retryDelay * time.Second)
-				}
-				_, err1 = db.Exec(sqlStatement, finalMessage)
-				if err1 == nil {
-					if i > 0 {
-						log.Info("Record successfully inserted into postgres database. Continuing export.")
-					}
-					break
-				}
-			}
+			sqlStatement := `INSERT INTO traffic (occurred_at, data) VALUES ($1, $2)`
 
+			err1 = retry.Do(
+				func() error {
+					_, err2 := db.Exec(sqlStatement, occurredAt, finalMessageMap)
+					return err2
+				},
+				retry.Attempts(retryAttempts),
+				retry.Delay(retryDelay*time.Second),
+				retry.OnRetry(func(n uint, err error) {
+					log.WithError(err).Infof("Error inserting entry into postgres database. Retrying in %vs.", retryDelay)
+				}),
+			)
 			if err1 != nil {
 				errc <- err1
+				continue
 			}
 
+			log.WithField("data.id", msgStruct.Data.Id).Infof("Record successfully inserted into postgres database.")
 		}
+
 	}()
 
 	err = c.WriteMessage(websocket.TextMessage, []byte(`{"leftOff":"latest","query":"","enableFullEntries":true,"fetch":50,"timeoutMs":3000}`))
@@ -222,7 +226,7 @@ func requiredEnv(envName string) string {
 	return ret
 }
 
-func handleMessage(message []byte) ([]byte, error) {
+func handleMessage(message []byte, msgStruct *Message) ([]byte, error) {
 
 	var messageMap map[string]interface{}
 
@@ -236,20 +240,18 @@ func handleMessage(message []byte) ([]byte, error) {
 		return nil, nil
 	}
 
-	v := Message{}
-
-	err = mapstructure.Decode(messageMap, &v)
+	err = mapstructure.Decode(messageMap, msgStruct)
 	if err != nil {
 		return nil, err
 	}
 
-	if v.Data.Protocol.Name != "" && v.Data.Request.Headers.Host != "" && v.Data.Request.Path != "" {
-		absoluteURI := v.Data.Protocol.Name + "://" + v.Data.Request.Headers.Host + v.Data.Request.Path
+	if msgStruct.Data.Protocol.Name != "" && msgStruct.Data.Request.Headers.Host != "" && msgStruct.Data.Request.Path != "" {
+		absoluteURI := msgStruct.Data.Protocol.Name + "://" + msgStruct.Data.Request.Headers.Host + msgStruct.Data.Request.Path
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
 	}
 
-	if v.Data.Request.Headers.Authorization != "" {
-		unHashedAuth := v.Data.Request.Headers.Authorization
+	if msgStruct.Data.Request.Headers.Authorization != "" {
+		unHashedAuth := msgStruct.Data.Request.Headers.Authorization
 		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
 
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)

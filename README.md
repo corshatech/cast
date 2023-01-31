@@ -42,7 +42,7 @@ prevent automated credential stuffing, brute force, and stolen credential reuse 
 
 Unfortunately, because of the growing API ecosystems across cloud and hybrid environments, the incredible, rapid adoption of Kubernetes, and the exciting race to automate, API credentials often have poor security hygiene. This provides an expansive and growing attack vector where adversaries can use this scale and hygiene to their advantage.
 
-CAST is a tool to hopefully help you shine a light into the corners and crevices of kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
+CAST is a tool to hopefully help you shine a light into the corners and crevices of Kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
 
 ## Prerequisites
 
@@ -56,8 +56,11 @@ Installation of the CAST tool can be broken up into two sections:
 - Installing the CAST tooling that leverages Kubeshark's taps
 
 ### Install Kubeshark
-CAST requires Kubeshark 37.0. The binary and instructions for installation can be found on the release page:
+**CAST requires Kubeshark 37.0**. The binary can be downloaded from the release page:
 [Kubeshark Release 37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0)
+
+More information about installing Kubeshark can be found on their site:
+[Kubeshark Installation](https://docs.kubeshark.co/en/install)
 
 After installation is complete, tap the Namespaces or Clusters you wish CAST to evaluate
 ```bash

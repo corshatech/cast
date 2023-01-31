@@ -15,6 +15,7 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/json"
@@ -29,6 +30,8 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/mitchellh/mapstructure"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/corshatech/cast/collector/analysis/pass_in_url"
 )
 
 const (
@@ -185,6 +188,60 @@ func exportRecords() error {
 			}
 
 			log.WithField("data.id", msgStruct.Data.Id).Infof("Record successfully inserted into postgres database.")
+
+			// Attempt to select the UUID of the record we just inserted
+			var dbId string
+			err1 = retry.Do(
+				func() error {
+					err2 := db.QueryRow(`SELECT id FROM traffic WHERE data->>'id' = $1`, msgStruct.Data.Id).Scan(&dbId)
+					if err2 != nil {
+						return fmt.Errorf("error selecting traffic.id: %w", err2)
+					}
+					return nil
+				},
+				retry.Attempts(retryAttempts),
+				retry.Delay(retryDelay*time.Second),
+				retry.OnRetry(func(n uint, err error) {
+					log.WithError(err).Errorf("Error selecting traffic.id")
+				}),
+			)
+			if err1 != nil {
+				errc <- err1
+				continue
+			}
+
+			err1 = retry.Do(
+				func() error {
+					ctx := context.Background()
+					matches := pass_in_url.Detect(msgStruct.Data.Request.QueryString)
+					if len(matches) == 0 {
+						return nil
+					}
+
+					log.
+						WithField("analysis.id", "pass_in_url").
+						WithField("pass_in_url.matches", matches).
+						Info("password detected in query string")
+
+					err2 := pass_in_url.InsertMatches(ctx, db, dbId, matches)
+					if err2 != nil {
+						return fmt.Errorf("error handling pass_in_url analysis: %w", err2)
+					}
+					return nil
+				},
+				retry.Attempts(retryAttempts),
+				retry.Delay(retryDelay*time.Second),
+				retry.OnRetry(func(n uint, err error) {
+					log.
+						WithField("analysis.id", "pass_in_url").
+						WithError(err).
+						Errorf("error handling pass_in_url analysis")
+				}),
+			)
+			if err1 != nil {
+				errc <- err1
+				continue
+			}
 		}
 
 	}()

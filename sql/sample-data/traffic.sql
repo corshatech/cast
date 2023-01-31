@@ -407,3 +407,48 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "elapsedTime":3
 }')
 ;
+
+INSERT INTO traffic (id, occurred_at, data)
+VALUES
+('f11b745f-e0ef-41ac-af95-1f69e5a17c76',
+'2023-01-01 13:12:01.000',
+'{
+   "request": {
+     "absoluteURI": "http://example.com/url-1"
+   },
+  "dst": {
+    "ip": "10.1.0.96",
+    "name": "",
+    "port": "8181"
+  },
+  "src": {
+    "ip": "192.2.0.1",
+    "name": "",
+    "port": "57944"
+  },
+   "timestamp": 1672578721000
+}'),
+('32df382a-cce8-4816-b057-25e4b145e6eb',
+'2023-01-01 13:12:03.000',
+'{
+   "request": {
+     "absoluteURI": "http://example.com/url-2"
+   },
+  "dst": {
+    "ip": "10.1.0.96",
+    "name": "",
+    "port": "8181"
+  },
+  "src": {
+    "ip": "192.2.0.2",
+    "name": "",
+    "port": "57944"
+  },
+   "timestamp": 1672578723000
+}');
+
+INSERT INTO pass_in_url (traffic_id, field)
+VALUES
+('f11b745f-e0ef-41ac-af95-1f69e5a17c76', 'password'),
+('f11b745f-e0ef-41ac-af95-1f69e5a17c76', 'pass'),
+('32df382a-cce8-4816-b057-25e4b145e6eb', 'passwd');

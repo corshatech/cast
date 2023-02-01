@@ -21,7 +21,7 @@ var keys = hashset.New(
 	"session-key",
 )
 
-// Handle detects if queryString has a password and inserts the result into the pass_in_url table
+// InsertMatches inserts the matches from Detect into the pass_in_url table
 func InsertMatches(ctx context.Context, db *sql.DB, traffic_id string, matched []string) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
@@ -47,7 +47,8 @@ func InsertMatches(ctx context.Context, db *sql.DB, traffic_id string, matched [
 
 // Detect returns an array of queryString keys that look like passwords
 func Detect(queryString map[string]interface{}) []string {
-	result := []string{}
+	var result []string
+
 	for k := range queryString {
 		if keys.Contains(strings.ToLower(k)) {
 			result = append(result, k)

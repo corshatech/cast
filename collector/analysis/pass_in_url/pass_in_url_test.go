@@ -123,12 +123,11 @@ func TestPassInUrl(t *testing.T) {
 		)
 	})
 	t.Run("is empty when not matched", func(t *testing.T) {
-		require.Equal(
+		require.Empty(
 			t,
 			pass_in_url.Detect(map[string]interface{}{
 				"foo": "bar",
 			}),
-			[]string{},
 		)
 	})
 }

@@ -1,9 +1,8 @@
 package pass_in_url
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/emirpasic/gods/sets/hashset"
@@ -21,38 +20,40 @@ var keys = hashset.New(
 	"session-key",
 )
 
-// InsertMatches inserts the matches from Detect into the pass_in_url table
-func InsertMatches(ctx context.Context, db *sql.DB, traffic_id string, matched []string) error {
-	tx, err := db.BeginTx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("could not begin transaction: %w", err)
-	}
-	defer func() {
-		_ = tx.Rollback()
-	}()
-
-	for _, match := range matched {
-		_, err := tx.ExecContext(ctx, "INSERT INTO pass_in_url (traffic_id, field) VALUES ($1, $2)", traffic_id, match)
-		if err != nil {
-			return fmt.Errorf("could not insert into pass_in_url: %w", err)
-		}
-	}
-
-	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("could not commit pass_in_url transaction: %w", err)
-	}
-
-	return nil
+// PassInUrl is the result of the pass-in-url analysis
+type PassInUrl struct {
+	// AbsoluteUri is the AbsoluteUri without a query string
+	AbsoluteUri string
+	// QueryParams are the query keys that look like passwords
+	QueryParams []string
 }
 
-// Detect returns an array of queryString keys that look like passwords
-func Detect(queryString map[string]interface{}) []string {
-	var result []string
+// Detect returns a new PassInUrl if it detects passwords in the absoluteUri, nil otherwise
+func Detect(absoluteUri string) (*PassInUrl, error) {
+	uri, err := url.Parse(absoluteUri)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing absoluteUri: %w", err)
+	}
 
-	for k := range queryString {
+	query, err := url.ParseQuery(uri.RawQuery)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing absoluteUri query: %w", err)
+	}
+
+	var matches []string
+	for k := range query {
 		if keys.Contains(strings.ToLower(k)) {
-			result = append(result, k)
+			matches = append(matches, k)
 		}
 	}
-	return result
+	if len(matches) == 0 {
+		return nil, nil
+	}
+
+	uri.RawQuery = ""
+	passInUrl := PassInUrl{
+		AbsoluteUri: uri.String(),
+		QueryParams: matches,
+	}
+	return &passInUrl, nil
 }

@@ -15,7 +15,6 @@ limitations under the License.
 package main
 
 import (
-	"context"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/json"
@@ -60,6 +59,7 @@ type Header struct {
 type Request struct {
 	Headers Header `messagestruct:"headers"`
 	Path    string `messagestruct:"path"`
+	Url     string `messagestruct:"url"`
 	// QueryString can be a map[string]string if the key is used once or
 	// map[string]string[] if the key is use multiple times
 	QueryString map[string]interface{}
@@ -79,13 +79,16 @@ type Message struct {
 // CAST Metadata extracted from the accompanying request
 type CASTMetadata struct {
 	/*
-		JWT strings detected in the request, if any present.
+		DetectedJwts are JWT strings detected in the request, if any present.
 		Strings in this list may not necessarily be in any particular order,
 		and need not be unique in the event the request contains duplicate JWTs somehow.
 		(i.e. Neither list order nor unique items guaranteed.)
 	*/
-	DetectedJwts []string
+	DetectedJwts []string `json:",omitempty"`
 	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
+
+	// PassInUrl is the data returned by the pass_in_url analysis
+	PassInUrl *pass_in_url.PassInUrl `json:",omitempty"`
 }
 
 func main() {
@@ -200,60 +203,6 @@ func exportRecords() error {
 			}
 
 			log.WithField("data.id", msgStruct.Data.Id).Infof("Record successfully inserted into postgres database.")
-
-			// Attempt to select the UUID of the record we just inserted
-			var dbId string
-			err1 = retry.Do(
-				func() error {
-					err2 := db.QueryRow(`SELECT id FROM traffic WHERE data->>'id' = $1`, msgStruct.Data.Id).Scan(&dbId)
-					if err2 != nil {
-						return fmt.Errorf("error selecting traffic.id: %w", err2)
-					}
-					return nil
-				},
-				retry.Attempts(retryAttempts),
-				retry.Delay(retryDelay*time.Second),
-				retry.OnRetry(func(n uint, err error) {
-					log.WithError(err).Errorf("Error selecting traffic.id")
-				}),
-			)
-			if err1 != nil {
-				errc <- err1
-				continue
-			}
-
-			err1 = retry.Do(
-				func() error {
-					ctx := context.Background()
-					matches := pass_in_url.Detect(msgStruct.Data.Request.QueryString)
-					if len(matches) == 0 {
-						return nil
-					}
-
-					log.
-						WithField("analysis.id", "pass_in_url").
-						WithField("pass_in_url.matches", matches).
-						Info("password detected in query string")
-
-					err2 := pass_in_url.InsertMatches(ctx, db, dbId, matches)
-					if err2 != nil {
-						return fmt.Errorf("error handling pass_in_url analysis: %w", err2)
-					}
-					return nil
-				},
-				retry.Attempts(retryAttempts),
-				retry.Delay(retryDelay*time.Second),
-				retry.OnRetry(func(n uint, err error) {
-					log.
-						WithField("analysis.id", "pass_in_url").
-						WithError(err).
-						Errorf("error handling pass_in_url analysis")
-				}),
-			)
-			if err1 != nil {
-				errc <- err1
-				continue
-			}
 		}
 
 	}()
@@ -296,12 +245,11 @@ func requiredEnv(envName string) string {
 }
 
 func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
-
+	var err error
 	var messageMap map[string]interface{}
 	var metadata CASTMetadata
 
-	err := json.Unmarshal(message, &messageMap)
-
+	err = json.Unmarshal(message, &messageMap)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -315,17 +263,32 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 		return nil, nil, err
 	}
 
-	if msgStruct.Data.Protocol.Name != "" && msgStruct.Data.Request.Headers.Host != "" && msgStruct.Data.Request.Path != "" {
-		absoluteURI := msgStruct.Data.Protocol.Name + "://" + msgStruct.Data.Request.Headers.Host + msgStruct.Data.Request.Path
+	var absoluteURI string
+	if msgStruct.Data.Protocol.Name != "" && msgStruct.Data.Request.Headers.Host != "" && msgStruct.Data.Request.Url != "" {
+		absoluteURI = msgStruct.Data.Protocol.Name + "://" + msgStruct.Data.Request.Headers.Host + msgStruct.Data.Request.Url
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
 	}
 
 	if msgStruct.Data.Request.Headers.Authorization != "" {
 		unHashedAuth := msgStruct.Data.Request.Headers.Authorization
 		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
-
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
 	}
+
+	// Start: Handle the pass-in-url analysis
+	passInUrl, err := pass_in_url.Detect(absoluteURI)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error in detecting PassInUrl: %w", err)
+	}
+	if passInUrl != nil {
+		log.WithFields(log.Fields{
+			"func":      "handleMessage",
+			"PassInUrl": metadata.PassInUrl,
+		}).Debug("password detected in url")
+		metadata.PassInUrl = passInUrl
+		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = metadata.PassInUrl.AbsoluteUri
+	}
+	// End: Handle the pass-in-url analysis
 
 	editedMessage, err := json.Marshal(messageMap["data"])
 	if err != nil {

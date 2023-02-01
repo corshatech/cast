@@ -27,7 +27,12 @@ test("runner works", async () => {
   expect(results).toStrictEqual({
     id: "pass-in-url",
     title: "Password in Query String",
-    description: "Potential password in query string",
+    description:
+      "A password or credential was detected in a URL as a query " +
+      "parameter. Using secure transport like HTTPS does not resolve the " +
+      "issue, because the URL may become logged or leak to third parties " +
+      "through e.g.the Referrer header.Do not include credentials in any " +
+      "part of a URL.",
     reportedAt: "2023-01-17T13:12:00.000Z",
     severity: "high",
     findings: [

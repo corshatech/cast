@@ -28,11 +28,11 @@ id,
   data->'src'->>'port' as src_port,
   data->'dst'->>'ip' as dst_ip,
   data->'dst'->>'port' as dst_port,
-  data->'request'->'absoluteURI' as uri,
+  meta->'PassInUrl'->'AbsoluteUri' as uri,
   occurred_at as timestamp,
-  array_agg(pass_in_url.field) as query_params
-FROM traffic INNER JOIN pass_in_url ON traffic.id = pass_in_url.traffic_id
-GROUP BY id, uri, src_ip, timestamp
+  meta->'PassInUrl'->'QueryParams' as query_params
+FROM traffic
+WHERE meta ? 'PassInUrl'
 ORDER BY occurred_at DESC
 `;
 
@@ -84,7 +84,12 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
   return {
     id: "pass-in-url",
     title: "Password in Query String",
-    description: "Potential password in query string",
+    description:
+      "A password or credential was detected in a URL as a query " +
+      "parameter. Using secure transport like HTTPS does not resolve the " +
+      "issue, because the URL may become logged or leak to third parties " +
+      "through e.g.the Referrer header.Do not include credentials in any " +
+      "part of a URL.",
     reportedAt,
     severity: "high",
     findings,

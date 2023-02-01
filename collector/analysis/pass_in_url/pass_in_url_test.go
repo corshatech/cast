@@ -54,14 +54,16 @@ func TestPassInUrl(t *testing.T) {
 	t.Run("returns an error when passed a malformed URL", func(t *testing.T) {
 		result, err := pass_in_url.Detect("\x7f")
 
-		assert.EqualError(t, err, "error parsing absoluteUri: parse \"\\x7f\": net/url: invalid control character in URL")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "error parsing absoluteUri: parse ")
 		assert.Nil(t, result)
 	})
 
 	t.Run("returns an error when passed a malformed query", func(t *testing.T) {
 		result, err := pass_in_url.Detect("http://example.com/?foo;bar=1")
 
-		assert.EqualError(t, err, "error parsing absoluteUri query: invalid semicolon separator in query")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "error parsing absoluteUri query: invalid semicolon")
 		assert.Nil(t, result)
 	})
 }

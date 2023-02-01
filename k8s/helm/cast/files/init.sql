@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS traffic (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   occurred_at timestamptz,
   data jsonb,
-  cast jsonb
+  meta jsonb
 );
 
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);

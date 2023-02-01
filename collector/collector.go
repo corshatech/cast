@@ -198,34 +198,26 @@ func main() {
 
 func exportRecords(pgConnection *sql.DB, ksConnection *websocket.Conn, ctx context.Context) error {
 	var err error
-	errc := make(chan error)
 
 	log.Info("Starting export of records.")
 
-	go func() {
-		for {
-			err = writeRecords(pgConnection, ksConnection)
-			if err != nil {
-				errc <- err
-			}
-		}
-
-	}()
-
-	// only fetch more records if writeRecords has no errors
+	err = ksConnection.WriteMessage(websocket.TextMessage, []byte(`{"leftOff":"latest","query":"","enableFullEntries":true,"fetch":50,"timeoutMs":3000}`))
 	if err != nil {
-		err = ksConnection.WriteMessage(websocket.TextMessage, []byte(`{"leftOff":"latest","query":"","enableFullEntries":true,"fetch":50,"timeoutMs":3000}`))
+		log.Println("write:", err)
+		return err
+	}
+
+	for {
+		err = writeRecords(pgConnection, ksConnection)
 		if err != nil {
-			log.Println("write:", err)
 			return err
 		}
-	}
-	for {
+
 		select {
-		case err := <-errc:
-			return err
 		case <-ctx.Done():
 			return nil
+		default:
+			continue
 		}
 	}
 }
@@ -257,9 +249,6 @@ func writeRecords(pgConnection *sql.DB, ksConnection *websocket.Conn) error {
 		func() error {
 			//nolint
 			_, err = pgConnection.Exec(sqlStatement, occurredAt, finalMessageMap)
-			if err == nil {
-				log.Info("Record successfully inserted into postgres database. Continuing export.")
-			}
 			return err
 		},
 		retry.Attempts(retryAttempts),

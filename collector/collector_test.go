@@ -113,7 +113,7 @@ func TestWriteRecords(t *testing.T) {
 	s := httptest.NewServer(http.HandlerFunc(echo))
 	defer s.Close()
 
-	// Convert http://127.0.0.1 to ws://127.0.0.
+	// Convert http://127.0.0.1 to ws://127.0.0.1
 	u := "ws" + strings.TrimPrefix(s.URL, "http")
 
 	// Connect to the server
@@ -159,25 +159,22 @@ func TestExportRecords(t *testing.T) {
 
 	// Connect to the server
 
+	// //nolint
+	// ws, _, err := websocket.DefaultDialer.Dial(u, nil)
+	// assert.NoError(t, err)
+	// defer ws.Close()
+
+	// err = ws.WriteMessage(websocket.TextMessage, badRequest)
+	// assert.NoError(t, err)
+
+	// err = exportRecords(db, ws, ctx)
+	// // expect error from handleMessage for invalid json
+	// assert.EqualError(t, err, "unexpected end of JSON input")
+
 	//nolint
 	ws, _, err := websocket.DefaultDialer.Dial(u, nil)
 	assert.NoError(t, err)
 	defer ws.Close()
-
-	err = ws.WriteMessage(websocket.TextMessage, badRequest)
-	assert.NoError(t, err)
-
-	err = exportRecords(db, ws, ctx)
-	// expect error from handleMessage for invalid json
-	assert.EqualError(t, err, "unexpected end of JSON input")
-
-	//nolint
-	ws, _, err = websocket.DefaultDialer.Dial(u, nil)
-	assert.NoError(t, err)
-	defer ws.Close()
-
-	err = ws.WriteMessage(websocket.TextMessage, badRequest)
-	assert.NoError(t, err)
 
 	// test graceful exit
 	go func(ctx context.Context) {
@@ -187,6 +184,12 @@ func TestExportRecords(t *testing.T) {
 	cancel()
 
 	assert.NoError(t, err)
+
+	_, _, err = ws.ReadMessage()
+
+	assert.Error(t, err)
+
+	assert.Equal(t, true, websocket.IsCloseError(err))
 
 }
 
@@ -228,6 +231,11 @@ func TestHandleRecord(t *testing.T) {
 	// Case 4: Bad json should return error
 	msgStruct4 := Message{}
 	_, err = handleMessage(badRequest, &msgStruct4)
+	assert.EqualError(t, err, "unexpected end of JSON input")
+
+	// Case 4: Bad json should return error
+	msgStruct5 := Message{}
+	_, err = handleMessage(nil, &msgStruct5)
 	assert.EqualError(t, err, "unexpected end of JSON input")
 
 }

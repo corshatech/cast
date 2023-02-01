@@ -12,8 +12,8 @@ SELECT
   data->'dst'->>'port' as destination_port,
 
   data->'timestamp' as timestamp
-FROM traffic WHERE
-data->'request'->'headers'->>'Authorization' LIKE 'Basic%';
+  FROM traffic WHERE
+  meta->>'UseOfBasicAuth' = 'true';
 `;
 
 interface Row {

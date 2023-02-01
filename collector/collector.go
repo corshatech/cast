@@ -22,6 +22,7 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/avast/retry-go"
@@ -71,6 +72,19 @@ type Data struct {
 type Message struct {
 	Data        Data   `messagestruct:"data"`
 	MessageType string `messagestruct:"messageType"`
+}
+
+// CAST Metadata extracted from the accompanying request
+type CASTMetadata struct {
+	/*
+		JWT strings detected in the request, if any present.
+		Strings in this list may not necessarily be in any particular order,
+		and need not be unique in the event the request contains duplicate JWTs somehow.
+		(i.e. Neither list order nor unique items guaranteed.)
+	*/
+	DetectedJwts []string
+	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
+	UseOfBasicAuth bool
 }
 
 func main() {
@@ -255,6 +269,7 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, error) {
 		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
 
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
+		metadata.UseOfBasicAuth = strings.HasPrefix(unHashedAuth, "Basic ")
 	}
 
 	editedMessage, err := json.Marshal(messageMap["data"])

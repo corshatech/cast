@@ -106,7 +106,7 @@ export type ExpiredJWT = IFinding<"expired-jwt", {
 
 export type PasswordInURL = IFinding<"pass-in-url", {
   /** The name of the query parameter suspected of containing a password. */
-  queryParam: string;
+  queryParams: string[];
   /**
    * The request that triggered this finding. In-particular,
    * the URI of this request should have a best-effort scrub to not contain

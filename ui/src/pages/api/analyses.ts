@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Analysis, AnalysisFunction, runAllAnalyses } from "lib/findings";
 import { runner as reusedAuthentication } from "../../lib/analysis/reused-authentication";
+import { runner as pass_in_url } from "../../lib/analysis/pass_in_url";
 import { useOfBasicAuth } from "lib/analysis/useOfBasicAuth";
 
-const analysisFunctions: AnalysisFunction[] = [reusedAuthentication, useOfBasicAuth];
+const analysisFunctions: AnalysisFunction[] = [reusedAuthentication, pass_in_url, useOfBasicAuth];
 
 export type AnalysesResponse = {
   analyses: Analysis[];

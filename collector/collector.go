@@ -76,6 +76,18 @@ type Message struct {
 	MessageType string `messagestruct:"messageType"`
 }
 
+// CAST Metadata extracted from the accompanying request
+type CASTMetadata struct {
+	/*
+		JWT strings detected in the request, if any present.
+		Strings in this list may not necessarily be in any particular order,
+		and need not be unique in the event the request contains duplicate JWTs somehow.
+		(i.e. Neither list order nor unique items guaranteed.)
+	*/
+	detectedJwts []string //lint:ignore U1000 Ignore unused
+	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
+}
+
 func main() {
 	err := retry.Do(
 		exportRecords,

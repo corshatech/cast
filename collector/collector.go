@@ -84,7 +84,7 @@ type CASTMetadata struct {
 		and need not be unique in the event the request contains duplicate JWTs somehow.
 		(i.e. Neither list order nor unique items guaranteed.)
 	*/
-	detectedJwts []string //lint:ignore U1000 Ignore unused
+	DetectedJwts []string
 	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
 }
 
@@ -169,7 +169,7 @@ func exportRecords() error {
 			}
 
 			msgStruct := Message{}
-			finalMessageMap, err1 := handleMessage(message, &msgStruct)
+			finalMessageMap, metadataJson, err1 := handleMessage(message, &msgStruct)
 			if err1 != nil {
 				log.WithError(err1).Info("Failed to process kubeshark record.")
 				errc <- err1
@@ -181,11 +181,11 @@ func exportRecords() error {
 
 			occurredAt := time.UnixMilli(msgStruct.Data.Timestamp)
 
-			sqlStatement := `INSERT INTO traffic (occurred_at, data) VALUES ($1, $2)`
+			sqlStatement := `INSERT INTO traffic (occurred_at, data, meta) VALUES ($1, $2, $3)`
 
 			err1 = retry.Do(
 				func() error {
-					_, err2 := db.Exec(sqlStatement, occurredAt, finalMessageMap)
+					_, err2 := db.Exec(sqlStatement, occurredAt, finalMessageMap, metadataJson)
 					return err2
 				},
 				retry.Attempts(retryAttempts),
@@ -295,23 +295,24 @@ func requiredEnv(envName string) string {
 	return ret
 }
 
-func handleMessage(message []byte, msgStruct *Message) ([]byte, error) {
+func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 
 	var messageMap map[string]interface{}
+	var metadata CASTMetadata
 
 	err := json.Unmarshal(message, &messageMap)
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if messageMap["messageType"].(string) != "fullEntry" {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	err = mapstructure.Decode(messageMap, msgStruct)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if msgStruct.Data.Protocol.Name != "" && msgStruct.Data.Request.Headers.Host != "" && msgStruct.Data.Request.Path != "" {
@@ -328,9 +329,14 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, error) {
 
 	editedMessage, err := json.Marshal(messageMap["data"])
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return editedMessage, nil
+
+	metadataJson, err := json.Marshal(metadata)
+	if err != nil {
+		return nil, nil, err
+	}
+	return editedMessage, metadataJson, nil
 }
 
 func detectJwts(request []byte) []string {

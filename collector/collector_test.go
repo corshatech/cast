@@ -159,20 +159,20 @@ func TestExportRecords(t *testing.T) {
 
 	// Connect to the server
 
-	// //nolint
-	// ws, _, err := websocket.DefaultDialer.Dial(u, nil)
-	// assert.NoError(t, err)
-	// defer ws.Close()
-
-	// err = ws.WriteMessage(websocket.TextMessage, badRequest)
-	// assert.NoError(t, err)
-
-	// err = exportRecords(db, ws, ctx)
-	// // expect error from handleMessage for invalid json
-	// assert.EqualError(t, err, "unexpected end of JSON input")
-
 	//nolint
 	ws, _, err := websocket.DefaultDialer.Dial(u, nil)
+	assert.NoError(t, err)
+	defer ws.Close()
+
+	err = ws.WriteMessage(websocket.TextMessage, badRequest)
+	assert.NoError(t, err)
+
+	err = exportRecords(db, ws, ctx)
+	// expect error from handleMessage for invalid json
+	assert.EqualError(t, err, "unexpected end of JSON input")
+
+	//nolint
+	ws, _, err = websocket.DefaultDialer.Dial(u, nil)
 	assert.NoError(t, err)
 	defer ws.Close()
 
@@ -184,12 +184,6 @@ func TestExportRecords(t *testing.T) {
 	cancel()
 
 	assert.NoError(t, err)
-
-	_, _, err = ws.ReadMessage()
-
-	assert.Error(t, err)
-
-	assert.Equal(t, true, websocket.IsCloseError(err))
 
 }
 

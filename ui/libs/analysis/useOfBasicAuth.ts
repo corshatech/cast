@@ -1,4 +1,4 @@
-import { Analysis, UseOfBasicAuth } from 'lib/findings';
+import { Analysis, UseOfBasicAuth } from '../findings';
 import conn from '../db';
 
 const query = `

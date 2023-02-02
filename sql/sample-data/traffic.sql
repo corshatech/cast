@@ -405,5 +405,5 @@ INSERT INTO traffic (occurred_at, data, meta) VALUES
    "requestSize":111,
    "responseSize":166,
    "elapsedTime":3
-}')
+}','{}')
 ;

@@ -99,14 +99,14 @@ func (a AnyTime) Match(v driver.Value) bool {
 func TestWriteRecords(t *testing.T) {
 
 	msgStruct := Message{}
-	handledJwtTest0, err := handleMessage(jwtTest0, &msgStruct)
+	handledJwtTest0, handledMetadataJson0, err := handleMessage(jwtTest0, &msgStruct)
 	assert.NoError(t, err)
 
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
 	defer db.Close()
 	// expect mock insert to be successful
-	mock.ExpectExec(`INSERT INTO traffic`).WithArgs(AnyTime{}, handledJwtTest0).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(`INSERT INTO traffic`).WithArgs(AnyTime{}, handledJwtTest0, handledMetadataJson0).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	// Create test server with the echo handler.
@@ -205,31 +205,35 @@ func TestHandleRecord(t *testing.T) {
 	assert.NoError(t, err)
 
 	msgStruct1 := Message{}
-	handledRecord1, err := handleMessage(jwtTest1, &msgStruct1)
+	handledRecord1, handledMetadata1, err := handleMessage(jwtTest1, &msgStruct1)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expectedJwtTest1, handledRecord1)
+	assert.Equal(t, []byte(`{}`), handledMetadata1)
 
 	// Case 2: Record that is not 'fullEntry' type should be nil
 	msgStruct2 := Message{}
-	handledRecord2, err := handleMessage(notFullEntry, &msgStruct2)
+	handledRecord2, handledMetadata2, err := handleMessage(notFullEntry, &msgStruct2)
 	assert.NoError(t, err)
 	assert.Empty(t, handledRecord2)
+	assert.Empty(t, handledMetadata2)
 
 	// Case 3: Expected to leave empty headers alone
 	msgStruct3 := Message{}
-	handledRecord3, err := handleMessage(noProtocolRequest, &msgStruct3)
+	handledRecord3, handledMetadata3, err := handleMessage(noProtocolRequest, &msgStruct3)
 	assert.NoError(t, err)
 	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
+	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
+	assert.Equal(t, []byte(`{}`), handledMetadata3)
 
 	// Case 4: Bad json should return error
 	msgStruct4 := Message{}
-	_, err = handleMessage(badRequest, &msgStruct4)
+	_, _, err = handleMessage(badRequest, &msgStruct4)
 	assert.EqualError(t, err, "unexpected end of JSON input")
 
 	// Case 4: Bad json should return error
 	msgStruct5 := Message{}
-	_, err = handleMessage(nil, &msgStruct5)
+	_, _, err = handleMessage(nil, &msgStruct5)
 	assert.EqualError(t, err, "unexpected end of JSON input")
 
 }

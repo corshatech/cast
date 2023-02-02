@@ -14,10 +14,15 @@ GO = GOPRIVATE=github.com/corshatech/* GO111MODULE=on go
 VERSION ?= "0.1.0-pre"
 GITSHA ?= "`git rev-parse HEAD`"
 
-all: tidy test lint image chart
+all: tidy test lint image
 
-test:
+test: test-go test-ui
+
+test-go:
 	$(GO) test -coverprofile=coverage.out ./...
+
+test-ui:
+	cd ui && npm ci && npm run "test:ci"
 
 image:
 	skaffold build -t ${VERSION} --default-repo=ghcr.io/corshatech/cast
@@ -29,7 +34,7 @@ tidy:
 	$(GO) mod tidy
 
 lint: lint-helm lint-ui lint-go
-	
+
 lint-helm:
 	helm dependency update k8s/helm/cast
 	helm lint k8s/helm/cast

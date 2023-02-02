@@ -12,7 +12,11 @@
 -- DROP TABLE IF EXISTS traffic;
 CREATE TABLE IF NOT EXISTS traffic (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  data jsonb
+  occurred_at timestamptz,
+  data jsonb,
+  meta jsonb
 );
 
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);
+CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE (data->'request'->'headers'->>'Authorization');
+CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE (data->'request'->'headers'->>'Authorization', data->'src');

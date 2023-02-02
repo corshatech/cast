@@ -19,6 +19,10 @@ const customJestConfig = {
     '^@/pages/(.*)$': '<rootDir>/pages/$1',
     '^@/app/(.*)$': '<rootDir>/app/$1',
   },
+  fakeTimers: {
+    enableGlobally: true,
+    now: 1673961120000,
+  }
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

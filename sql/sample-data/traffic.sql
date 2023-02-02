@@ -9,92 +9,109 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-INSERT INTO traffic (data) VALUES
-('{
+INSERT INTO traffic (occurred_at, data) VALUES
+--
+-- reused-auth
+--
+
+-- client 1 (192.2.0.1) which made requests to two urls with the same auth as client 2
+('2023-01-18 13:12:00.000', '{
 	"protocol": {
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+    "absoluteURI": "http://example.com/url-1",
 		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
 	},
-  "src":{
-    "ip":"10.22.8.8"
+  "dst": {
+    "ip": "10.1.0.96",
+    "name": "",
+    "port": "8181"
+  },
+  "src": {
+    "ip": "192.2.0.1",
+    "name": "",
+    "port": "57944"
   },
 	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
+	"timestamp": 1674047520000
 }'),
-('{
+('2023-01-18 13:12:01.000', '{
 	"protocol": {
 		"name": "http"
 	},
 	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
+    "absoluteURI": "http://example.com/url-2",
 		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
 		}
 	},
-  "src":{
-    "ip":"10.22.8.8"
+  "dst": {
+    "ip": "10.1.0.96",
+    "name": "",
+    "port": "8181"
   },
-	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
+  "src": {
+    "ip": "192.2.0.1",
+    "name": "",
+    "port": "57945"
+  },
+	"id": "000000000000000000000091",
+	"timestamp": 1674047521000
+}'),
+-- client 2 (192.2.0.2) which made a request to one url with the same auth as client 1
+('2023-01-18 13:12:02.000', '{
+	"protocol": {
+		"name": "http"
+	},
+	"request": {
+    "absoluteURI": "http://example.com/url-1",
+		"headers": {
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
+		}
+	},
+  "dst": {
+    "ip": "10.1.0.96",
+    "name": "",
+    "port": "8181"
+  },
+  "src": {
+    "ip": "192.2.0.2",
+    "name": "",
+    "port": "57944"
+  },
+	"id": "000000000000000000000092",
+	"timestamp": 1674047522000
+}'),
+-- client 3 (192.2.0.3) which made a request with a unique auth header, this request should not show up in the reused-auth result
+('2023-01-18 13:12:03.000', '{
+	"protocol": {
+		"name": "http"
+	},
+	"request": {
+    "absoluteURI": "http://example.com/url-1",
+		"headers": {
+			"Authorization": "fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//xyzzy"
+		}
+	},
+  "dst": {
+    "ip": "10.1.0.96",
+    "name": "",
+    "port": "8181"
+  },
+  "src": {
+    "ip": "192.2.0.3",
+    "name": "",
+    "port": "57944"
+  },
+	"id": "000000000000000000000093",
+	"timestamp": 1674047523000
 }'),
 
-('{
-	"protocol": {
-		"name": "http"
-	},
-	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
-		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
-		}
-	},
-  "src":{
-    "ip":"10.22.8.9"
-  },
-	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
-}'),
-
-('{
-	"protocol": {
-		"name": "http"
-	},
-	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
-		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//YzTkFL7Xw"
-		}
-	},
-  "src":{
-    "ip":"10.22.8.10"
-  },
-	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
-}'),
-
-('{
-	"protocol": {
-		"name": "http"
-	},
-	"request": {
-		"absoluteUri": "http://httpbin.httpbin.svc.cluster.local/headers",
-		"headers": {
-			"Authorization": "$argon2i$v=19$m=16,t=2,p=1$fGxJWjolVURhX2xbUGlWRVBtN3xGJldxW01URiMzNmg$oKXSg9IvLop//XyzzY"
-		}
-	},
-  "src":{
-    "ip":"10.22.8.11"
-  },
-	"id": "000000000000000000000090",
-	"timestamp": 1669237256611
-}'),
 -- request with 1 JWT in Auth header
-('{
+('2023-01-17 18:59:29.360797553', '{
    "protocol":{
       "name":"http",
       "version":"1.1",
@@ -168,7 +185,7 @@ INSERT INTO traffic (data) VALUES
    "elapsedTime":3
 }'),
 -- request with 1 JWT in Auth header and 1 in cookies
-('{
+('2023-01-17 18:59:29.360797553', '{
    "protocol":{
       "name":"http",
       "version":"1.1",
@@ -242,7 +259,7 @@ INSERT INTO traffic (data) VALUES
    "elapsedTime":3
 }'),
 -- request with 1 JWT with invalid signature in Auth header, 1 in request body, 1 inserted into the method field
-('{
+('2023-01-17 18:59:29.360797553', '{
    "protocol":{
       "name":"http",
       "version":"1.1",
@@ -315,4 +332,78 @@ INSERT INTO traffic (data) VALUES
    "requestSize":111,
    "responseSize":166,
    "elapsedTime":3
-}');
+}'),
+-- request with Basic Authentication
+('2023-01-31 13:12:00.000', '{
+   "protocol":{
+      "name":"http",
+      "version":"1.1",
+      "abbr":"HTTP"
+   },
+   "capture":"pcap",
+   "src":{
+      "ip":"10.1.0.1",
+      "port":"58826",
+      "name":""
+   },
+   "dst":{
+      "ip":"10.1.1.25",
+      "port":"8080",
+      "name":"httpbin.httpbin"
+   },
+   "namespace":"httpbin",
+   "outgoing":false,
+   "timestamp":1673981969360,
+   "startTime":"2023-01-17T18:59:29.360797553Z",
+   "request":{
+      "bodySize":0,
+      "absoluteURI": "http://example.com/url-5",
+      "cookies":{},
+      "headers":{
+         "Accept":"*/*",
+         "Authorization":"Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+         "Connection":"close",
+         "Host":"10.1.1.25:8080",
+         "User-Agent":"kube-probe/1.25"
+      },
+      "headersSize":-1,
+      "httpVersion":"HTTP/1.1",
+      "method":"GET",
+      "path":"/status/200",
+      "pathSegments":[
+         "status",
+         "200"
+      ],
+      "queryString":{
+         
+      },
+      "targetUri":"/status/200",
+      "url":"/status/200"
+   },
+   "response":{
+      "bodySize":0,
+      "content":{
+         "encoding":"base64",
+         "mimeType":"",
+         "size":0
+      },
+      "cookies":{
+         
+      },
+      "headers":{
+         "Access-Control-Allow-Credentials":"true",
+         "Access-Control-Allow-Origin":"*",
+         "Content-Length":"0",
+         "Date":"Tue, 17 Jan 2023 18:59:29 GMT"
+      },
+      "headersSize":-1,
+      "httpVersion":"HTTP/1.1",
+      "redirectURL":"",
+      "status":200,
+      "statusText":"OK"
+   },
+   "requestSize":111,
+   "responseSize":166,
+   "elapsedTime":3
+}')
+;

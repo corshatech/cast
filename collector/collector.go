@@ -292,6 +292,7 @@ func requiredEnv(envName string) string {
 func handleMessage(message []byte, msgStruct *Message) ([]byte, error) {
 
 	var messageMap map[string]interface{}
+	var metadata CASTMetadata
 
 	err := json.Unmarshal(message, &messageMap)
 

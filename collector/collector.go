@@ -255,7 +255,7 @@ func writeRecords(pgConnection *sql.DB, ksConnection *websocket.Conn) error {
 
 	occurredAt := time.UnixMilli(msgStruct.Data.Timestamp)
 
-	sqlStatement := `INSERT INTO traffic (occurred_at, data) VALUES ($1, $2, $3)`
+	sqlStatement := `INSERT INTO traffic (occurred_at, data, meta) VALUES ($1, $2, $3)`
 
 	err = retry.Do(
 		func() error {
@@ -323,6 +323,8 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
+
+	metadata.DetectedJwts = detectJwts(message)
 
 	metadataJson, err := json.Marshal(metadata)
 	if err != nil {

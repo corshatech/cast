@@ -154,7 +154,7 @@ func TestExportRecords(t *testing.T) {
 	s := httptest.NewServer(http.HandlerFunc(echo))
 	defer s.Close()
 
-	// Convert http://127.0.0.1 to ws://127.0.0.
+	// Convert http://127.0.0.1 to ws://127.0.0.1
 	u := "ws" + strings.TrimPrefix(s.URL, "http")
 
 	// Connect to the server
@@ -191,14 +191,36 @@ var noProtocolRequest = []byte(`{"messageType":"fullEntry","data":{"request":{"h
 
 func TestHandleRecord(t *testing.T) {
 
+	// Cast 1: Request with no jwts
+
+	var jwtTest0Map map[string]interface{}
+
+	absoluteURI := "http://10.1.1.25:8080/status/200"
+
+	err := json.Unmarshal(jwtTest0, &jwtTest0Map)
+	assert.NoError(t, err)
+
+	jwtTest0Map["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
+
+	expectedJwtTest0, err := json.Marshal(jwtTest0Map["data"])
+	assert.NoError(t, err)
+
+	msgStruct0 := Message{}
+	handledRecord0, handledMetadata0, err := handleMessage(jwtTest0, &msgStruct0)
+	assert.NoError(t, err)
+
+	assert.Equal(t, expectedJwtTest0, handledRecord0)
+	// empty DetectedJwts should be omitted
+	assert.Equal(t, []byte(`{}`), handledMetadata0)
+
 	// Case 1: Request with auth header bearer token and absoluteURI
 	var jwtTest1Map map[string]interface{}
 
-	err := json.Unmarshal(jwtTest1, &jwtTest1Map)
+	err = json.Unmarshal(jwtTest1, &jwtTest1Map)
 	assert.NoError(t, err)
 
 	expectedHash1 := sha256.Sum256([]byte("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"))
-	jwtTest1Map["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = "http://10.1.1.25:8080/status/200"
+	jwtTest1Map["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
 	jwtTest1Map["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", expectedHash1)
 
 	expectedJwtTest1, err := json.Marshal(jwtTest1Map["data"])
@@ -209,7 +231,7 @@ func TestHandleRecord(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, expectedJwtTest1, handledRecord1)
-	assert.Equal(t, []byte(`{}`), handledMetadata1)
+	assert.Equal(t, []byte(`{"DetectedJwts":["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"]}`), handledMetadata1)
 
 	// Case 2: Record that is not 'fullEntry' type should be nil
 	msgStruct2 := Message{}

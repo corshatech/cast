@@ -15,6 +15,7 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/json"
@@ -88,143 +89,191 @@ type CASTMetadata struct {
 }
 
 func main() {
-	err := retry.Do(
-		exportRecords,
-		retry.Attempts(retryAttempts),
-		retry.Delay(retryDelay*time.Second),
-		retry.OnRetry(func(n uint, err error) {
-			log.WithError(err).Infof("Error starting CAST. Retrying in %vs", retryDelay)
-		}),
-	)
-	if err != nil {
-		log.WithError(err).Fatal("Failed to start CAST.")
-	}
-}
 
-//gocyclo:ignore
-func exportRecords() error {
-	// Open postgres connection
+	var err error
+
 	pgHost := requiredEnv(postgresHostEnv)
 	pgPort := requiredEnv(postgresPortEnv)
 	pgUser := requiredEnv(postgresUserEnv)
 	pgPass := requiredEnv(postgresPassEnv)
 	dbName := requiredEnv(dbNameEnv)
+	websocketURL := requiredEnv(websocketURLEnv)
+
+	var pgConnection *sql.DB
+	var ksConnection *websocket.Conn
+
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", pgHost, pgPort, pgUser, pgPass, dbName)
-	db, err := sql.Open("postgres", connStr)
+
+	err = retry.Do(
+		func() error {
+			pgConnection, err = sql.Open("postgres", connStr)
+			return err
+		},
+		retry.Attempts(retryAttempts),
+		retry.Delay(retryDelay*time.Second),
+		retry.OnRetry(func(n uint, err error) {
+			log.Infof("Error connecting to postgres database. Retrying in %vs", retryDelay)
+			time.Sleep(retryDelay * time.Second)
+		}),
+	)
 	if err != nil {
 		log.WithFields(log.Fields{
 			"postgres host": pgHost,
 			"postgres port": pgPort,
 			"postgres user": pgUser,
-		}).WithError(err).Info("Failed to open postgres database connection.")
-		return err
+		}).WithError(err).Fatal("Failed to open postgres database connection.")
 	}
 
 	// wait for postgres database to be ready before continuing
 	err = retry.Do(
 		func() error {
-			return db.Ping()
+			return pgConnection.Ping()
 		},
 		retry.Attempts(5),
 		retry.Delay(5*time.Second),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Unable to reach postgres database. Retrying in %vs", 5)
+			time.Sleep(5 * time.Second)
 		}),
 	)
 	if err != nil {
-		log.WithError(err).Info("Failed to reach postgres database.")
-		return err
+		log.WithError(err).Fatal("Failed to connect to postgres.")
+	} else {
+		log.Info("Established connection to postgres database.")
 	}
-	defer db.Close()
 
-	log.Info("Established connection to postgres database.")
-
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-
-	errc := make(chan error)
-
-	// Connecting to kubeshark database through kubeshark-api-server websocket
-	websocketURL := requiredEnv(websocketURLEnv)
-	c, _, err := websocket.DefaultDialer.Dial(websocketURL, nil)
+	err = retry.Do(
+		func() error {
+			//nolint
+			ksConnection, _, err = websocket.DefaultDialer.Dial(websocketURL, nil)
+			return err
+		},
+		retry.Attempts(retryAttempts),
+		retry.Delay(retryDelay*time.Second),
+		retry.OnRetry(func(n uint, err error) {
+			log.Infof("Error connecting to postgres database. Retrying in %vs", retryDelay)
+			time.Sleep(retryDelay * time.Second)
+		}),
+	)
 	if err != nil {
-		log.WithError(err).Info("Failed to connect to kubeshark.")
-		return err
+		log.WithError(err).Fatal("Failed to connect to kubeshark.")
+	} else {
+		log.Info("Established connection to kubeshark database.")
 	}
-
-	log.Info("Established connection to kubeshark database.")
-
-	defer c.Close()
 
 	log.Info("Collector is ready to export records.")
+	defer pgConnection.Close()
+	defer ksConnection.Close()
 
+	ctx := context.Background()
+
+	// trap Ctrl+C and call cancel on the context
+	ctx, cancel := context.WithCancel(ctx)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	defer func() {
+		signal.Stop(c)
+		cancel()
+	}()
 	go func() {
-		log.Info("Starting export of records.")
-		for {
-			_, message, err1 := c.ReadMessage()
-			if err1 != nil {
-				log.Println("read:", err1)
-				errc <- err1
+		select {
+		case <-c:
+			cancel()
+			log.Println("interrupt")
+			// Cleanly close the connection by sending a close message and then
+			// waiting (with timeout) for the server to close the connection.
+			err = ksConnection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+			if err != nil {
+				log.Println("write close:", err)
+				return
 			}
-
-			msgStruct := Message{}
-			finalMessageMap, err1 := handleMessage(message, &msgStruct)
-			if err1 != nil {
-				log.WithError(err1).Info("Failed to process kubeshark record.")
-				errc <- err1
-			}
-
-			if finalMessageMap == nil {
-				continue
-			}
-
-			occurredAt := time.UnixMilli(msgStruct.Data.Timestamp)
-
-			sqlStatement := `INSERT INTO traffic (occurred_at, data) VALUES ($1, $2)`
-
-			err1 = retry.Do(
-				func() error {
-					_, err2 := db.Exec(sqlStatement, occurredAt, finalMessageMap)
-					return err2
-				},
-				retry.Attempts(retryAttempts),
-				retry.Delay(retryDelay*time.Second),
-				retry.OnRetry(func(n uint, err error) {
-					log.WithError(err).Infof("Error inserting entry into postgres database. Retrying in %vs.", retryDelay)
-				}),
-			)
-			if err1 != nil {
-				errc <- err1
-				continue
-			}
-
-			log.WithField("data.id", msgStruct.Data.Id).Infof("Record successfully inserted into postgres database.")
+		case <-ctx.Done():
 		}
-
 	}()
 
-	err = c.WriteMessage(websocket.TextMessage, []byte(`{"leftOff":"latest","query":"","enableFullEntries":true,"fetch":50,"timeoutMs":3000}`))
+	err = retry.Do(
+		func() error {
+			//nolint
+			err = exportRecords(pgConnection, ksConnection, ctx)
+			return err
+		},
+		retry.Attempts(retryAttempts),
+		retry.Delay(retryDelay*time.Second),
+		retry.OnRetry(func(n uint, err error) {
+			log.Infof("Error exporting records. Retrying in %vs", retryDelay)
+			time.Sleep(retryDelay * time.Second)
+		}),
+	)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to start CAST.")
+	}
+
+}
+
+func exportRecords(pgConnection *sql.DB, ksConnection *websocket.Conn, ctx context.Context) error {
+	var err error
+
+	log.Info("Starting export of records.")
+
+	err = ksConnection.WriteMessage(websocket.TextMessage, []byte(`{"leftOff":"latest","query":"","enableFullEntries":true,"fetch":50,"timeoutMs":3000}`))
 	if err != nil {
 		log.Println("write:", err)
 		return err
 	}
-	for {
-		select {
-		case err := <-errc:
-			return err
-		case <-interrupt:
-			log.Println("interrupt")
 
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
-			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				log.Println("write close:", err)
-				return err
-			}
+	for {
+		err = writeRecords(pgConnection, ksConnection)
+		if err != nil {
+			return err
+		}
+
+		select {
+		case <-ctx.Done():
 			return nil
+		default:
+			continue
 		}
 	}
+}
+
+func writeRecords(pgConnection *sql.DB, ksConnection *websocket.Conn) error {
+	_, message, err := ksConnection.ReadMessage()
+	if err != nil {
+		log.Println("read:", err)
+		return err
+	}
+
+	msgStruct := Message{}
+
+	finalMessageMap, err := handleMessage(message, &msgStruct)
+	if err != nil {
+		log.WithError(err).Info("Failed to process kubeshark record.")
+		return err
+	}
+
+	if finalMessageMap == nil {
+		return nil
+	}
+
+	occurredAt := time.UnixMilli(msgStruct.Data.Timestamp)
+
+	sqlStatement := `INSERT INTO traffic (occurred_at, data) VALUES ($1, $2)`
+
+	err = retry.Do(
+		func() error {
+			//nolint
+			_, err = pgConnection.Exec(sqlStatement, occurredAt, finalMessageMap)
+			return err
+		},
+		retry.Attempts(retryAttempts),
+		retry.Delay(retryDelay*time.Second),
+		retry.OnRetry(func(n uint, err error) {
+			log.WithError(err).Infof("Error inserting entry into postgres database. Retrying in %vs.", retryDelay)
+			time.Sleep(retryDelay * time.Second)
+		}),
+	)
+
+	return err
 
 }
 

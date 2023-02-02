@@ -1,5 +1,5 @@
 # CAST
-![Go Coverage](https://img.shields.io/badge/Go%20Coverage-2.1%25-red)
+![Go Coverage](https://img.shields.io/badge/Go%20Coverage-41.7%25-red)
 ![Node Coverage](https://img.shields.io/badge/Node%20Coverage-79.59%25-yellow)
 
 CAST is an API security tool being developed to evaluate Kubernetes API traffic for authentication
@@ -42,7 +42,7 @@ prevent automated credential stuffing, brute force, and stolen credential reuse 
 
 Unfortunately, because of the growing API ecosystems across cloud and hybrid environments; the incredible, rapid adoption of Kubernetes; and the exciting race to automate, API credentials often have poor security hygiene. This provides an expansive and growing attack vector where adversaries can use this scale and lack of security hygiene to their advantage.
 
-CAST is a tool that will help you shine a light into the dark corners of kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
+CAST is a tool that will help you shine a light into the dark corners of Kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises.  It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.  
 
 ## Prerequisites
 
@@ -56,8 +56,12 @@ Installation of the CAST tool can be broken up into two sections:
 - Installing the CAST tooling alongside Kubeshark's taps
 
 ### Install Kubeshark
-Installation of Kubeshark is straightforward and can be found on their site here:
-[Kubeshark Installation](https://docs.kubeshark.co/en/install)
+**CAST requires Kubeshark 37.0**. The binary can be downloaded from the release page:
+[Kubeshark Release 37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0)
+
+More information about installing Kubeshark can be found on their site:
+[Kubeshark Installation](https://docs.kubeshark.co/en/install). 
+NOTE: the instructions are for the latest version of Kubeshark, not 37.0 .
 
 After installation is complete, tap the Namespaces or Clusters you wish CAST to evaluate
 ```bash

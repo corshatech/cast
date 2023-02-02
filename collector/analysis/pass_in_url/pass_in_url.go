@@ -8,15 +8,17 @@ import (
 	"github.com/emirpasic/gods/sets/hashset"
 )
 
+// keys are the query string keys to match on.
+// NOTE: these must be lower-case
 var keys = hashset.New(
 	"password",
 	"pass",
 	"pwd",
 	"auth",
-	"apiKey",
+	"apikey",
 	"api-key",
 	"session",
-	"sessionKey",
+	"sessionkey",
 	"session-key",
 )
 

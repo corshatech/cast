@@ -287,6 +287,8 @@ func requiredEnv(envName string) string {
 	return ret
 }
 
+// handleMessage takes a message read from the kubeshark websocket and processes it for insertion
+// into the postgres database. It returns the processed message and a CASTMetadata struct for the message.
 func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 
 	var messageMap map[string]interface{}

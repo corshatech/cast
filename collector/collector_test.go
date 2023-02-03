@@ -99,14 +99,14 @@ func (a AnyTime) Match(v driver.Value) bool {
 func TestWriteRecords(t *testing.T) {
 
 	msgStruct := Message{}
-	handledJwtTest0, err := handleMessage(jwtTest0, &msgStruct)
+	handledJwtTest0, handledMetadataJson0, err := handleMessage(jwtTest0, &msgStruct)
 	assert.NoError(t, err)
 
 	db, mock, err := sqlmock.New()
 	assert.NoError(t, err)
 	defer db.Close()
 	// expect mock insert to be successful
-	mock.ExpectExec(`INSERT INTO traffic`).WithArgs(AnyTime{}, handledJwtTest0).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec(`INSERT INTO traffic`).WithArgs(AnyTime{}, handledJwtTest0, handledMetadataJson0).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
 	// Create test server with the echo handler.
@@ -154,7 +154,7 @@ func TestExportRecords(t *testing.T) {
 	s := httptest.NewServer(http.HandlerFunc(echo))
 	defer s.Close()
 
-	// Convert http://127.0.0.1 to ws://127.0.0.
+	// Convert http://127.0.0.1 to ws://127.0.0.1
 	u := "ws" + strings.TrimPrefix(s.URL, "http")
 
 	// Connect to the server
@@ -191,45 +191,71 @@ var noProtocolRequest = []byte(`{"messageType":"fullEntry","data":{"request":{"h
 
 func TestHandleRecord(t *testing.T) {
 
+	// Cast 1: Request with no jwts
+
+	var jwtTest0Map map[string]interface{}
+
+	absoluteURI := "http://10.1.1.25:8080/status/200"
+
+	err := json.Unmarshal(jwtTest0, &jwtTest0Map)
+	assert.NoError(t, err)
+
+	jwtTest0Map["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
+
+	expectedJwtTest0, err := json.Marshal(jwtTest0Map["data"])
+	assert.NoError(t, err)
+
+	msgStruct0 := Message{}
+	handledRecord0, handledMetadata0, err := handleMessage(jwtTest0, &msgStruct0)
+	assert.NoError(t, err)
+
+	assert.Equal(t, expectedJwtTest0, handledRecord0)
+	// empty DetectedJwts should be omitted
+	assert.Equal(t, []byte(`{}`), handledMetadata0)
+
 	// Case 1: Request with auth header bearer token and absoluteURI
 	var jwtTest1Map map[string]interface{}
 
-	err := json.Unmarshal(jwtTest1, &jwtTest1Map)
+	err = json.Unmarshal(jwtTest1, &jwtTest1Map)
 	assert.NoError(t, err)
 
 	expectedHash1 := sha256.Sum256([]byte("Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"))
-	jwtTest1Map["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = "http://10.1.1.25:8080/status/200"
+	jwtTest1Map["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
 	jwtTest1Map["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", expectedHash1)
 
 	expectedJwtTest1, err := json.Marshal(jwtTest1Map["data"])
 	assert.NoError(t, err)
 
 	msgStruct1 := Message{}
-	handledRecord1, err := handleMessage(jwtTest1, &msgStruct1)
+	handledRecord1, handledMetadata1, err := handleMessage(jwtTest1, &msgStruct1)
 	assert.NoError(t, err)
 
 	assert.Equal(t, expectedJwtTest1, handledRecord1)
+	assert.Equal(t, []byte(`{"DetectedJwts":["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"]}`), handledMetadata1)
 
 	// Case 2: Record that is not 'fullEntry' type should be nil
 	msgStruct2 := Message{}
-	handledRecord2, err := handleMessage(notFullEntry, &msgStruct2)
+	handledRecord2, handledMetadata2, err := handleMessage(notFullEntry, &msgStruct2)
 	assert.NoError(t, err)
 	assert.Empty(t, handledRecord2)
+	assert.Empty(t, handledMetadata2)
 
 	// Case 3: Expected to leave empty headers alone
 	msgStruct3 := Message{}
-	handledRecord3, err := handleMessage(noProtocolRequest, &msgStruct3)
+	handledRecord3, handledMetadata3, err := handleMessage(noProtocolRequest, &msgStruct3)
 	assert.NoError(t, err)
 	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
+	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
+	assert.Equal(t, []byte(`{}`), handledMetadata3)
 
 	// Case 4: Bad json should return error
 	msgStruct4 := Message{}
-	_, err = handleMessage(badRequest, &msgStruct4)
+	_, _, err = handleMessage(badRequest, &msgStruct4)
 	assert.EqualError(t, err, "unexpected end of JSON input")
 
 	// Case 4: Bad json should return error
 	msgStruct5 := Message{}
-	_, err = handleMessage(nil, &msgStruct5)
+	_, _, err = handleMessage(nil, &msgStruct5)
 	assert.EqualError(t, err, "unexpected end of JSON input")
 
 }

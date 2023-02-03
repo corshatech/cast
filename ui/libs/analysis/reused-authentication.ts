@@ -28,22 +28,22 @@ FROM
 
 -- find all auth headers that have multiple sources
 (
-  SELECT
-    data->'request'->'headers'->>'Authorization' as auth
-  FROM traffic
-  WHERE
-    data->'request'->'headers'->>'Authorization' is not null
-  GROUP BY
-    auth
-  HAVING
-    count(distinct data->'src'->'ip') > 1
+SELECT
+  data->'request'->'headers'->>'Authorization' as auth
+FROM traffic
+WHERE
+  data->'request'->'headers'->>'Authorization' is not null
+GROUP BY
+  auth
+HAVING
+  count(distinct data->'src'->'ip') > 1
 ) as reused,
 
 -- find min and max timestamps for each reused auth header
 LATERAL (
 SELECT
-    min(t.occurred_at) as min_timestamp,
-    max(t.occurred_at) as max_timestamp
+  min(t.occurred_at) as min_timestamp,
+  max(t.occurred_at) as max_timestamp
 FROM traffic as t
 WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
 GROUP BY reused.auth
@@ -63,17 +63,17 @@ LATERAL (
 -- find the most recent request made by each source that reused the auth header
 LATERAL (
   SELECT
-   t.data->'src' as src,
-   t.data->'dst' as dst,
-   t.data->'request'->'absoluteURI' as uri,
-   t.occurred_at as timestamp
-   FROM traffic t
-   WHERE
-     srcCount.src_ip = t.data->'src'->'ip'
-   AND
-     srcCount.auth = t.data->'request'->'headers'->>'Authorization'
-   ORDER BY t.occurred_at DESC
-   LIMIT 1
+  t.data->'src' as src,
+  t.data->'dst' as dst,
+  t.data->'request'->'absoluteURI' as uri,
+  t.occurred_at as timestamp
+  FROM traffic t
+  WHERE
+    srcCount.src_ip = t.data->'src'->'ip'
+  AND
+    srcCount.auth = t.data->'request'->'headers'->>'Authorization'
+  ORDER BY t.occurred_at DESC
+  LIMIT 1
 ) as sampleRequest
 `;
 

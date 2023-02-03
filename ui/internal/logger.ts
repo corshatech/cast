@@ -14,10 +14,10 @@ import {
   MessageContext,
   Message,
   TransformMessageFunction,
-} from "roarr";
-import { createLogWriter as createBrowserLogWriter } from "@roarr/browser-log-writer";
-import { serializeError } from "serialize-error";
-import { ulid } from "ulid";
+} from 'roarr';
+import { createLogWriter as createBrowserLogWriter } from '@roarr/browser-log-writer';
+import { serializeError } from 'serialize-error';
+import { ulid } from 'ulid';
 
 /**
  * Currenty, there are two environment variables that control logging:
@@ -58,19 +58,19 @@ type AdditionalLoggerContext = Readonly<{
 const serializedErrorMiddleware: TransformMessageFunction<
   MessageContext<AdditionalLoggerContext>
 > = (
-  message: Message<MessageContext<AdditionalLoggerContext>>
+  message: Message<MessageContext<AdditionalLoggerContext>>,
 ): Message<MessageContext> => {
   const entries = Object.entries(message.context);
   return {
     ...message,
     context: entries.reduce(
-      (prev: MessageContext, entry: typeof entries[number]) => {
+      (prev: MessageContext, entry: (typeof entries)[number]) => {
         if (entry[1] instanceof Error) {
           return { ...prev, [entry[0]]: serializeError<Error>(entry[1]) };
         }
         return { ...prev, [entry[0]]: entry[1] };
       },
-      {}
+      {},
     ),
   };
 };
@@ -87,19 +87,19 @@ const instanceId = ulid();
        defined.
        */
 if (
-  process.env.NEXT_PUBLIC_ROARR_BROWSER_LOG === "true" &&
-  typeof window !== "undefined"
+  process.env.NEXT_PUBLIC_ROARR_BROWSER_LOG === 'true' &&
+  typeof window !== 'undefined'
 ) {
   ROARR.write = createBrowserLogWriter();
   /* When using @roarr/browser-log-writer, roarr logging (which is turned off
          by default) is controlled by the value of `ROARR_LOG` in local storage -
          not an environment variable. */
-  window.localStorage.setItem("ROARR_LOG", "true");
+  window.localStorage.setItem('ROARR_LOG', 'true');
 }
 
 export default Logger.child<AdditionalLoggerContext>(
-  serializedErrorMiddleware
+  serializedErrorMiddleware,
 ).child<AdditionalLoggerContext>((message: Message<MessageContext>) => ({
   ...message,
-  context: { ...message.context, application: "console", instanceId },
+  context: { ...message.context, application: 'console', instanceId },
 }));

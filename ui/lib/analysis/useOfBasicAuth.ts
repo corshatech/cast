@@ -1,4 +1,4 @@
-import { Analysis, UseOfBasicAuth } from 'lib/findings';
+import { Analysis, UseOfBasicAuth } from '../findings';
 import conn from '../db';
 
 const query = `
@@ -75,5 +75,4 @@ export async function useOfBasicAuth(): Promise<Analysis> {
   const queryFunction = async () => (await conn.query(query, [])).rows;
 
   return runnerPure(queryFunction);
-
 }

@@ -1,3 +1,5 @@
+# CAST
+
 ![Go Coverage](https://img.shields.io/badge/Go%20Coverage-41.7%25-red)
 ![Node Coverage](https://img.shields.io/badge/Node%20Coverage-79.59%25-yellow)
 
@@ -44,12 +46,7 @@ prevent automated credential stuffing, brute force, and stolen credential reuse 
 
 Unfortunately, because of the growing API ecosystems across cloud and hybrid environments; the incredible, rapid adoption of Kubernetes; and the exciting race to automate, API credentials often have poor security hygiene. This provides an expansive and growing attack vector where adversaries can use this scale and lack of security hygiene to their advantage.
 
-<<<<<<< HEAD
-CAST is a tool to hopefully help you shine a light into the corners and crevices of kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises. It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.
-=======
 CAST is a tool that will help you shine a light into the dark corners of Kubernetes-based API credential usage whether your API clients and services are running in cloud, your own datacenters, or even on-premises. It is designed to help you quickly identify poor API secrets hygiene, such as sharing the same key or token across multiple workloads.
-
-> > > > > > > f80839701680402f985c1b3b2b7b8b3d66297628
 
 ## Prerequisites
 

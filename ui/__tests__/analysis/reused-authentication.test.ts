@@ -1,4 +1,4 @@
-import { runnerPure } from '../../libs/analysis/reused-authentication';
+import { runnerPure } from '../../lib/analysis/reused-authentication';
 
 test('runner works', async () => {
   const query = () =>

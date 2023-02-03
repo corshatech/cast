@@ -8,8 +8,8 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License. */
-import { runnerPure } from '../../libs/analysis/useOfBasicAuth';
-import { Analysis } from '../../libs/findings';
+import { runnerPure } from '../../lib/analysis/useOfBasicAuth';
+import { Analysis } from '../../lib/findings';
 
 describe('useOfBasicAuth', () => {
   it('should detect basic auth in an Authorization Header', async () => {

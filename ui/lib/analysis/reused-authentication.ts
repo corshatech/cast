@@ -9,8 +9,8 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, Finding, ReusedAuthentication } from '../../libs/findings';
-import conn from '../../libs/db';
+import { Analysis, Finding, ReusedAuthentication } from '../../lib/findings';
+import conn from '../../lib/db';
 
 const query = `
 select

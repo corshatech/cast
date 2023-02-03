@@ -1,7 +1,17 @@
 {
   "extends": ["next/core-web-vitals"],
   "rules": {
-    "quotes": [2, "single", { "allowTemplateLiterals": true }],
-    "comma-style": [2, "last"]
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "always-multiline"
+      }
+    ],
+    "comma-style": ["error", "last"]
   }
 }

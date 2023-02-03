@@ -10,7 +10,7 @@
    limitations under the License. */
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import conn from '../../libs/db';
+import conn from '../../lib/db';
 
 export type AuthenticationUseRecord = {
   absoluteUri: string;

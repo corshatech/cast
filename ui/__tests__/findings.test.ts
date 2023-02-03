@@ -1,4 +1,4 @@
-import { runAllAnalyses, Analysis } from '../libs/findings';
+import { runAllAnalyses, Analysis } from '../lib/findings';
 
 const analysis1 = {
   id: '123-analysis',

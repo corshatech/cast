@@ -209,7 +209,7 @@ func TestHandleRecord(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, expectedJwtTest1, handledRecord1)
-	assert.Equal(t, []byte(`{}`), handledMetadata1)
+	assert.Equal(t, []byte(`{"UseOfBasicAuth":false}`), handledMetadata1)
 
 	// Case 2: Record that is not 'fullEntry' type should be nil
 	msgStruct2 := Message{}
@@ -224,7 +224,7 @@ func TestHandleRecord(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
 	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
-	assert.Equal(t, []byte(`{}`), handledMetadata3)
+	assert.Equal(t, []byte(`{"UseOfBasicAuth":false}`), handledMetadata3)
 
 	// Case 4: Bad json should return error
 	msgStruct4 := Message{}

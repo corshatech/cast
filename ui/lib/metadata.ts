@@ -10,7 +10,7 @@
    limitations under the License. */
 
 /** CAST Metadata extracted from the accompanying request */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export type CASTMetadata = {
   /**
    * JWT strings detected in the request, if any present.

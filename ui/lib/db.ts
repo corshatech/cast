@@ -9,13 +9,13 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Pool } from "pg";
+import { Pool } from 'pg';
 
 const conn = new Pool({
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
   host: process.env.PGHOST,
-  port: +(process.env.PGPORT || "5432"),
+  port: +(process.env.PGPORT || '5432'),
   database: process.env.PGDATABASE,
 });
 

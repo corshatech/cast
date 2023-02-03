@@ -51,7 +51,6 @@ export interface Analysis {
   findings?: Finding[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type IFinding<
   Type extends string,
   DataType extends Record<string, any>,

@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/avast/retry-go"
@@ -84,6 +85,7 @@ type CASTMetadata struct {
 	*/
 	DetectedJwts []string `json:",omitempty"`
 	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
+	UseOfBasicAuth bool
 }
 
 func main() {
@@ -319,6 +321,7 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
 
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
+		metadata.UseOfBasicAuth = strings.HasPrefix(unHashedAuth, "Basic ")
 	}
 
 	editedMessage, err := json.Marshal(messageMap["data"])

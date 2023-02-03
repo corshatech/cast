@@ -45,6 +45,9 @@ var jwtTest2 = []byte(`{"messageType":"fullEntry","data":{"id":"0000000000000000
 // kubeshark record with 1 JWT with invalid signature in Auth header, 1 in request body, 1 inserted into the method field
 var jwtTest3 = []byte(`{"messageType":"fullEntry","data":{"id":"000000000000000000000097","protocol":{"name":"http","version":"1.1","abbr":"HTTP"},"capture":"pcap","src":{"ip":"10.1.0.1","port":"58826","name":""},"dst":{"ip":"10.1.1.25","port":"8080","name":"httpbin.httpbin"},"namespace":"httpbin","outgoing":false,"timestamp":1673981969360,"startTime":"2023-01-17T18:59:29.360797553Z","request":{"bodySize":0,"cookies":{},"headers":{"Accept":"*/*","Connection":"close","Host":"10.1.1.25:8080","User-Agent":"kube-probe/1.25"},"headersSize":-1,"httpVersion":"HTTP/1.1","method":"GET eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM2Nzg5MCIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.F59k3-qDAqpuURGAT6IK0C2wezu4i63Jn9eLBCg9quA","path":"/status/200","pathSegments":["status","200"],"queryString":{},"targetUri":"/status/200","url":"/status/200"},"response":{"bodySize":0,"content":{"encoding":"base64","mimeType":"","size":0, "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM2ODk3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.UjSiqCcqPMDRA7YTXC1pdrbwQCUE1Eqm7EtoTH5N3xQ"},"cookies":{},"headers":{"Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwp36POk6yJV_adQssw5c","Access-Control-Allow-Credentials":"true","Access-Control-Allow-Origin":"*","Content-Length":"0","Date":"Tue, 17 Jan 2023 18:59:29 GMT"},"headersSize":-1,"httpVersion":"HTTP/1.1","redirectURL":"","status":200,"statusText":"OK"},"requestSize":111,"responseSize":166,"elapsedTime":3}}`)
 
+// kubeshark record with 1 Basic Authentication header
+var useOfBasicAuthTest = []byte(`{"messageType":"fullEntry","data":{"id":"000000000000000000000095","protocol":{"name":"http","version":"1.1","abbr":"HTTP"},"capture":"pcap","src":{"ip":"10.1.0.1","port":"58826","name":""},"dst":{"ip":"10.1.1.25","port":"8080","name":"httpbin.httpbin"},"namespace":"httpbin","outgoing":false,"timestamp":1673981969360,"startTime":"2023-01-17T18:59:29.360797553Z","request":{"bodySize":0,"cookies":{},"headers":{"Accept":"*/*","Connection":"close","Host":"10.1.1.25:8080","User-Agent":"kube-probe/1.25", "Authorization":"Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="}, "headersSize":-1,"httpVersion":"HTTP/1.1","method":"GET","path":"/status/200","pathSegments":["status","200"],"queryString":{},"targetUri":"/status/200","url":"/status/200"},"response":{"bodySize":0,"content":{"encoding":"base64","mimeType":"","size":0},"cookies":{},"headers":{"Access-Control-Allow-Credentials":"true","Access-Control-Allow-Origin":"*","Content-Length":"0","Date":"Tue, 17 Jan 2023 18:59:29 GMT"},"headersSize":-1,"httpVersion":"HTTP/1.1","redirectURL":"","status":200,"statusText":"OK"},"requestSize":111,"responseSize":166,"elapsedTime":3}}`)
+
 func TestDetectJwts(t *testing.T) {
 	results := detectJwts(jwtTest0)
 	if len(results) != 0 {
@@ -211,7 +214,7 @@ func TestHandleRecord(t *testing.T) {
 
 	assert.Equal(t, expectedJwtTest0, handledRecord0)
 	// empty DetectedJwts should be omitted
-	assert.Equal(t, []byte(`{}`), handledMetadata0)
+	assert.JSONEq(t, `{"UseOfBasicAuth": false}`, string(handledMetadata0))
 
 	// Case 1: Request with auth header bearer token and absoluteURI
 	var jwtTest1Map map[string]interface{}
@@ -231,7 +234,10 @@ func TestHandleRecord(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, expectedJwtTest1, handledRecord1)
-	assert.Equal(t, []byte(`{"DetectedJwts":["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"]}`), handledMetadata1)
+	assert.JSONEq(t, `{
+	  "DetectedJwts": ["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"],
+	  "UseOfBasicAuth": false
+	}`, string(handledMetadata1))
 
 	// Case 2: Record that is not 'fullEntry' type should be nil
 	msgStruct2 := Message{}
@@ -244,20 +250,31 @@ func TestHandleRecord(t *testing.T) {
 	msgStruct3 := Message{}
 	handledRecord3, handledMetadata3, err := handleMessage(noProtocolRequest, &msgStruct3)
 	assert.NoError(t, err)
-	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
-	assert.Equal(t, []byte(`{"request":{"headers":{}}}`), handledRecord3)
-	assert.Equal(t, []byte(`{}`), handledMetadata3)
+	assert.JSONEq(t, `{"request":{"headers":{}}}`, string(handledRecord3))
+	assert.JSONEq(t, `{"UseOfBasicAuth":false}`, string(handledMetadata3))
 
 	// Case 4: Bad json should return error
 	msgStruct4 := Message{}
 	_, _, err = handleMessage(badRequest, &msgStruct4)
 	assert.EqualError(t, err, "unexpected end of JSON input")
 
-	// Case 4: Bad json should return error
+	// Case 5: Bad json should return error
 	msgStruct5 := Message{}
 	_, _, err = handleMessage(nil, &msgStruct5)
 	assert.EqualError(t, err, "unexpected end of JSON input")
 
+}
+
+func TestUseOfBasicAuth(t *testing.T) {
+	msgStruct := Message{}
+	_, handledMetadata, err := handleMessage(useOfBasicAuthTest, &msgStruct)
+	assert.NoError(t, err)
+	assert.JSONEq(t, `{"UseOfBasicAuth":true}`, string(handledMetadata))
+
+	msgStruct = Message{}
+	_, handledMetadata, err = handleMessage(noProtocolRequest, &msgStruct)
+	assert.NoError(t, err)
+	assert.JSONEq(t, `{"UseOfBasicAuth":false}`, string(handledMetadata))
 }
 
 func TestRequiredEnv(t *testing.T) {

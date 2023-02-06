@@ -1,8 +1,2 @@
-arrowParens: avoid
-tabWidth: 2
-semi: true
-singleQuote: false
-useTabs: false
-trailingComma: "all"
-printWidth: 100
-bracketSpacing: true
+singleQuote: true
+trailingComma: 'all'

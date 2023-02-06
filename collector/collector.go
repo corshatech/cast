@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/avast/retry-go"
@@ -89,7 +90,8 @@ type CASTMetadata struct {
 	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
 
 	// PassInUrl is the data returned by the pass_in_url analysis
-	PassInUrl *pass_in_url.PassInUrl `json:",omitempty"`
+	PassInUrl      *pass_in_url.PassInUrl `json:",omitempty"`
+	UseOfBasicAuth bool
 }
 
 func main() {
@@ -293,6 +295,8 @@ func requiredEnv(envName string) string {
 	return ret
 }
 
+// handleMessage takes a message read from the kubeshark websocket and processes it for insertion
+// into the postgres database. It returns the processed message and a CASTMetadata struct for the message.
 func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 	var err error
 	var messageMap map[string]interface{}
@@ -322,6 +326,7 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 		unHashedAuth := msgStruct.Data.Request.Headers.Authorization
 		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
+		metadata.UseOfBasicAuth = strings.HasPrefix(unHashedAuth, "Basic ")
 	}
 
 	// Start: Handle the pass-in-url analysis
@@ -343,6 +348,8 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, err
 	}
+
+	metadata.DetectedJwts = detectJwts(message)
 
 	metadataJson, err := json.Marshal(metadata)
 	if err != nil {

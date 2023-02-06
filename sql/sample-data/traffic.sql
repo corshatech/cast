@@ -9,7 +9,7 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-INSERT INTO traffic (occurred_at, data) VALUES
+INSERT INTO traffic (occurred_at, data, meta) VALUES
 --
 -- reused-auth
 --
@@ -37,7 +37,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
   },
 	"id": "000000000000000000000090",
 	"timestamp": 1674047520000
-}'),
+}', '{}'),
 ('2023-01-18 13:12:01.000', '{
 	"protocol": {
 		"name": "http"
@@ -60,7 +60,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
   },
 	"id": "000000000000000000000091",
 	"timestamp": 1674047521000
-}'),
+}', '{}'),
 -- client 2 (192.2.0.2) which made a request to one url with the same auth as client 1
 ('2023-01-18 13:12:02.000', '{
 	"protocol": {
@@ -84,7 +84,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
   },
 	"id": "000000000000000000000092",
 	"timestamp": 1674047522000
-}'),
+}','{}'),
 -- client 3 (192.2.0.3) which made a request with a unique auth header, this request should not show up in the reused-auth result
 ('2023-01-18 13:12:03.000', '{
 	"protocol": {
@@ -108,9 +108,9 @@ INSERT INTO traffic (occurred_at, data) VALUES
   },
 	"id": "000000000000000000000093",
 	"timestamp": 1674047523000
-}'),
+}', '{}'),
 
--- request with 1 JWT in Auth header
+-- request with 1 JWT in response Auth header
 ('2023-01-17 18:59:29.360797553', '{
    "protocol":{
       "name":"http",
@@ -183,8 +183,8 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "requestSize":111,
    "responseSize":166,
    "elapsedTime":3
-}'),
--- request with 1 JWT in Auth header and 1 in cookies
+}','{"DetectedJwts":["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"]}' ),
+-- request with 1 JWT in request Auth header (hashed by collector) and 1 in request cookies
 ('2023-01-17 18:59:29.360797553', '{
    "protocol":{
       "name":"http",
@@ -212,6 +212,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
          "token":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
       },
       "headers":{
+          "Authorization":"5501453c967af3668eb7144c8f3d24b421e6c9678411e48cbd7875b83f09def9",
          "Accept":"*/*",
          "Connection":"close",
          "Host":"10.1.1.25:8080",
@@ -242,7 +243,6 @@ INSERT INTO traffic (occurred_at, data) VALUES
          
       },
       "headers":{
-         "Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
          "Access-Control-Allow-Credentials":"true",
          "Access-Control-Allow-Origin":"*",
          "Content-Length":"0",
@@ -257,8 +257,8 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "requestSize":111,
    "responseSize":166,
    "elapsedTime":3
-}'),
--- request with 1 JWT with invalid signature in Auth header, 1 in request body, 1 inserted into the method field
+}','{"DetectedJwts":["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"]}'),
+-- request with 1 JWT with invalid signature in response Auth header, 1 in response body, 1 inserted into the method field
 ('2023-01-17 18:59:29.360797553', '{
    "protocol":{
       "name":"http",
@@ -332,7 +332,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "requestSize":111,
    "responseSize":166,
    "elapsedTime":3
-}'),
+}', '{"DetectedJwts":["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM2Nzg5MCIsIm5hbWUiOiJKb2huIERvZSIsImlhdCI6MTUxNjIzOTAyMn0.F59k3-qDAqpuURGAT6IK0C2wezu4i63Jn9eLBCg9quA","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM2ODk3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.UjSiqCcqPMDRA7YTXC1pdrbwQCUE1Eqm7EtoTH5N3xQ","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwp36POk6yJV_adQssw5c"]}'),
 -- request with Basic Authentication
 ('2023-01-31 13:12:00.000', '{
    "protocol":{
@@ -405,7 +405,7 @@ INSERT INTO traffic (occurred_at, data) VALUES
    "requestSize":111,
    "responseSize":166,
    "elapsedTime":3
-}')
+}','{}')
 ;
 
 INSERT INTO traffic (occurred_at, data, meta)

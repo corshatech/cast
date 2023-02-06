@@ -1,24 +1,22 @@
+import { Header } from '@/components/app/Header/Header';
+import { Layout } from '@/components/index';
 import Head from 'next/head';
-
-import { FeatureComponent } from '@/components/index';
-
 export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>CAST Dashboard</title>
-        <meta
-          name="description"
-          content="An overview of the most important events in your system"
-        />
+        <title>Cast Design System</title>
       </Head>
-      <main>
-        <h2 className="text-3xl text-blue-500" data-testid="title">
-          CAST Dashboard
-        </h2>
-        <p>Lorem Ipsum</p>
-        <FeatureComponent />
-      </main>
+      <Layout>
+        <Header />
+        <main className="bg-gray-100 px-16">
+          <div>Summary</div>
+          <div>Table 1</div>
+          <div>Table 2</div>
+          <div>Table 3</div>
+          <div>Table 4</div>
+        </main>
+      </Layout>
     </>
   );
 }

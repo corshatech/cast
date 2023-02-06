@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button snapshot 1`] = `
+[
+  <div
+    className="my-8 mt-24"
+  >
+    <h2
+      className="leading-6 text-h2 font-poppins font-bold"
+    >
+      Buttons
+    </h2>
+  </div>,
+  <hr
+    className="my-12"
+  />,
+  <div
+    className="mb-16"
+  >
+    <div
+      className="mb-3"
+    >
+      <h3
+        className="leading-6 text-h3 font-poppins font-bold"
+      >
+        Primary Buttons
+      </h3>
+    </div>
+    <div
+      className="flex space-x-12 justify-start items-center mb-8"
+    >
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-corsha-brand-blue text-white border-2 border-corsha-brand-blue hover:bg-corsha-brand-mid-blue hover:border-[#104457] focus:bg-corsha-brand-blue focus:border-2 focus:border-corsha-brand-green disabled:bg-[#A1A9B4] disabled:border-[#A1A9B4] disabled:cursor-not-allowed px-10 py-2"
+      >
+        Small
+      </button>
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-corsha-brand-blue text-white border-2 border-corsha-brand-blue hover:bg-corsha-brand-mid-blue hover:border-[#104457] focus:bg-corsha-brand-blue focus:border-2 focus:border-corsha-brand-green disabled:bg-[#A1A9B4] disabled:border-[#A1A9B4] disabled:cursor-not-allowed px-[70px] py-3"
+      >
+        Medium
+      </button>
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-corsha-brand-blue text-white border-2 border-corsha-brand-blue hover:bg-corsha-brand-mid-blue hover:border-[#104457] focus:bg-corsha-brand-blue focus:border-2 focus:border-corsha-brand-green disabled:bg-[#A1A9B4] disabled:border-[#A1A9B4] disabled:cursor-not-allowed px-[75px] py-3.5"
+      >
+        Large
+      </button>
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-corsha-brand-blue text-white border-2 border-corsha-brand-blue hover:bg-corsha-brand-mid-blue hover:border-[#104457] focus:bg-corsha-brand-blue focus:border-2 focus:border-corsha-brand-green disabled:bg-[#A1A9B4] disabled:border-[#A1A9B4] disabled:cursor-not-allowed px-[75px] py-3.5"
+        disabled={true}
+      >
+        Large Disabled
+      </button>
+    </div>
+  </div>,
+  <div
+    className="mb-16"
+  >
+    <div
+      className="mb-3"
+    >
+      <h3
+        className="leading-6 text-h3 font-poppins font-bold"
+      >
+        Secondary Buttons
+      </h3>
+    </div>
+    <div
+      className="flex space-x-12 justify-start items-center mb-8"
+    >
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-white text-primary border-2 border-corsha-brand-blue hover:bg-highlight-blue focus:border-2 focus:border-corsha-brand-green disabled:border-[#A1A9B4] disabled:text-[#A1A9B4] disabled:hover:bg-white disabled:cursor-not-allowed px-10 py-2"
+      >
+        Small
+      </button>
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-white text-primary border-2 border-corsha-brand-blue hover:bg-highlight-blue focus:border-2 focus:border-corsha-brand-green disabled:border-[#A1A9B4] disabled:text-[#A1A9B4] disabled:hover:bg-white disabled:cursor-not-allowed px-[70px] py-3"
+      >
+        Medium
+      </button>
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-white text-primary border-2 border-corsha-brand-blue hover:bg-highlight-blue focus:border-2 focus:border-corsha-brand-green disabled:border-[#A1A9B4] disabled:text-[#A1A9B4] disabled:hover:bg-white disabled:cursor-not-allowed px-[75px] py-3.5"
+      >
+        Large
+      </button>
+      <button
+        className="rounded-md space-x-3 leading-none inline-block bg-white text-primary border-2 border-corsha-brand-blue hover:bg-highlight-blue focus:border-2 focus:border-corsha-brand-green disabled:border-[#A1A9B4] disabled:text-[#A1A9B4] disabled:hover:bg-white disabled:cursor-not-allowed px-[75px] py-3.5"
+        disabled={true}
+      >
+        Large Disabled
+      </button>
+    </div>
+  </div>,
+  <div
+    className="h-64"
+  />,
+]
+`;

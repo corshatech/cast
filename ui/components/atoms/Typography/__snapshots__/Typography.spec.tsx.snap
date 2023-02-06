@@ -1,0 +1,129 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Typography given "body1" as variant and "p" as size, matches snapshot 1`] = `
+<p
+  className="leading-6 text-body1 font-nunito"
+>
+  Typography Element
+</p>
+`;
+
+exports[`Typography given "body1" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-body1 font-nunito"
+>
+  Typography Element
+</span>
+`;
+
+exports[`Typography given "body2" as variant and "p" as size, matches snapshot 1`] = `
+<p
+  className="leading-6 text-body2 font-nunito"
+>
+  Typography Element
+</p>
+`;
+
+exports[`Typography given "body2" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-body2 font-nunito"
+>
+  Typography Element
+</span>
+`;
+
+exports[`Typography given "body3" as variant and "p" as size, matches snapshot 1`] = `
+<p
+  className="leading-6 text-body3 font-nunito"
+>
+  Typography Element
+</p>
+`;
+
+exports[`Typography given "body3" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-body3 font-nunito"
+>
+  Typography Element
+</span>
+`;
+
+exports[`Typography given "body4" as variant and "p" as size, matches snapshot 1`] = `
+<p
+  className="leading-6 text-body4 font-nunito"
+>
+  Typography Element
+</p>
+`;
+
+exports[`Typography given "body4" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-body4 font-nunito"
+>
+  Typography Element
+</span>
+`;
+
+exports[`Typography given "h1" as variant and "h1" as size, matches snapshot 1`] = `
+<h1
+  className="leading-6 text-h1 font-poppins font-bold"
+>
+  Typography Element
+</h1>
+`;
+
+exports[`Typography given "h1" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-h1 font-poppins font-bold"
+>
+  Typography Element
+</span>
+`;
+
+exports[`Typography given "h2" as variant and "h2" as size, matches snapshot 1`] = `
+<h2
+  className="leading-6 text-h2 font-poppins font-bold"
+>
+  Typography Element
+</h2>
+`;
+
+exports[`Typography given "h2" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-h2 font-poppins font-bold"
+>
+  Typography Element
+</span>
+`;
+
+exports[`Typography given "h3" as variant and "h3" as size, matches snapshot 1`] = `
+<h3
+  className="leading-6 text-h3 font-poppins font-bold"
+>
+  Typography Element
+</h3>
+`;
+
+exports[`Typography given "h3" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-h3 font-poppins font-bold"
+>
+  Typography Element
+</span>
+`;
+
+exports[`Typography given "h4" as variant and "h4" as size, matches snapshot 1`] = `
+<h4
+  className="leading-6 text-h4 font-poppins font-semibold"
+>
+  Typography Element
+</h4>
+`;
+
+exports[`Typography given "h4" as variant and undefined as size, matches snapshot 1`] = `
+<span
+  className="leading-6 text-h4 font-poppins font-semibold"
+>
+  Typography Element
+</span>
+`;

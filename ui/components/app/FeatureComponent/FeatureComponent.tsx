@@ -23,7 +23,7 @@ export function FeatureComponent() {
   return (
     <div>
       <div className="text-3xl rounded-smd">A Title</div>
-      <Button variant="lg">Click Me</Button>
+      <Button variant="primary">Click Me</Button>
     </div>
   );
 }

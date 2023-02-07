@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Button given "primary" as variant and "lg" as size, matches snapshot 1`] = `
+<button
+  className="rounded-md space-x-3 leading-none inline-block bg-corsha-brand-blue text-white border-2 border-corsha-brand-blue hover:bg-corsha-brand-mid-blue hover:border-[#104457] focus:bg-corsha-brand-blue focus:border-2 focus:border-corsha-brand-green disabled:bg-[#A1A9B4] disabled:border-[#A1A9B4] disabled:cursor-not-allowed px-[75px] py-3.5"
+>
+  Click Me
+</button>
+`;
+
+exports[`Button given "primary" as variant and "md" as size, matches snapshot 1`] = `
+<button
+  className="rounded-md space-x-3 leading-none inline-block bg-corsha-brand-blue text-white border-2 border-corsha-brand-blue hover:bg-corsha-brand-mid-blue hover:border-[#104457] focus:bg-corsha-brand-blue focus:border-2 focus:border-corsha-brand-green disabled:bg-[#A1A9B4] disabled:border-[#A1A9B4] disabled:cursor-not-allowed px-[70px] py-3"
+>
+  Click Me
+</button>
+`;
+
+exports[`Button given "primary" as variant and "sm" as size, matches snapshot 1`] = `
+<button
+  className="rounded-md space-x-3 leading-none inline-block bg-corsha-brand-blue text-white border-2 border-corsha-brand-blue hover:bg-corsha-brand-mid-blue hover:border-[#104457] focus:bg-corsha-brand-blue focus:border-2 focus:border-corsha-brand-green disabled:bg-[#A1A9B4] disabled:border-[#A1A9B4] disabled:cursor-not-allowed px-10 py-2"
+>
+  Click Me
+</button>
+`;
+
+exports[`Button given "secondary" as variant and "lg" as size, matches snapshot 1`] = `
+<button
+  className="rounded-md space-x-3 leading-none inline-block bg-white text-primary border-2 border-corsha-brand-blue hover:bg-highlight-blue focus:border-2 focus:border-corsha-brand-green disabled:border-[#A1A9B4] disabled:text-[#A1A9B4] disabled:hover:bg-white disabled:cursor-not-allowed px-[75px] py-3.5"
+>
+  Click Me
+</button>
+`;
+
+exports[`Button given "secondary" as variant and "md" as size, matches snapshot 1`] = `
+<button
+  className="rounded-md space-x-3 leading-none inline-block bg-white text-primary border-2 border-corsha-brand-blue hover:bg-highlight-blue focus:border-2 focus:border-corsha-brand-green disabled:border-[#A1A9B4] disabled:text-[#A1A9B4] disabled:hover:bg-white disabled:cursor-not-allowed px-[70px] py-3"
+>
+  Click Me
+</button>
+`;
+
+exports[`Button given "secondary" as variant and "sm" as size, matches snapshot 1`] = `
+<button
+  className="rounded-md space-x-3 leading-none inline-block bg-white text-primary border-2 border-corsha-brand-blue hover:bg-highlight-blue focus:border-2 focus:border-corsha-brand-green disabled:border-[#A1A9B4] disabled:text-[#A1A9B4] disabled:hover:bg-white disabled:cursor-not-allowed px-10 py-2"
+>
+  Click Me
+</button>
+`;

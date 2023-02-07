@@ -1,0 +1,269 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Typography Section snapshot 1`] = `
+[
+  <div
+    className="mb-8 mt-24"
+  >
+    <h2
+      className="leading-6 text-h2 font-poppins font-bold"
+    >
+      Typography
+    </h2>
+  </div>,
+  <hr
+    className="my-12"
+  />,
+  <div
+    className="space-y-6 mb-24 flex flex-col"
+  >
+    <h1
+      className="leading-6 text-h1 font-poppins font-bold"
+    >
+      Heading Level One
+    </h1>
+    <h2
+      className="leading-6 text-h2 font-poppins font-bold"
+    >
+      Heading Level Two
+    </h2>
+    <h3
+      className="leading-6 text-h3 font-poppins font-bold"
+    >
+      Heading Level Three
+    </h3>
+    <h4
+      className="leading-6 text-h4 font-poppins font-semibold"
+    >
+      Heaving Level Four
+    </h4>
+    <div
+      className="grid grid-cols-4 justify-between items-start pt-12"
+    >
+      <span
+        className="leading-6 text-body1 font-nunito"
+      >
+        <div
+          className="font-black"
+        >
+          Body 1 Black
+        </div>
+        <div
+          className="font-black"
+        >
+          Nunito Sans Black 16px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body1 font-nunito"
+      >
+        <div
+          className="font-bold"
+        >
+          Body 1 Bold
+        </div>
+        <div
+          className="font-bold"
+        >
+          Nunito Sans Bold 16px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body1 font-nunito"
+      >
+        <div>
+          Body 1 Regular
+        </div>
+        <div>
+          Nunito Sans Regular 16px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body1 font-nunito"
+      >
+        <div
+          className="underline font-medium"
+        >
+          Body 1 Underlined
+        </div>
+        <div
+          className="underline font-medium"
+        >
+          Nunito Sans Medium Underline 16px
+        </div>
+      </span>
+    </div>
+    <div
+      className="grid grid-cols-4 justify-between items-start pt-12"
+    >
+      <span
+        className="leading-6 text-body2 font-nunito"
+      >
+        <div
+          className="font-bold"
+        >
+          Body 2 Bold
+        </div>
+        <div
+          className="font-bold"
+        >
+          Nunito Sans Bold 14px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body2 font-nunito"
+      >
+        <div>
+          Body 2 Regular
+        </div>
+        <div>
+          Nunito Sans Regular 14px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body2 font-nunito"
+      >
+        <div
+          className="underline font-medium"
+        >
+          Body 2 Underlined
+        </div>
+        <div
+          className="underline font-medium"
+        >
+          Nunito Sans Medium Underline 14px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body2 font-nunito"
+      >
+        <div
+          className="font-medium"
+        >
+          All Caps
+        </div>
+        <div
+          className="font-black capitalize"
+        >
+          Nunito Sans Black All Caps 14px
+        </div>
+      </span>
+    </div>
+    <div
+      className="grid grid-cols-4 justify-between items-start pt-12"
+    >
+      <span
+        className="leading-6 text-body3 font-nunito"
+      >
+        <div
+          className="font-black"
+        >
+          Body 3 Black
+        </div>
+        <div
+          className="font-black"
+        >
+          Nunito Sans Black 12px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body3 font-nunito"
+      >
+        <div
+          className="font-bold"
+        >
+          Body 3 Bold
+        </div>
+        <div
+          className="font-bold"
+        >
+          Nunito Sans Bold 12px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body3 font-nunito"
+      >
+        <div>
+          Body 3 Regular
+        </div>
+        <div>
+          Nunito Sans Regular 12px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body3 font-nunito"
+      >
+        <div
+          className="underline font-medium"
+        >
+          Body 3 Underlined
+        </div>
+        <div
+          className="underline font-medium"
+        >
+          Nunito Sans Medium Underline 12px
+        </div>
+      </span>
+    </div>
+    <div
+      className="grid grid-cols-4 justify-between items-start pt-12"
+    >
+      <span
+        className="leading-6 text-body4 font-nunito"
+      >
+        <div
+          className="font-black"
+        >
+          Body 4 Black
+        </div>
+        <div
+          className="font-black"
+        >
+          Nunito Sans Black 10px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body4 font-nunito"
+      >
+        <div
+          className="font-bold"
+        >
+          Body 4 Bold
+        </div>
+        <div
+          className="font-bold"
+        >
+          Nunito Sans Bold 10px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body4 font-nunito"
+      >
+        <div>
+          Body 4 Regular
+        </div>
+        <div>
+          Nunito Sans Regular 10px
+        </div>
+      </span>
+      <span
+        className="leading-6 text-body4 font-nunito"
+      >
+        <div
+          className="underline font-medium"
+        >
+          Body 4 Underlined
+        </div>
+        <div
+          className="underline font-medium"
+        >
+          Nunito Sans Medium Underline 10px
+        </div>
+      </span>
+    </div>
+  </div>,
+  <div
+    className="h-64"
+  />,
+]
+`;

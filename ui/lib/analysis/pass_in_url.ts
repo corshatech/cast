@@ -91,6 +91,8 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
       'through e.g. the Referrer header. Do not include credentials in any ' +
       'part of a URL.',
     reportedAt,
+    weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
+    weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
     severity: 'high',
     findings,
   };

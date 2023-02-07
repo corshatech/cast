@@ -1,3 +1,13 @@
+/* Copyright 2023 Corsha.
+   Licensed under the Apache License, Version 2.0 (the 'License');
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an 'AS IS' BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. */
 import { runnerPure } from '../../lib/analysis/pass_in_url';
 
 test('runner works', async () => {
@@ -34,7 +44,8 @@ test('runner works', async () => {
       'through e.g. the Referrer header. Do not include credentials in any ' +
       'part of a URL.',
     reportedAt: '2023-01-17T13:12:00.000Z',
-    weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
+    weaknessLink:
+      'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
     weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
     severity: 'high',
     findings: [

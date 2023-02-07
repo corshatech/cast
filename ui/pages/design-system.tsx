@@ -15,11 +15,13 @@ export const DesignSystem = () => {
       </Head>
       <Layout>
         <Header />
-        <main className="bg-gray-100 px-16 w-screen">
-          <TypographySection />
-          <ButtonSection />
-          <ColorSection />
-          <IconSection />
+        <main className="bg-gray-50 w-screen">
+          <div className="max-w-screen mx-auto px-4 sm:px-6 lg:px-8">
+            <TypographySection />
+            <ButtonSection />
+            <ColorSection />
+            <IconSection />
+          </div>
         </main>
       </Layout>
     </>

@@ -1,0 +1,547 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Color Section snapshot 1`] = `
+[
+  <div
+    className="my-8 mt-24"
+  >
+    <h2
+      className="leading-6 text-h2 font-poppins font-bold"
+    >
+      Color Palette
+    </h2>
+  </div>,
+  <hr
+    className="my-12"
+  />,
+  <div
+    className="mb-16"
+  >
+    <div
+      className="mb-3"
+    >
+      <h3
+        className="leading-6 text-h3 font-poppins font-bold"
+      >
+        Primary Colors
+      </h3>
+    </div>
+    <div
+      className="mb-8 grid grid-cols-6 align-top justify-items-start"
+    >
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-corsha-brand-blue rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Corsha Brand Blue
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #0A2E3B
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-corsha-brand-mid-blue rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Corsha Brand Mid Blue
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #104457
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-corsha-brand-green rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Corsha Brand Green
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #77C043
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-corsha-dark-green rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Corsha Dark Green
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #57A61F
+        </p>
+      </div>
+    </div>
+    <div
+      className="mb-8 grid grid-cols-6 align-top justify-items-start"
+    >
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-main-grey rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Main Grey
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #646F79
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-field-outline-grey rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Field Outline Grey
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #CBD5E1
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-link-blue rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Link Blue
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #167FA6
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-highlight-blue rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Highlight Blue
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #D5EBF3
+        </p>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="my-16"
+  >
+    <div
+      className="mb-3"
+    >
+      <h3
+        className="leading-6 text-h3 font-poppins font-bold"
+      >
+        Graphs / Charts
+      </h3>
+    </div>
+    <div
+      className="mb-8 grid grid-cols-6 align-top justify-items-start"
+    >
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-dark-green rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Dark Green
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #276825
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-red rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Red
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #C10B00
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-orange rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Orange
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #FA9537
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-yellow rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Yellow
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #FED766
+        </p>
+      </div>
+    </div>
+    <div
+      className="mb-8 grid grid-cols-6 align-top justify-items-start"
+    >
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-purple rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Purple
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #8850D0
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-dark-blue rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Dark Blue
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #2C2DBE
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-medium-blue rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Medium Blue
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #1378FF
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-light-blue rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Light Blue
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #37ADEB
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-grey rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Grey
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #979797
+        </p>
+      </div>
+    </div>
+    <div
+      className="mb-8 grid grid-cols-6 align-top justify-items-start"
+    >
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-corsha-blue-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Corsha Blue - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #10445799
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-corsha-green-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Corsha Green - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #77C04399
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-dark-green-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Dark Green - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #27682599
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-red-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Red - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #C10B0099
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-orange-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Orange - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #FA953799
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-yellow-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Yellow - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #FED76699
+        </p>
+      </div>
+    </div>
+    <div
+      className="mb-8 grid grid-cols-6 align-top justify-items-start"
+    >
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-purple-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Purple - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #8850D099
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-dark-blue-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Dark Blue - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #2C2DBE99
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-medium-blue-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Medium Blue - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #1378FF99
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-light-blue-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Light Blue - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #37ADEB99
+        </p>
+      </div>
+      <div
+        className="flex flex-col w-40 space-y-1"
+      >
+        <div
+          className="h-40 bg-grey-light rounded-lg my-3"
+        />
+        <h4
+          className="leading-6 text-h4 font-poppins font-semibold"
+        >
+          Grey - Light
+        </h4>
+        <p
+          className="leading-6 text-body1 font-nunito"
+        >
+          #97979799
+        </p>
+      </div>
+    </div>
+  </div>,
+  <div
+    className="h-64"
+  />,
+]
+`;

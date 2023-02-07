@@ -13,7 +13,12 @@
     "coverage": "nyc report --reporter=lcov"
   },
   "dependencies": {
-    "@next/font": "13.1.4",
+    "@fortawesome/fontawesome-svg-core": "^6.2.1",
+    "@fortawesome/free-regular-svg-icons": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@headlessui/react": "^1.7.8",
+    "@next/font": "^13.1.4",
     "@roarr/browser-log-writer": "^1.1.1",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
@@ -38,6 +43,7 @@
     "@testing-library/react": "^13.4.0",
     "@types/jwt-decode": "^3.1.0",
     "@types/pg": "^8.6.6",
+    "@types/react-test-renderer": "^18.0.0",
     "autoprefixer": "^10.4.13",
     "babel-loader": "^9.1.2",
     "eslint-plugin-prettier": "^4.2.1",
@@ -47,6 +53,7 @@
     "msw": "^0.49.3",
     "nyc": "^15.1.0",
     "postcss": "^8.4.21",
+    "react-test-renderer": "^18.2.0",
     "tailwindcss": "^3.2.4",
     "whatwg-fetch": "^3.6.2"
   }

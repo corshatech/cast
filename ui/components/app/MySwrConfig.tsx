@@ -4,6 +4,19 @@ import { Fetcher, PublicConfiguration } from 'swr/_internal';
 
 type Provider = { provider?: (cache: Readonly<Cache<any>>) => Cache<any> };
 
+export async function customFetcher(url: string) {
+  const res = await fetch(url);
+
+  // If the status code is not in the range 200-299,
+  // we still try to parse and throw it.
+  if (!res.ok) {
+    const json = (await res.json()) as { message: string };
+    throw new Error(json.message);
+  }
+
+  return res.json();
+}
+
 export function MySwrConfig({
   children,
   swrConfig,
@@ -17,17 +30,4 @@ export function MySwrConfig({
       {children}
     </SWRConfig>
   );
-}
-
-export async function customFetcher(url: string) {
-  const res = await fetch(url);
-
-  // If the status code is not in the range 200-299,
-  // we still try to parse and throw it.
-  if (!res.ok) {
-    const json = (await res.json()) as { message: string };
-    throw new Error(json.message);
-  }
-
-  return res.json();
 }

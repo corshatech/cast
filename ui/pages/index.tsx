@@ -1,5 +1,5 @@
 import { Header } from '@/components/app/Header/Header';
-import { Layout } from '@/components/index';
+import { Layout, Summary } from '@/components/index';
 import Head from 'next/head';
 export default function Dashboard() {
   return (
@@ -13,7 +13,7 @@ export default function Dashboard() {
           <div className="max-w-screen mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mx-auto">
               <div className="w-full my-12 bg-slate-200 h-[400px] rounded-lg flex justify-center items-center">
-                Summary
+                <Summary />
               </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">

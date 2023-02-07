@@ -114,20 +114,17 @@ export type ExpiredJWT = IFinding<
   }
 >;
 
-export type PasswordInURL = IFinding<
-  'pass-in-url',
-  {
-    /** The name of the query parameter suspected of containing a password. */
-    queryParam: string;
-    /**
-     * The request that triggered this finding. In-particular,
-     * the URI of this request should have a best-effort scrub to not contain
-     * the credential in the finding report; only report the suspicion of it
-     * containing a credential.
-     */
-    inRequest: RequestContext;
-  }
->;
+export type PasswordInURL = IFinding<'pass-in-url', {
+  /** The name of the query parameter suspected of containing a password. */
+  queryParams: string[];
+  /**
+   * The request that triggered this finding. In-particular,
+   * the URI of this request should have a best-effort scrub to not contain
+   * the credential in the finding report; only report the suspicion of it
+   * containing a credential.
+   */
+  inRequest: RequestContext;
+}>;
 
 export type UseOfBasicAuth = IFinding<
   'use-of-basic-auth',

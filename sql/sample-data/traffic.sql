@@ -407,3 +407,40 @@ INSERT INTO traffic (occurred_at, data, meta) VALUES
    "elapsedTime":3
 }','{}')
 ;
+
+INSERT INTO traffic (occurred_at, data, meta)
+VALUES
+(
+  '2023-01-01 13:12:01.000',
+  '{
+    "dst": {
+      "ip": "10.1.0.96",
+      "name": "",
+      "port": "8181"
+    },
+    "src": {
+      "ip": "192.2.0.1",
+      "name": "",
+      "port": "57944"
+    },
+    "timestamp": 1672578721000
+  }',
+  '{"PassInUrl": {"AbsoluteUri": "http://example.com/url-1", "QueryParams": ["password", "pass"]}}'
+),
+(
+  '2023-01-01 13:12:03.000',
+  '{
+    "dst": {
+      "ip": "10.1.0.96",
+      "name": "",
+      "port": "8181"
+    },
+    "src": {
+      "ip": "192.2.0.2",
+      "name": "",
+      "port": "57944"
+    },
+    "timestamp": 1672578723000
+  }',
+  '{"PassInUrl": {"AbsoluteUri": "http://example.com/url-2", "QueryParams": ["passwd"]}}'
+);

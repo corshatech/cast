@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/avast/retry-go v3.0.0+incompatible
+	github.com/emirpasic/gods v1.18.1
 	github.com/gorilla/websocket v1.5.0
 	github.com/lib/pq v1.10.7
 	github.com/sirupsen/logrus v1.8.0

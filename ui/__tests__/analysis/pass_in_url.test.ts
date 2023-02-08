@@ -44,8 +44,7 @@ test('runner works', async () => {
       'through e.g. the Referrer header. Do not include credentials in any ' +
       'part of a URL.',
     reportedAt: '2023-01-17T13:12:00.000Z',
-    weaknessLink:
-      'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
+    weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
     weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
     severity: 'high',
     findings: [

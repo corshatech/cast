@@ -45,7 +45,7 @@ function isExpired(jwt: string, occuredAt: number): string | undefined {
     return undefined;
   }
 
-  if (!Number.isFinite(decoded.exp)) {
+  if (!Number.isFinite(decoded.exp) || decoded.exp === undefined) {
     // TODO: raise error here? This is an included, but invalid, exp field
     return undefined;
   }

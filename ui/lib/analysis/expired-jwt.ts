@@ -1,3 +1,14 @@
+/* Copyright 2023 Corsha.
+   Licensed under the Apache License, Version 2.0 (the 'License');
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+   http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an 'AS IS' BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. */
+
 import { Analysis, ExpiredJWT } from '../findings';
 import conn from '../db';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
@@ -27,16 +38,25 @@ interface Row {
   timestamp: number;
 }
 
-function isExpired(jwt: string, occuredAt: number): string {
+function isExpired(jwt: string, occuredAt: number): string | undefined {
   var decoded = jwtDecode<JwtPayload>(jwt);
+
+  if (!('exp' in decoded)) {
+    return undefined;
+  }
+
+  if (!Number.isFinite(decoded.exp)) {
+    // TODO: raise error here? This is an included, but invalid, exp field
+    return undefined;
+  }
 
   // assumes jwt 'exp' follows NumericDate standard, epoch in seconds
   // https://www.rfc-editor.org/rfc/rfc7519#section-4.1.4
   // 300000ms=5m
-  if (decoded.exp != undefined && occuredAt - decoded.exp * 1000 > 300000) {
+  if (occuredAt - decoded.exp * 1000 > 300000) {
     return new Date(decoded.exp * 1000).toISOString();
   }
-  return '';
+  return undefined;
 }
 
 /** runnerPure is the AnalysisFunction free of external dependencies
@@ -49,22 +69,23 @@ export async function runnerPure(
   const rows = await query();
   const detectedAt = new Date().toISOString();
 
-  const findings = rows.reduce(function (result, row) {
+  const findings = rows.reduce((result, row) => {
     const expirationDate = isExpired(row.jwt, row.timestamp);
-    if (expirationDate) {
+    if (typeof expirationDate === 'string') {
+      const at = new Date(row.timestamp).toISOString();
       const finding: ExpiredJWT = {
         type: 'expired-jwt',
         name: 'Expired JWTs',
         detectedAt,
         severity: 'low',
         occurredAt: {
-          at: new Date(row.timestamp).toISOString(),
+          at: at,
         },
         data: {
           jwt: row.jwt,
           expiredAt: expirationDate,
           inRequest: {
-            at: new Date(row.timestamp).toISOString(),
+            at: at,
             destIp: row.destination_ip,
             destPort: row.destination_port,
             proto:

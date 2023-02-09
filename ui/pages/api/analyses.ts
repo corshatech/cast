@@ -2,9 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { Analysis, AnalysisFunction, runAllAnalyses } from 'lib/findings';
 import { runner as reusedAuthentication } from '../../lib/analysis/reused-authentication';
 import { runner as passInUrl } from '../../lib/analysis/pass_in_url';
+import { runner as expiredJwt } from '../../lib/analysis/expired-jwt';
 import { useOfBasicAuth } from 'lib/analysis/useOfBasicAuth';
 
-const analysisFunctions: AnalysisFunction[] = [reusedAuthentication, passInUrl, useOfBasicAuth];
+const analysisFunctions: AnalysisFunction[] = [reusedAuthentication, expiredJwt, passInUrl, useOfBasicAuth];
 
 export type AnalysesResponse = {
   analyses: Analysis[];

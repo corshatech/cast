@@ -78,14 +78,12 @@ export async function runnerPure(
         name: 'Expired JWTs',
         detectedAt,
         severity: 'low',
-        occurredAt: {
-          at: at,
-        },
+        occurredAt: { at },
         data: {
           jwt: row.jwt,
           expiredAt: expirationDate,
           inRequest: {
-            at: at,
+            at,
             destIp: row.destination_ip,
             destPort: row.destination_port,
             proto:

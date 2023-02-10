@@ -1,7 +1,14 @@
+import useSWR from 'swr';
+import type { AnalysesResponse } from '@/pages/api/analyses';
+
+import { Analysis } from '@/components/app/Analysis';
 import { Header } from '@/components/app/Header/Header';
 import { Layout, Summary } from '@/components/index';
 import Head from 'next/head';
+
 export default function Dashboard() {
+  const { data, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
+  const analyses = (data?.analyses ?? []);
   return (
     <>
       <Head>
@@ -17,9 +24,7 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-              <div className="w-full bg-slate-200 h-[400px] rounded-lg flex justify-center items-center">
-                Table 1
-              </div>
+              {(analyses.length > 0) && analyses.map((a) => <Analysis {...a} key={a.id}/>)}
               <div className="w-full bg-slate-200 h-[400px] rounded-lg flex justify-center items-center">
                 Table 2
               </div>

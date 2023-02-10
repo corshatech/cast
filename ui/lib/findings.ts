@@ -30,9 +30,9 @@ export const Severity = ['none', 'low', 'medium', 'high', 'critical'] as const;
 /** The severity of a finding. */
 export type Severity = (typeof Severity)[number];
 
-export interface Analysis {
-  /** Human-friendly machine-readable ID for analysis kind; e.g. CAST-C-103 */
-  id: string;
+export type Analysis<ForFindingType extends Finding['type'] = Finding['type']> = {
+/** Human-friendly machine-readable ID for analysis kind; e.g. CAST-C-103 */
+  id: ForFindingType;
   /** Human-readable title for analysis kind */
   title: string;
   /** Human-readable description for analysis. */
@@ -48,7 +48,7 @@ export interface Analysis {
    * severity of any of the individual findings contained within */
   severity: Severity;
   /** Findings reported by this analysis, if any. Omitted if empty. */
-  findings?: Finding[];
+  findings?: Extract<Finding, { type: ForFindingType }>[];
 }
 
 export type IFinding<

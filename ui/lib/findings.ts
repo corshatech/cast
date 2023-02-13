@@ -31,7 +31,7 @@ export const Severity = ['none', 'low', 'medium', 'high', 'critical'] as const;
 export type Severity = (typeof Severity)[number];
 
 export type Analysis<ForFindingType extends Finding['type'] = Finding['type']> = {
-/** Human-friendly machine-readable ID for analysis kind; e.g. CAST-C-103 */
+  /** Human-friendly machine-readable ID for analysis kind; e.g. CAST-C-103 */
   id: ForFindingType;
   /** Human-readable title for analysis kind */
   title: string;
@@ -41,11 +41,15 @@ export type Analysis<ForFindingType extends Finding['type'] = Finding['type']> =
   reportedAt: DateString;
   /** URL for authoritative source covering weakness; i.e. CVE or CWE or OWASP link */
   weaknessLink?: string;
-  /** Human-readable title of weakness ID/link; e.g. if it"s a CWE,
-   * this is something like "CWE-439" */
+  /**
+   * Human-readable title of weakness ID/link; e.g. if it"s a CWE,
+   * this is something like "CWE-439"
+   */
   weaknessTitle?: string;
-  /** Severity of failed analysis; must not be "lower" than the
-   * severity of any of the individual findings contained within */
+  /**
+   * Severity of failed analysis; must not be "lower" than the
+   * severity of any of the individual findings contained within
+   */
   severity: Severity;
   /** Findings reported by this analysis, if any. Omitted if empty. */
   findings?: Extract<Finding, { type: ForFindingType }>[];
@@ -84,8 +88,10 @@ export type IFinding<
   detectedAt: DateString;
 
   severity: Severity;
-  /** Contextual data describing the particular finding. Particular
-   * contents varies by finding kind. */
+  /**
+   * Contextual data describing the particular finding. Particular
+   * contents varies by finding kind.
+   */
   data: DataType;
 };
 
@@ -104,8 +110,10 @@ export type ReusedAuthentication = IFinding<
   {
     /** The identifier for the particular reused authentication */
     auth: string;
-    /** Minimum 2 RequestContext[], at least one unique record per srcIp
-     * involved in the auth sharing. */
+    /**
+     * Minimum 2 RequestContext[], at least one unique record per srcIp
+     * involved in the auth sharing.
+     */
     inRequests: (RequestContext & { count: number })[];
   }
 >;

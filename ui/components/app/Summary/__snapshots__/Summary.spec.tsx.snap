@@ -15,10 +15,7 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
     <p
       className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
     >
-      7
-       Faults (
-      143
-       Findings)
+      7 Faults (143 Findings)
     </p>
     <p
       className="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
@@ -155,10 +152,7 @@ exports[`Analyses Summary Component renders some problems variant 1`] = `
     <p
       className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
     >
-      7
-       Faults (
-      143
-       Findings)
+      7 Faults (143 Findings)
     </p>
     <p
       className="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"

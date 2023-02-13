@@ -9,8 +9,7 @@ describe('Analyses Summary Component', () => {
         scansPassed={17}
         findings={0}
         severityCounts={{ none: 0, low: 0, medium: 0, high: 0, critical: 0 }}
-      />
-    ).toJSON();
+      />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
@@ -21,8 +20,7 @@ describe('Analyses Summary Component', () => {
         scansPassed={10}
         findings={143}
         severityCounts={{ none: 0, low: 2, medium: 2, high: 0, critical: 3 }}
-      />
-    ).toJSON();
+      />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 
@@ -33,8 +31,7 @@ describe('Analyses Summary Component', () => {
         scansPassed={10}
         findings={143}
         severityCounts={{ none: 1, low: 2, medium: 3, high: 4, critical: 5 }}
-      />
-    ).toJSON();
+      />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

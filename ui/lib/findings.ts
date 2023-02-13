@@ -171,7 +171,7 @@ export function summarizeAnalyses(analyses: Analysis[]): AnalysesSummary {
 
   analyses.forEach(analysis => {
     const findingsCount = (analysis.findings ?? []).length;
-    if (findingsCount) {
+    if (findingsCount > 0) {
       findings += findingsCount;
       faults++;
       severityCounts[analysis.severity]++;

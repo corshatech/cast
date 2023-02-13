@@ -7,11 +7,11 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
   <div
     className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
   >
-    <div
-      className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+    <h3
+      className="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
     >
       Ongoing Results
-    </div>
+    </h3>
     <p
       className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
     >
@@ -116,11 +116,11 @@ exports[`Analyses Summary Component renders no problems variant 1`] = `
   <div
     className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
   >
-    <div
-      className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+    <h3
+      className="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
     >
       Ongoing Results
-    </div>
+    </h3>
     <p
       className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
     >
@@ -144,11 +144,11 @@ exports[`Analyses Summary Component renders some problems variant 1`] = `
   <div
     className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
   >
-    <div
-      className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+    <h3
+      className="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
     >
       Ongoing Results
-    </div>
+    </h3>
     <p
       className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
     >

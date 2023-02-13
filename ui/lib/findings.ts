@@ -17,12 +17,12 @@ export type DateString = string;
 
 export type OccurredAt =
   | {
-      start: DateString;
-      end: DateString;
-    }
+    start: DateString;
+    end: DateString;
+  }
   | {
-      at: DateString;
-    };
+    at: DateString;
+  };
 
 /** The set of severity levels */
 export const Severity = ['none', 'low', 'medium', 'high', 'critical'] as const;
@@ -49,6 +49,13 @@ export interface Analysis {
   severity: Severity;
   /** Findings reported by this analysis, if any. Omitted if empty. */
   findings?: Finding[];
+}
+
+export interface AnalysesSummary {
+  faults: number,
+  scansPassed: number,
+  findings: number,
+  severityCounts: Record<Severity, number>;
 }
 
 export type IFinding<
@@ -148,4 +155,35 @@ export async function runAllAnalyses(
 ): Promise<Analysis[]> {
   const promises = analyses.map((f) => f());
   return Promise.all(promises);
+}
+
+export function summarizeAnalyses(analyses: Analysis[]): AnalysesSummary {
+  let faults = 0;
+  let findings = 0;
+  let scansPassed = 0;
+  let severityCounts = {
+    none: 0,
+    low: 0,
+    medium: 0,
+    high: 0,
+    critical: 0,
+  };
+
+  analyses.forEach(analysis => {
+    const findingsCount = (analysis.findings ?? []).length;
+    if (findingsCount > 0) {
+      findings += findingsCount;
+      faults++;
+      severityCounts[analysis.severity]++;
+    } else {
+      scansPassed++;
+    }
+  });
+
+  return {
+    faults,
+    findings,
+    scansPassed,
+    severityCounts,
+  }
 }

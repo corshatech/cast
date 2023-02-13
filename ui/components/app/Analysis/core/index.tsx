@@ -40,15 +40,17 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
       <Typography variant='h2'>{title}</Typography>
       <Typography className='max-w-md' variant='body1'>{description}</Typography>
       <table className='font-light my-1 text-zinc-400 border-spacing-1'>
-        <tr>
-          <td>Updated:</td><td><FormattedDate when={reportedAt}/></td>
-        </tr>
-        <tr>
-          <td>Issue Severity:</td><td>{severity}</td>
-        </tr>
-        {weaknessFragment && <tr>
-          <td>Learn more:</td><td>{weaknessFragment}</td>
-        </tr>}
+        <tbody>
+          <tr>
+            <td>Updated:</td><td><FormattedDate when={reportedAt}/></td>
+          </tr>
+          <tr>
+            <td>Issue Severity:</td><td>{severity}</td>
+          </tr>
+          {weaknessFragment && <tr>
+            <td>Learn more:</td><td>{weaknessFragment}</td>
+          </tr>}
+        </tbody>
       </table>
       {children}
     </CardContent>

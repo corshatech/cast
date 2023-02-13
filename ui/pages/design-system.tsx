@@ -5,6 +5,7 @@ import {
   ButtonSection,
   ColorSection,
   IconSection,
+  AnalysisSection,
 } from '@/components/app/page-sections';
 
 export const DesignSystem = () => {
@@ -21,6 +22,7 @@ export const DesignSystem = () => {
             <ButtonSection />
             <ColorSection />
             <IconSection />
+            <AnalysisSection />
           </div>
         </main>
       </Layout>

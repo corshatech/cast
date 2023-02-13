@@ -1,53 +1,37 @@
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
-import { setupServer } from 'msw/node';
-import { rest } from 'msw';
+import renderer from 'react-test-renderer';
+import { Summary } from '@/components/index';
 
-import { Summary } from './index';
-import { AnalysesResponse } from '@/pages/api/analyses';
-
-const server = setupServer(
-  rest.get<AnalysesResponse>('/api/reused-authentication', (req, res, ctx) => {
-    return res(
-      ctx.delay(500),
-      ctx.status(200),
-      ctx.json([`Some thing with text response`]),
-    );
-  }),
-);
-
-global.fetch = jest.fn();
-
-describe('Summary Component', () => {
-  beforeAll(() => {
-    server.listen();
+describe('Analyses Summary Component', () => {
+  it('renders no problems variant', () => {
+    const tree = renderer.create(
+      <Summary
+        faults={0}
+        scansPassed={17}
+        findings={0}
+        severityCounts={{ none: 0, low: 0, medium: 0, high: 0, critical: 0 }}
+      />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
-  afterAll(() => {
-    server.close();
+  it('renders some problems variant', () => {
+    const tree = renderer.create(
+      <Summary
+        faults={7}
+        scansPassed={10}
+        findings={143}
+        severityCounts={{ none: 0, low: 2, medium: 2, high: 0, critical: 3 }}
+      />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 
-  it.skip('should show Loading when fetching data', () => {
-    render(<Summary />);
-    const loadingText = screen.getByText('Loading...');
-
-    expect(loadingText).toBeInTheDocument();
-  });
-
-  it.skip('should show error when fetch fails', () => {
-    render(<Summary />);
-    const error = screen.getByText('Error');
-
-    expect(error).toBeInTheDocument();
-  });
-
-  it.skip('should show data when fetch succeeds', async () => {
-    render(<Summary />);
-
-    await waitForElementToBeRemoved(() => screen.getByText('Loading...'));
-    expect(await screen.findByText('Summary')).toBeTruthy();
+  it('renders all problems variant', () => {
+    const tree = renderer.create(
+      <Summary
+        faults={7}
+        scansPassed={10}
+        findings={143}
+        severityCounts={{ none: 1, low: 2, medium: 3, high: 4, critical: 5 }}
+      />).toJSON();
+    expect(tree).toMatchSnapshot();
   });
 });

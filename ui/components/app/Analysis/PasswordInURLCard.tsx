@@ -1,0 +1,59 @@
+import React from 'react';
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+} from '@mui/x-data-grid';
+
+const columns: GridColDef[] = [
+  {
+    field: 'at',
+    headerName: 'Timestamp',
+    renderCell(params: GridRenderCellParams<string>) {
+      return params.value && <FormattedDate when={params.value}/>
+    },
+    width: 200,
+  },
+  { field: 'queryParams', headerName: 'Query Param(s)', width: 300 },
+  { field: 'srcIp', headerName: 'Src IP' },
+  { field: 'destIp', headerName: 'Dest IP' },
+  { field: 'URI', headerName: 'URI', width: 400 },
+];
+
+import { Analysis } from '@/lib/findings';
+import { AnalysisCard } from './core';
+import { FormattedDate } from '@/components/atoms/FormattedDate';
+
+export const PasswordInURLCard: React.FC<Analysis<'pass-in-url'>> = ({
+  findings,
+  ...otherProps
+}) => {
+  return <AnalysisCard {...otherProps}>
+    <div style={{height: '400px', width: '100%'}}>
+    <DataGrid
+      rows={(findings ?? []).map(({
+        data: {
+          queryParams,
+          inRequest: {
+            at,
+            srcIp,
+            URI,
+            destIp,
+          },
+        },
+      }) => ({
+        id: `${at}${srcIp}${destIp}${URI}${queryParams}`,
+        // each param in quotes, joined by commas into a list
+        queryParams: queryParams.map(s => `"${s}"`).join(', '),
+        at,
+        srcIp,
+        URI,
+        destIp,
+      }))}
+      columns={columns}
+      pageSize={10}
+      rowsPerPageOptions={[10]}
+    />
+    </div>
+  </AnalysisCard>
+}

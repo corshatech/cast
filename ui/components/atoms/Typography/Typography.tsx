@@ -22,11 +22,33 @@ const classes: Record<TypographyVariant, string> = {
   body4: 'leading-6 text-body4 font-nunito',
 };
 
+const defaultComponents: Record<TypographyVariant, string> = {
+  h1: 'h1',
+  h2: 'h2',
+  h3: 'h3',
+  h4: 'h4',
+  body1: 'p',
+  body2: 'p',
+  body3: 'p',
+  body4: 'p',
+};
+
 export const Typography = ({
-  component = 'span',
+  component,
   className,
   children,
   variant = 'body1',
 }: TypographyProps): JSX.Element => {
-  return React.createElement(component, { className: clsx(classes[variant] ?? classes.body1, className) }, children);
+  // in order, use:
+  // - the provided component param;
+  // - the associated default component given the variant;
+  // - then if both are still null, use a span. (should never happen)
+  const useComponent = component ?? defaultComponents[variant] ?? 'span';
+  // in order, use:
+  // - the classes for this variant;
+  // - if still null, default to the body1 classes (should never happen)
+  const useClasses = classes[variant] ?? classes.body1;
+  return React.createElement(useComponent, {
+    className: clsx(useClasses, className),
+  }, children);
 };

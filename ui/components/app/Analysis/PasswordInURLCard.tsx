@@ -5,6 +5,10 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 
+import { Analysis } from '@/lib/findings';
+import { FormattedDate } from '@/components/atoms/FormattedDate';
+import { AnalysisCard } from './core';
+
 const columns: GridColDef[] = [
   {
     field: 'at',
@@ -19,10 +23,6 @@ const columns: GridColDef[] = [
   { field: 'destIp', headerName: 'Dest IP' },
   { field: 'URI', headerName: 'URI', width: 400 },
 ];
-
-import { Analysis } from '@/lib/findings';
-import { AnalysisCard } from './core';
-import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 export const PasswordInURLCard: React.FC<Analysis<'pass-in-url'>> = ({
   findings,

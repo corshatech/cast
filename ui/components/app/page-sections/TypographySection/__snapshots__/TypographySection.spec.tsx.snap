@@ -40,7 +40,7 @@ exports[`Typography Section snapshot 1`] = `
     <div
       className="grid grid-cols-4 justify-between items-start pt-12"
     >
-      <span
+      <p
         className="leading-6 text-body1 font-nunito"
       >
         <div
@@ -53,8 +53,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Black 16px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body1 font-nunito"
       >
         <div
@@ -67,8 +67,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Bold 16px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body1 font-nunito"
       >
         <div>
@@ -77,8 +77,8 @@ exports[`Typography Section snapshot 1`] = `
         <div>
           Nunito Sans Regular 16px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body1 font-nunito"
       >
         <div
@@ -91,12 +91,12 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Medium Underline 16px
         </div>
-      </span>
+      </p>
     </div>
     <div
       className="grid grid-cols-4 justify-between items-start pt-12"
     >
-      <span
+      <p
         className="leading-6 text-body2 font-nunito"
       >
         <div
@@ -109,8 +109,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Bold 14px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body2 font-nunito"
       >
         <div>
@@ -119,8 +119,8 @@ exports[`Typography Section snapshot 1`] = `
         <div>
           Nunito Sans Regular 14px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body2 font-nunito"
       >
         <div
@@ -133,8 +133,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Medium Underline 14px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body2 font-nunito"
       >
         <div
@@ -147,12 +147,12 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Black All Caps 14px
         </div>
-      </span>
+      </p>
     </div>
     <div
       className="grid grid-cols-4 justify-between items-start pt-12"
     >
-      <span
+      <p
         className="leading-6 text-body3 font-nunito"
       >
         <div
@@ -165,8 +165,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Black 12px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body3 font-nunito"
       >
         <div
@@ -179,8 +179,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Bold 12px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body3 font-nunito"
       >
         <div>
@@ -189,8 +189,8 @@ exports[`Typography Section snapshot 1`] = `
         <div>
           Nunito Sans Regular 12px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body3 font-nunito"
       >
         <div
@@ -203,12 +203,12 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Medium Underline 12px
         </div>
-      </span>
+      </p>
     </div>
     <div
       className="grid grid-cols-4 justify-between items-start pt-12"
     >
-      <span
+      <p
         className="leading-6 text-body4 font-nunito"
       >
         <div
@@ -221,8 +221,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Black 10px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body4 font-nunito"
       >
         <div
@@ -235,8 +235,8 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Bold 10px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body4 font-nunito"
       >
         <div>
@@ -245,8 +245,8 @@ exports[`Typography Section snapshot 1`] = `
         <div>
           Nunito Sans Regular 10px
         </div>
-      </span>
-      <span
+      </p>
+      <p
         className="leading-6 text-body4 font-nunito"
       >
         <div
@@ -259,7 +259,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Nunito Sans Medium Underline 10px
         </div>
-      </span>
+      </p>
     </div>
   </div>,
   <div

@@ -1,7 +1,7 @@
 import { runAllAnalyses, summarizeAnalyses, Analysis } from '../lib/findings';
 
 const analysis1: Analysis = {
-  id: '123-analysis',
+  id: 'reused-auth',
   title: 'Test Analysis 1',
   description: 'The first test analysis',
   reportedAt: '2023-01-17T13:12:00.000Z',
@@ -63,7 +63,7 @@ const analysis1: Analysis = {
 const runner1 = (): Promise<Analysis> => Promise.resolve(analysis1);
 
 const analysis2: Analysis = {
-  id: '321-analysis',
+  id: 'reused-auth',
   title: 'Test Analysis 2',
   description: 'The second test analysis',
   reportedAt: '2023-01-17T13:12:00.000Z',
@@ -98,7 +98,7 @@ const analysis2: Analysis = {
 };
 
 const passedAnalysis: Analysis = {
-  id: '321-analysis',
+  id: 'reused-auth',
   title: 'Passed Analysis',
   description: 'The passed analysis',
   reportedAt: '2023-01-17T13:12:00.000Z',

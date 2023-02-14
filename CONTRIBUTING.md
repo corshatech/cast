@@ -60,14 +60,13 @@ Skaffold can be used to test the entire CAST pipeline:
 skaffold run --platform=linux/amd64 --port-forward --kube-context <kube context>
 ```
 
-The repository's [Skaffold config](./skaffold.yaml) has a lifecycle hook that taps an httpbin deployment with Kubeshark and sends mock traffic data to that httpbin service's endpoint for CAST to analyse. The script can also be run seperately for an existing CAST deployment and Kubeshark tapped service:
+The repository's [Skaffold config](./skaffold.yaml) has a lifecycle hook that taps an HTTPBin deployment with Kubeshark and sends mock traffic data to that HTTPBin service's endpoint for CAST to analyze. The script can also be run separately for an existing CAST deployment and Kubeshark tapped service:
 ```bash
 ./scripts/generate-pipeline-data.sh <service endpoint>
 ```
-
 Note: Skaffold will not remove Kubeshark during resource cleanup. To remove Kubeshark resources, use ```kubeshark clean```. 
 
-If you wish to generate your own test traffic for CAST, you can do so with CURL calls. For example, traffic can be sent to the httpbin service created by the repository's [Skaffold config](./skaffold.yaml) by sending CURL requests from a curl pod in your kube cluster as follows:
+If you wish to generate your own test traffic for CAST, you can do so with CURL calls. For example, traffic can be sent to the HTTPBin service created by the repository's [Skaffold config](./skaffold.yaml) by sending CURL requests from a curl pod in your kube cluster as follows:
 
 ```bash
 kubectl create namespace curl
@@ -76,6 +75,18 @@ kubectl run curl -n curl --image=curlimages/curl -- sleep 3600
 kubectl wait --for=condition=Ready pod/curl -n curl
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "http://httpbin.cast.svc.cluster.local/headers?q=1"
 ```
+
+To run the UI application in development mode with generated traffic data, first update your ```./ui/.env.local``` file with the cast-postgres connection details:
+```bash
+cat > ./ui/.env.local <<HERE
+PGUSER=cast
+PGPASSWORD=dev-password
+PGHOST=127.0.0.1
+PGPORT=5432
+PGDATABASE=cast
+HERE
+``` 
+Then run the skaffold command give above. In a separate terminal, use ```npm run dev``` from the ```./ui``` directory to start the application at http://localhost:4000. 
 
 ## Releasing
 

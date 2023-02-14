@@ -76,7 +76,7 @@ kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy
 
 
 # delete curl namespaces
-kubectl delete namespace curl
-kubectl delete namespace curl2
+kubectl delete namespace curl &
+kubectl delete namespace curl2 &
 
 echo -e "\nmock data insertion complete."

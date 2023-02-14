@@ -53,6 +53,30 @@ kubectl config use-context "$KUBE_CONTEXT"
 skaffold dev --platform=linux/amd64 --port-forward --namespace "$NAMESPACE" --default-repo="$REPO"
 ```
 
+## End to End Testing
+
+Skaffold can be used to test the entire CAST pipeline:
+```bash
+skaffold run --platform=linux/amd64 --port-forward --kube-context <kube context>
+```
+
+The repository's [Skaffold config](./skaffold.yaml) has a lifecycle hook that taps an httpbin deployment with Kubeshark and sends mock traffic data to that httpbin service's endpoint for CAST to analyse. The script can also be run seperately for an existing CAST deployment and Kubeshark tapped service:
+```bash
+./scripts/generate-pipeline-data.sh <service endpoint>
+```
+
+Note: Skaffold will not remove Kubeshark during resource cleanup. To remove Kubeshark resources, use ```kubeshark clean```. 
+
+If you wish to generate your own test traffic for CAST, you can do so with CURL calls. For example, traffic can be sent to the httpbin service created by the repository's [Skaffold config](./skaffold.yaml) by sending CURL requests from a curl pod in your kube cluster as follows:
+
+```bash
+kubectl create namespace curl
+kubectl -n curl delete pod curl
+kubectl run curl -n curl --image=curlimages/curl -- sleep 3600
+kubectl wait --for=condition=Ready pod/curl -n curl
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "http://httpbin.cast.svc.cluster.local/headers?q=1"
+```
+
 ## Releasing
 
 To release the chart, you just need to create a docker release. GitHub actions will do the rest.

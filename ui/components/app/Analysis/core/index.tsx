@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 
 import type { Analysis as AnalysisType } from '@/lib/findings';
-import { Typography } from '@/components/atoms';
+import { SeverityIcon, Typography } from '@/components/atoms';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 import Link from 'next/link';
 
@@ -37,9 +37,9 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
 
   return <Card>
     <CardContent>
-      <Typography variant='h2'>{title}</Typography>
-      <Typography className='max-w-md' variant='body1'>{description}</Typography>
-      <table className='font-light my-1 text-zinc-400 border-spacing-1'>
+      <Typography variant='h2'><SeverityIcon severity={severity}/> {title}</Typography>
+      <Typography className='max-w-prose my-2' variant='body1'>{description}</Typography>
+      <table className='font-light my-2 text-zinc-400 border-separate border-spacing-x-4'>
         <tbody>
           <tr>
             <td>Updated:</td><td><FormattedDate when={reportedAt}/></td>

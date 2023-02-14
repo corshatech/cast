@@ -29,6 +29,9 @@ jobs:
         working-directory: ./ui
         run: |
           npm run build
+      - name: Unit tests
+        working-directory: ./ui
+        run: npm run test:ci
   golint:
     name: Lint Go Code
     runs-on: ubuntu-latest

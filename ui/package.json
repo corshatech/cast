@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --watchAll",
-    "test:ci": "jest --ci",
+    "test:ci": "TZ=Europe/Lisbon jest --ci",
     "test:coverage": "jest --coverage && nyc report -t coverage --reporter=json-summary",
     "coverage": "nyc report --reporter=lcov"
   },

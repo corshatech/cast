@@ -51,6 +51,7 @@ export const ExpiredJWTCard: React.FC<Analysis<'expired-jwt'>> = ({
           },
         },
       }) => ({
+        id: `${jwt}${at}${expiredAt}${srcIp}${URI}${destPort}`,
         at,
         jwt,
         expiredAt,

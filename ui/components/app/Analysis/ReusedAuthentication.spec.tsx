@@ -1,9 +1,9 @@
+
+
 import { render } from '@testing-library/react';
 import { ReusedAuthenticationCard } from './ReusedAuthentication';
 
-// construct the Unix Epoch in the local timezone.
-// Should cause test dates to read as midnight Jan 1 1970 when printed
-const reportedAt = new Date(1970, 0, 1).toISOString();
+const reportedAt = new Date().toISOString();
 
 describe('ReusedAuthenticationCard', () => {
   it('renders all passed props', () => {

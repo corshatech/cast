@@ -1,9 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { AnalysisCard } from './';
 
-// construct the Unix Epoch in the local timezone.
-// Should cause test dates to read as midnight Jan 1 1970 when printed
-const reportedAt = new Date(1970, 0, 1).toISOString();
+const reportedAt = new Date().toISOString();
 
 describe('AnalysisCard', () => {
   it('renders all passed props', () => {

@@ -38,7 +38,7 @@ exports[`AnalysisCard Does not render a WeaknessLink when given a title but no L
               Updated:
             </td>
             <td>
-              1/1/1970, 12:00:00 AM
+              2023-01-17T13:12:00.000Z
             </td>
           </tr>
           <tr>
@@ -94,7 +94,7 @@ exports[`AnalysisCard renders a weaknessLink without title 1`] = `
               Updated:
             </td>
             <td>
-              1/1/1970, 12:00:00 AM
+              2023-01-17T13:12:00.000Z
             </td>
           </tr>
           <tr>
@@ -163,7 +163,7 @@ exports[`AnalysisCard renders all passed props 1`] = `
               Updated:
             </td>
             <td>
-              1/1/1970, 12:00:00 AM
+              2023-01-17T13:12:00.000Z
             </td>
           </tr>
           <tr>

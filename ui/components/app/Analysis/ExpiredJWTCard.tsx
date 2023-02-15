@@ -29,6 +29,7 @@ const columns: GridColDef[] = [
   },
   { field: 'srcIp', headerName: 'Src IP' },
   { field: 'URI', headerName: 'URI', width: 400 },
+  { field: 'destIp', headerName: 'Dest IP' },
   { field: 'destPort', headerName: 'Dest Port' },
 ];
 
@@ -47,6 +48,7 @@ export const ExpiredJWTCard: React.FC<Analysis<'expired-jwt'>> = ({
             at,
             srcIp,
             URI,
+            destIp,
             destPort,
           },
         },
@@ -57,6 +59,7 @@ export const ExpiredJWTCard: React.FC<Analysis<'expired-jwt'>> = ({
         expiredAt,
         srcIp,
         URI,
+        destIp,
         destPort,
       }))}
       columns={columns}

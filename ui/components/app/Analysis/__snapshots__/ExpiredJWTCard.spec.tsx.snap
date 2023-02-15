@@ -55,7 +55,7 @@ exports[`ExpiredJWTCard renders all passed props 1`] = `
         style="height: 400px; width: 100%;"
       >
         <div
-          aria-colcount="6"
+          aria-colcount="7"
           aria-multiselectable="false"
           aria-rowcount="2"
           class="MuiDataGrid-root MuiDataGrid-root--densityStandard css-1e2bxag-MuiDataGrid-root"

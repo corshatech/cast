@@ -49,7 +49,7 @@ portForward:
   - resourceType: service
     resourceName: cast-service
     port: 80
-    localPort: 3000
+    localPort: 8000
   - resourceType: service
     resourceName: cast-postgresql
     port: 5432

@@ -57,14 +57,15 @@ skaffold dev --platform=linux/amd64 --port-forward --namespace "$NAMESPACE" --de
 
 Skaffold can be used to test the entire CAST pipeline:
 ```bash
-skaffold run --platform=linux/amd64 --port-forward --kube-context <kube context>
+skaffold run --platform=linux/amd64 --port-forward
 ```
+Note: You will need to set your kube-context prior to running skaffold. 
 
 The repository's [Skaffold config](./skaffold.yaml) has a lifecycle hook that taps an HTTPBin deployment with Kubeshark and sends mock traffic data to that HTTPBin service's endpoint for CAST to analyze. The script can also be run separately for an existing CAST deployment and Kubeshark tapped service:
 ```bash
 ./scripts/generate-pipeline-data.sh <service endpoint>
 ```
-Note: Skaffold will not remove Kubeshark during resource cleanup. To remove Kubeshark resources, use ```kubeshark clean```. 
+Skaffold will not remove Kubeshark during resource cleanup. To remove Kubeshark resources, use ```kubeshark clean```. 
 
 If you wish to generate your own test traffic for CAST, you can do so with CURL calls. For example, traffic can be sent to the HTTPBin service created by the repository's [Skaffold config](./skaffold.yaml) by sending CURL requests from a curl pod in your kube cluster as follows:
 
@@ -86,7 +87,7 @@ PGPORT=5432
 PGDATABASE=cast
 HERE
 ``` 
-Then run the skaffold command give above. In a separate terminal, use ```npm run dev``` from the ```./ui``` directory to start the application at http://localhost:4000. 
+Then run the skaffold command give above. In a separate terminal, use ```npm run dev``` from the ```./ui``` directory to start the application at http://localhost:3000. 
 
 ## Releasing
 

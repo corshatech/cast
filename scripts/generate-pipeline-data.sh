@@ -17,8 +17,7 @@ svc=$1
 echo "service endpoint: $svc"
 
 # kubeshark tap
-kubeshark=`kubeshark tap -n cast "(httpbin*)" --set headless=true`
-$kubeshark &
+nohup kubeshark tap -n cast "(httpbin*)" --set headless=true > foo.out 2> foo.err < /dev/null &
 
 
 # create curl pod
@@ -76,7 +75,8 @@ kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy
 
 
 # delete curl namespaces
-kubectl delete namespace curl &
-kubectl delete namespace curl2 &
+kubectl delete namespace curl --wait=false --force --grace-period=0 
+kubectl delete namespace curl2 --wait=false --force --grace-period=0 
 
 echo -e "\nmock data insertion complete."
+exit 0

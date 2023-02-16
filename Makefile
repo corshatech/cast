@@ -49,4 +49,10 @@ clean:
 	$(GO) clean ./...
 	$(RM) -rf build
 
+# remove cast deployment resources
+cast-clean:
+	kubectl delete ns cast
+	kubeshark clean
+	kubectl delete pvc data-cast-postgresql-0 -n cast
+
 .PHONY: all test cast tidy lint lint-helm

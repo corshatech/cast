@@ -174,7 +174,7 @@ Alternatively, a YAML file that specifies the values for the parameters can be p
 
 ## Contributing
 
-Check [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to contribute.
+Check [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to contribute and developer workflows.
 
 If you have questions you would like to ask the developers,
 or feedback you would like to provide,

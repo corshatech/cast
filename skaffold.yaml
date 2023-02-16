@@ -24,9 +24,6 @@ build:
 deploy:
   helm:
     releases:
-    - name: httpbin
-      namespace: cast
-      remoteChart: https://matheusfm.dev/charts/httpbin-0.1.1.tgz
     - name: cast
       chartPath: k8s/helm/cast
       namespace: cast
@@ -40,12 +37,19 @@ deploy:
 
         ui.image.repository: "{{ .IMAGE_REPO2 }}"
         ui.image.tag: "{{ .IMAGE_TAG2 }}"
+    - name: httpbin
+      namespace: cast
+      remoteChart: https://matheusfm.dev/charts/httpbin-0.1.1.tgz
+    hooks:
+      after:
+        - host:
+            command: ["sh","-c", "./scripts/generate-pipeline-data.sh http://httpbin.cast.svc.cluster.local"]
 
 portForward:
   - resourceType: service
     resourceName: cast-service
     port: 80
-    localPort: 3000
+    localPort: 8000
   - resourceType: service
     resourceName: cast-postgresql
     port: 5432

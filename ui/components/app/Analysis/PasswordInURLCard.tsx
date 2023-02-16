@@ -21,6 +21,7 @@ const columns: GridColDef[] = [
   { field: 'queryParams', headerName: 'Query Param(s)', width: 300 },
   { field: 'srcIp', headerName: 'Src IP' },
   { field: 'destIp', headerName: 'Dest IP' },
+  { field: 'destPort', headerName: 'Dest Port' },
   { field: 'URI', headerName: 'URI', width: 400 },
 ];
 
@@ -39,16 +40,18 @@ export const PasswordInURLCard: React.FC<Analysis<'pass-in-url'>> = ({
             srcIp,
             URI,
             destIp,
+            destPort,
           },
         },
       }) => ({
-        id: `${at}${srcIp}${destIp}${URI}${queryParams}`,
+        id: `${at}${srcIp}${destIp}${destPort}${URI}${queryParams}`,
         // each param in quotes, joined by commas into a list
         queryParams: queryParams.map(s => `"${s}"`).join(', '),
         at,
         srcIp,
         URI,
         destIp,
+        destPort,
       }))}
       columns={columns}
       pageSize={10}

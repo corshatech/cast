@@ -19,6 +19,9 @@ echo "service endpoint: $svc"
 # kubeshark tap
 nohup kubeshark tap -n cast "(httpbin*)" --set headless=true > foo.out 2> foo.err < /dev/null &
 
+# Waiting for collector pod successfully connect to postgres and kubeshark
+collector=$(kubectl get pods --namespace=cast | grep cast-collector | cut -d' ' -f1)
+while ! kubectl logs -n cast ${collector}|grep -q "Starting export of records." ;do echo "Waiting for collector to be ready.\n";sleep 10;done
 
 # create curl pod
 kubectl create namespace curl

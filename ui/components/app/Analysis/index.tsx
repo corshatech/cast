@@ -2,6 +2,7 @@ import { Analysis as AnalysisType } from '@/lib/findings';
 import { PasswordInURLCard } from './PasswordInURLCard';
 import { ExpiredJWTCard } from './ExpiredJWTCard';
 import { ReusedAuthenticationCard } from './ReusedAuthentication';
+import { UseOfBasicAuthCard } from './UseOfBasicAuthCard';
 
 export const Analysis: React.FC<AnalysisType> = (analysis) => {
   switch (analysis.id) {
@@ -13,6 +14,9 @@ export const Analysis: React.FC<AnalysisType> = (analysis) => {
     }
     case 'pass-in-url': {
       return <PasswordInURLCard {...analysis as AnalysisType<'pass-in-url'>} />
+    }
+    case 'use-of-basic-auth': {
+      return <UseOfBasicAuthCard {...analysis as AnalysisType<'use-of-basic-auth'>}/>
     }
     default:
       return <p>Error</p>

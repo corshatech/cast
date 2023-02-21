@@ -37,7 +37,7 @@ export const ExpiredJWTCard: React.FC<Analysis<'expired-jwt'>> = ({
   findings,
   ...otherProps
 }) => {
-  return <AnalysisCard {...otherProps}>
+  return <AnalysisCard {...otherProps} noResults={(findings ?? []).length === 0}>
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid
       rows={(findings ?? []).map(({

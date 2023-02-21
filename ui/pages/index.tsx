@@ -36,7 +36,7 @@ export default function Dashboard() {
                 {summary && <Summary {...summary} />}
               </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div className="grid grid-cols-1 mx-auto gap-8 mb-12">
               {(analyses.length > 0) && analyses.map((a) => <Analysis {...a} key={a.id}/>)}
               <div className="w-full bg-slate-200 h-[400px] rounded-lg flex justify-center items-center">
                 Table 2

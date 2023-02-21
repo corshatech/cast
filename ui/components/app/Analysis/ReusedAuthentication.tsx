@@ -19,7 +19,7 @@ export const ReusedAuthenticationCard: React.FC<Analysis<'reused-auth'>> = ({
   findings,
   ...otherProps
 }) => {
-  return <AnalysisCard {...otherProps}>
+  return <AnalysisCard {...otherProps} noResults={(findings ?? []).length === 0}>
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid
       rows={(findings ?? []).flatMap((f) => (

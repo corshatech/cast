@@ -8,17 +8,22 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
     className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
   >
     <h3
-      className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+      className="leading-6 text-h4 font-poppins font-semibold"
     >
       Ongoing Results
     </h3>
     <p
-      className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      className="leading-6 text-body1 font-nunito"
     >
       7 Faults (143 Findings)
     </p>
     <p
-      className="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+      className="leading-6 text-body1 font-nunito"
+      style={
+        {
+          "color": "rgba(0, 0, 0, 0.6)",
+        }
+      }
     >
       10
        passed
@@ -117,17 +122,22 @@ exports[`Analyses Summary Component renders no problems variant 1`] = `
     className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
   >
     <h3
-      className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+      className="leading-6 text-h4 font-poppins font-semibold"
     >
       Ongoing Results
     </h3>
     <p
-      className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      className="leading-6 text-body1 font-nunito"
     >
-      No problems detected
+      No problems detected yet. Live scanning will continue in the background.
     </p>
     <p
-      className="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+      className="leading-6 text-body1 font-nunito"
+      style={
+        {
+          "color": "rgba(0, 0, 0, 0.6)",
+        }
+      }
     >
       17
        passed
@@ -145,17 +155,22 @@ exports[`Analyses Summary Component renders some problems variant 1`] = `
     className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
   >
     <h3
-      className="MuiTypography-root MuiTypography-h5 css-ag7rrr-MuiTypography-root"
+      className="leading-6 text-h4 font-poppins font-semibold"
     >
       Ongoing Results
     </h3>
     <p
-      className="MuiTypography-root MuiTypography-body1 css-ahj2mt-MuiTypography-root"
+      className="leading-6 text-body1 font-nunito"
     >
       7 Faults (143 Findings)
     </p>
     <p
-      className="MuiTypography-root MuiTypography-body1 css-1pnmrwp-MuiTypography-root"
+      className="leading-6 text-body1 font-nunito"
+      style={
+        {
+          "color": "rgba(0, 0, 0, 0.6)",
+        }
+      }
     >
       10
        passed

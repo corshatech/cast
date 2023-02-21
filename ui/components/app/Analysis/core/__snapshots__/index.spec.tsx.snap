@@ -193,3 +193,55 @@ exports[`AnalysisCard renders all passed props 1`] = `
   </div>
 </DocumentFragment>
 `;
+
+exports[`AnalysisCardLoading renders as expected 1`] = `
+<div
+  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root animate-pulse css-bhp9pd-MuiPaper-root-MuiCard-root"
+>
+  <div
+    className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+  >
+    <h2
+      className="leading-6 text-h2 font-poppins font-bold h-6 bg-gray-200 rounded-full dark:bg-gray-500 w-48 mb-2"
+    />
+    <p
+      className="leading-6 text-body1 font-nunito max-w-prose my-2 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 w-40 mb-2"
+    />
+    <table
+      className="font-light my-2 text-zinc-400 border-separate border-spacing-x-4"
+    >
+      <tbody>
+        <tr>
+          <td>
+            <div
+              className="max-w-prose my-2 h-4 bg-gray-200 rounded-full dark:bg-gray-500 w-20 mb-2"
+            />
+          </td>
+          <td>
+            <div
+              className="max-w-prose my-2 h-4 bg-gray-200 rounded-full dark:bg-gray-500 w-32 mb-2"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div
+              className="max-w-prose my-2 h-4 bg-gray-200 rounded-full dark:bg-gray-500 w-20 mb-2"
+            />
+          </td>
+          <td>
+            <div
+              className="max-w-prose my-2 h-4 bg-gray-200 rounded-full dark:bg-gray-500 w-12 mb-2"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div
+      className="w-full bg-gray-200 dark:bg-gray-500 h-[400px] rounded-lg"
+    >
+       
+    </div>
+  </div>
+</div>
+`;

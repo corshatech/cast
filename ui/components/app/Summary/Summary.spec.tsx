@@ -1,5 +1,5 @@
 import renderer from 'react-test-renderer';
-import { Summary } from '@/components/index';
+import { Summary, SummaryLoading } from '@/components/index';
 
 describe('Analyses Summary Component', () => {
   it('renders no problems variant', () => {
@@ -35,3 +35,11 @@ describe('Analyses Summary Component', () => {
     expect(tree).toMatchSnapshot();
   });
 });
+
+describe('Analyses Summary Loading Component', () => {
+  it('rednders correctly', () => {
+    const tree = renderer.create(
+      <SummaryLoading />).toJSON();
+    expect(tree).toMatchSnapshot();
+  })
+})

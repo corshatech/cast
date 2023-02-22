@@ -1,13 +1,21 @@
 import Head from 'next/head';
 import Alert from '@mui/material/Alert';
 import useSWR from 'swr';
-import { Roarr } from 'roarr';
 import type { AnalysesResponse } from '@/pages/api/analyses';
 
 import { Analysis, AnalysisCardLoading } from '@/components/app/Analysis';
 import { Header } from '@/components/app/Header/Header';
 import { Layout, Summary, SummaryLoading } from '@/components/index';
 import { summarizeAnalyses } from 'lib/findings';
+
+const AnalysisGridLoading = () => {
+  return (<>
+    <AnalysisCardLoading />
+    <AnalysisCardLoading />
+    <AnalysisCardLoading />
+    <AnalysisCardLoading />
+  </>);
+}
 
 export default function Dashboard() {
   const { data, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
@@ -43,14 +51,3 @@ export default function Dashboard() {
     </>
   );
 }
-
-
-const AnalysisGridLoading = () => {
-  return (<>
-    <AnalysisCardLoading />
-    <AnalysisCardLoading />
-    <AnalysisCardLoading />
-    <AnalysisCardLoading />
-  </>);
-}
-

@@ -4,6 +4,8 @@ import { ExpiredJWTCard } from './ExpiredJWTCard';
 import { ReusedAuthenticationCard } from './ReusedAuthentication';
 import { UseOfBasicAuthCard } from './UseOfBasicAuthCard';
 
+export { AnalysisCardLoading } from './core';
+
 export const Analysis: React.FC<AnalysisType> = (analysis) => {
   switch (analysis.id) {
     case 'expired-jwt': {

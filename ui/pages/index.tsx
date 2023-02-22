@@ -10,7 +10,7 @@ import { Layout, Summary, SummaryLoading } from '@/components/index';
 import { summarizeAnalyses } from 'lib/findings';
 
 export default function Dashboard() {
-  const { data, isLoading, error } = useSWR<AnalysesResponse>('/api/analysesxxx');
+  const { data, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
   const analysesResponse = data;
 
   const summary = !isLoading && analysesResponse && summarizeAnalyses(analysesResponse.analyses);

@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 export type AnalysisProps = {
   children?: React.ReactNode;
+  exportButton?: React.ReactNode;
 } & Pick<
   AnalysisType,
   'description'
@@ -29,6 +30,7 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   severity,
   title,
   children,
+  exportButton,
 }) => {
   let weaknessFragment = null;
   if (weaknessLink !== undefined) {
@@ -37,7 +39,10 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
 
   return <Card>
     <CardContent>
-      <Typography variant='h2'><SeverityIcon severity={severity} /> {title}</Typography>
+      <div className='flex flex-nowrap'>
+        <Typography variant='h2' className='grow'><SeverityIcon severity={severity} /> {title}</Typography>
+        {exportButton}
+      </div>
       <Typography className='max-w-prose my-2' variant='body1'>{description}</Typography>
       <table className='font-light my-2 text-zinc-400 border-separate border-spacing-x-4'>
         <tbody>

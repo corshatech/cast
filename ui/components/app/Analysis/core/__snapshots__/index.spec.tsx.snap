@@ -8,22 +8,26 @@ exports[`AnalysisCard Does not render a WeaknessLink when given a title but no L
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
-      <h2
-        class="leading-6 text-h2 font-poppins font-bold"
+      <div
+        class="flex flex-nowrap"
       >
-        <svg
-          aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium css-1yq1soz-MuiSvgIcon-root"
-          data-testid="LightbulbIcon"
-          focusable="false"
-          viewBox="0 0 24 24"
+        <h2
+          class="leading-6 text-h2 font-poppins font-bold grow"
         >
-          <path
-            d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
-          />
-        </svg>
-         Test title
-      </h2>
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium css-1yq1soz-MuiSvgIcon-root"
+            data-testid="LightbulbIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+            />
+          </svg>
+           Test title
+        </h2>
+      </div>
       <p
         class="leading-6 text-body1 font-nunito max-w-prose my-2"
       >
@@ -64,22 +68,26 @@ exports[`AnalysisCard renders a weaknessLink without title 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
-      <h2
-        class="leading-6 text-h2 font-poppins font-bold"
+      <div
+        class="flex flex-nowrap"
       >
-        <svg
-          aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium css-1yq1soz-MuiSvgIcon-root"
-          data-testid="LightbulbIcon"
-          focusable="false"
-          viewBox="0 0 24 24"
+        <h2
+          class="leading-6 text-h2 font-poppins font-bold grow"
         >
-          <path
-            d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
-          />
-        </svg>
-         Test title
-      </h2>
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium css-1yq1soz-MuiSvgIcon-root"
+            data-testid="LightbulbIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+            />
+          </svg>
+           Test title
+        </h2>
+      </div>
       <p
         class="leading-6 text-body1 font-nunito max-w-prose my-2"
       >
@@ -133,22 +141,26 @@ exports[`AnalysisCard renders all passed props 1`] = `
     <div
       class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
     >
-      <h2
-        class="leading-6 text-h2 font-poppins font-bold"
+      <div
+        class="flex flex-nowrap"
       >
-        <svg
-          aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium css-1yq1soz-MuiSvgIcon-root"
-          data-testid="LightbulbIcon"
-          focusable="false"
-          viewBox="0 0 24 24"
+        <h2
+          class="leading-6 text-h2 font-poppins font-bold grow"
         >
-          <path
-            d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
-          />
-        </svg>
-         Test title
-      </h2>
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium css-1yq1soz-MuiSvgIcon-root"
+            data-testid="LightbulbIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"
+            />
+          </svg>
+           Test title
+        </h2>
+      </div>
       <p
         class="leading-6 text-body1 font-nunito max-w-prose my-2"
       >

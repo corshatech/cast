@@ -17,9 +17,12 @@ jobs:
       - name: markdownlint-cli2-action
         uses: DavidAnson/markdownlint-cli2-action@v9
         with:
+          command: config
           globs: |
+            .markdownlint.yaml
             **/*.md
             #ui/node_modules
+            #.github
   eslint:
     name: Lint TS,JS,SCSS
     runs-on: ubuntu-latest

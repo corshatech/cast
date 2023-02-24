@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { AnalysisCard } from './';
+import renderer from 'react-test-renderer';
+import { AnalysisCard, AnalysisCardLoading } from './';
 
 const reportedAt = new Date().toISOString();
 
@@ -40,3 +41,13 @@ describe('AnalysisCard', () => {
     expect(asFragment()).toMatchSnapshot()
   });
 });
+
+describe('AnalysisCardLoading', () => {
+  it('renders as expected', () => {
+    const tree = renderer.create(
+      <AnalysisCardLoading />).toJSON();
+
+    expect(tree).toMatchSnapshot();
+
+  })
+})

@@ -1,9 +1,11 @@
 # Contributing Guidelines
 
 ## Code of Conduct
+
 Thank you for your interest in contributing to CAST! We are dedicated to making contributing to our project a positive experience for everyone. We ask that our users and contributors review and observe our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## The Contributor License Agreement
+
 In order to contribute to CAST, you will need to sign Corsha's [Contributor License Agreement](./CLA.md) and email the signed copy to legal@corsha.com.
 
 ## Contribution Guidelines
@@ -17,77 +19,33 @@ In order to contribute to CAST, you will need to sign Corsha's [Contributor Lice
 
 ## Local Development
 
-We use docker-desktop and Skaffold for local development:
+We use [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [Skaffold](https://skaffold.dev) for local development. You will need to [enable Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes) support within Docker Desktop.
+
+The local Skaffold deployment starts Kubeshark, CAST, creates a `./ui/.env.local` file, and runs `scripts/generate-pineline-data.sh` to insert test data.
+
+Typically, when you are working on CAST, you will want to run the application in headless mode. This skips the build and deployment of the front-end which can time considerable time.
+
+`skaffold dev` will redeploy the application whenever changes are detected. You can then use `npm run dev` to iterate on the front-end without redeployment.
+
+To deploy CAST locally in headless mode run the following command:
 
 ```bash
-# deploy to the cast namespace
-skaffold dev --platform=linux/amd64 --port-forward --kube-context docker-desktop
-
-
-# OR deploy to a custom namespace
-skaffold dev --platform=linux/amd64 --port-forward --kube-context docker-desktop --namespace "<NS>"
+skaffold dev --profile headless --port-forward --kube-context docker-desktop
 ```
 
-Skaffold will watch for changes and redeploy the application to docker-desktop.
+Once you see the log message "Starting export of records.", the back-end of CAST is running.
 
-Now that Cast is up, we can run a Kubeshark tap on all the pods locally
-
+In a separate terminal start the front-end:
 
 ```bash
-kubectl config use-context docker-desktop
-kubeshark tap -A
+cd ./ui
+npm ci # optionally install packages
+npm run dev
 ```
 
-## Deploying the local chart to a remote cluster
+This starts the front-end located at <http://localhost:3000>
 
-If you would like to test the local chart on a remote cluster, you will need to push the docker image to a docker registry that is accessible to your remote cluster.
-
-If that docker registry requires logging in, you will need to [create a docker-registry secret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials) called `regcred` in the namespace you're deploying CAST to.
-
-Then set ```build.local.push: true``` in ```skaffold.yaml```.
-
-After that preliminary setup is done, we can iterate on the chart using the remote cluster in the same way we did with docker-desktop. We just need to change the docker registry with the `--default-repo` argument.
-
-```bash
-kubectl config use-context "$KUBE_CONTEXT"
-skaffold dev --platform=linux/amd64 --port-forward --namespace "$NAMESPACE" --default-repo="$REPO"
-```
-
-## End to End Testing
-
-Skaffold can be used to test the entire CAST pipeline:
-```bash
-skaffold run --platform=linux/amd64 --port-forward
-```
-Note: You will need to set your kube-context prior to running skaffold. 
-
-The repository's [Skaffold config](./skaffold.yaml) has a lifecycle hook that taps an HTTPBin deployment with Kubeshark and sends mock traffic data to that HTTPBin service's endpoint for CAST to analyze. The script can also be run separately for an existing CAST deployment and Kubeshark tapped service:
-```bash
-./scripts/generate-pipeline-data.sh <service endpoint>
-```
-Skaffold will not remove Kubeshark during resource cleanup. To remove Kubeshark resources, use ```kubeshark clean```. 
-
-If you wish to generate your own test traffic for CAST, you can do so with CURL calls. For example, traffic can be sent to the HTTPBin service created by the repository's [Skaffold config](./skaffold.yaml) by sending CURL requests from a curl pod in your kube cluster as follows:
-
-```bash
-kubectl create namespace curl
-kubectl -n curl delete pod curl
-kubectl run curl -n curl --image=curlimages/curl -- sleep 3600
-kubectl wait --for=condition=Ready pod/curl -n curl
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "http://httpbin.cast.svc.cluster.local/headers?q=1"
-```
-
-To run the UI application in development mode with generated traffic data, first update your ```./ui/.env.local``` file with the cast-postgres connection details:
-```bash
-cat > ./ui/.env.local <<HERE
-PGUSER=cast
-PGPASSWORD=dev-password
-PGHOST=127.0.0.1
-PGPORT=5432
-PGDATABASE=cast
-HERE
-``` 
-Then run the skaffold command give above. In a separate terminal, use ```npm run dev``` from the ```./ui``` directory to start the application at http://localhost:3000. 
+You should be ready to work on CAST. Changes to the back-end will be redeployed by Skaffold, and changes made to the front-end will be reloaded by the Next.js development server
 
 ## Releasing
 

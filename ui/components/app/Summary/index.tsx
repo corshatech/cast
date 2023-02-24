@@ -28,13 +28,14 @@ export const Summary = ({ faults, findings, scansPassed, severityCounts }: Summa
 }
 
 export const SummaryLoading = () => {
+  const theme = useTheme();
   const liClassName = 'w-32 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 mb-2';
 
   return (<Card className="animate-pulse">
     <CardContent>
-      <Typography variant="h5" component="h3" className="h-5 bg-gray-200 rounded-full dark:bg-gray-500 w-48 mb-2"></Typography>
+      <Typography variant="h4" component="h3" className="h-5 bg-gray-200 rounded-full dark:bg-gray-500 w-48 mb-2"></Typography>
       <Typography className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 w-40 mb-2"></Typography>
-      <Typography className="h-2 bg-gray-200 rounded-full dark:bg-gray-500 w-20 mb-2" color="text.secondary"></Typography>
+      <Typography className="h-2 bg-gray-200 rounded-full dark:bg-gray-500 w-20 mb-2" style={{color: theme.palette.text.secondary}}></Typography>
       <ul>
         <li className={liClassName} key="critical"></li>
         <li className={liClassName} key="high"></li>

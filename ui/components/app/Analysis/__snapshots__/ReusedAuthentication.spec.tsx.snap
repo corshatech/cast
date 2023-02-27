@@ -83,7 +83,7 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
         <div
           aria-colcount="5"
           aria-multiselectable="false"
-          aria-rowcount="1"
+          aria-rowcount="3"
           class="MuiDataGrid-root MuiDataGrid-root--densityStandard css-1e2bxag-MuiDataGrid-root"
           role="grid"
         >
@@ -93,15 +93,6 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
           <div
             class="MuiDataGrid-main css-204u17-MuiDataGrid-main"
           >
-            <div
-              style="height: -56px; width: 0px; position: absolute; top: 56px;"
-            >
-              <div
-                class="MuiDataGrid-overlay css-c1gd0l-MuiDataGrid-overlay"
-              >
-                No rows
-              </div>
-            </div>
             <div
               class="MuiDataGrid-columnHeaders css-z8fhq1-MuiDataGrid-columnHeaders"
               style="min-height: 56px; max-height: 56px; line-height: 56px;"
@@ -434,12 +425,135 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
               >
                 <div
                   class="MuiDataGrid-virtualScrollerContent MuiDataGrid-virtualScrollerContent--overflowed css-1kwdphh-MuiDataGrid-virtualScrollerContent"
-                  style="width: auto; height: 1px; min-height: auto;"
+                  style="width: auto; height: 104px; min-height: auto;"
                 >
                   <div
                     class="MuiDataGrid-virtualScrollerRenderZone css-s1v7zr-MuiDataGrid-virtualScrollerRenderZone"
-                    style="transform: translate3d(0px, undefinedpx, 0px);"
-                  />
+                    style="transform: translate3d(0px, 0px, 0px);"
+                  >
+                    <div
+                      aria-rowindex="2"
+                      aria-selected="false"
+                      class="MuiDataGrid-row"
+                      data-id="test-data-auth{"at":"2023-01-17T13:12:00.000Z","destIp":"1.1.1.1","destPort":"20","proto":"tcp","srcIp":"2.2.2.2","srcPort":"5129","URI":"https://example.com","count":1}"
+                      data-rowindex="0"
+                      role="row"
+                      style="max-height: 52px; min-height: 52px;"
+                    >
+                      <div
+                        aria-colindex="1"
+                        aria-colspan="1"
+                        class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
+                        data-colindex="0"
+                        data-field="Secret"
+                        role="cell"
+                        style="min-width: 400px; max-width: 400px; min-height: 52px; max-height: 52px;"
+                        tabindex="-1"
+                      >
+                        <div
+                          class="MuiDataGrid-cellContent"
+                          title="test-data-auth"
+                        >
+                          test-data-auth
+                        </div>
+                      </div>
+                      <div
+                        aria-colindex="2"
+                        aria-colspan="1"
+                        class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
+                        data-colindex="1"
+                        data-field="Src IP"
+                        role="cell"
+                        style="min-width: 100px; max-width: 100px; min-height: 52px; max-height: 52px;"
+                        tabindex="-1"
+                      >
+                        <div
+                          class="MuiDataGrid-cellContent"
+                          title="2.2.2.2"
+                        >
+                          2.2.2.2
+                        </div>
+                      </div>
+                      <div
+                        aria-colindex="3"
+                        aria-colspan="1"
+                        class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
+                        data-colindex="2"
+                        data-field="URI"
+                        role="cell"
+                        style="min-width: 400px; max-width: 400px; min-height: 52px; max-height: 52px;"
+                        tabindex="-1"
+                      >
+                        <div
+                          class="MuiDataGrid-cellContent"
+                          title="https://example.com"
+                        >
+                          https://example.com
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      aria-rowindex="3"
+                      aria-selected="false"
+                      class="MuiDataGrid-row MuiDataGrid-row--lastVisible"
+                      data-id="test-data-auth{"at":"2023-01-17T13:12:00.000Z","destIp":"1.1.1.1","destPort":"20","proto":"tcp","srcIp":"1.1.1.1","srcPort":"5129","URI":"https://example.com","count":1}"
+                      data-rowindex="1"
+                      role="row"
+                      style="max-height: 52px; min-height: 52px;"
+                    >
+                      <div
+                        aria-colindex="1"
+                        aria-colspan="1"
+                        class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
+                        data-colindex="0"
+                        data-field="Secret"
+                        role="cell"
+                        style="min-width: 400px; max-width: 400px; min-height: 52px; max-height: 52px;"
+                        tabindex="-1"
+                      >
+                        <div
+                          class="MuiDataGrid-cellContent"
+                          title="test-data-auth"
+                        >
+                          test-data-auth
+                        </div>
+                      </div>
+                      <div
+                        aria-colindex="2"
+                        aria-colspan="1"
+                        class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
+                        data-colindex="1"
+                        data-field="Src IP"
+                        role="cell"
+                        style="min-width: 100px; max-width: 100px; min-height: 52px; max-height: 52px;"
+                        tabindex="-1"
+                      >
+                        <div
+                          class="MuiDataGrid-cellContent"
+                          title="1.1.1.1"
+                        >
+                          1.1.1.1
+                        </div>
+                      </div>
+                      <div
+                        aria-colindex="3"
+                        aria-colspan="1"
+                        class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
+                        data-colindex="2"
+                        data-field="URI"
+                        role="cell"
+                        style="min-width: 400px; max-width: 400px; min-height: 52px; max-height: 52px;"
+                        tabindex="-1"
+                      >
+                        <div
+                          class="MuiDataGrid-cellContent"
+                          title="https://example.com"
+                        >
+                          https://example.com
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -475,7 +589,7 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
                   <p
                     class="MuiTablePagination-displayedRows css-levciy-MuiTablePagination-displayedRows"
                   >
-                    0–0 of 0
+                    1–2 of 2
                   </p>
                   <div
                     class="MuiTablePagination-actions"

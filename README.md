@@ -131,7 +131,9 @@ more information.
 > remove the cached postgres password from the previous CAST
 > deployment.
 >
-> ```bash kubectl delete pvc data-cast-postgresql-0```
+> ```bash
+> kubectl delete pvc data-cast-postgresql-0
+> ```
 >
 > This can be avoided by setting `postgresql.auth.password` as
 > described in the [Helm Parameters](#helm-parameters) section.

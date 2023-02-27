@@ -60,6 +60,7 @@ export const PasswordInURLCard: React.FC<Analysis<'pass-in-url'>> = ({
       data={data}
       filename={`${reportedAt}-PasswordsInURL.csv`}
     />}
+    noResults={data.length === 0}
   >
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid

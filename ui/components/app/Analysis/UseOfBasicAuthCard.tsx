@@ -56,6 +56,7 @@ export const UseOfBasicAuthCard: React.FC<Analysis<'use-of-basic-auth'>> = ({
       filename={`${reportedAt}-UseOfBasicAuth.csv`}
     />}
     {...otherProps}
+    noResults={data.length === 0}
   >
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid

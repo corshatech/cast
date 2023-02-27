@@ -115,7 +115,7 @@ exports[`AnalysisCard renders a weaknessLink without title 1`] = `
           </tr>
           <tr>
             <td>
-              Learn more:
+              Learn more:
             </td>
             <td>
               <a
@@ -188,7 +188,7 @@ exports[`AnalysisCard renders all passed props 1`] = `
           </tr>
           <tr>
             <td>
-              Learn more:
+              Learn more:
             </td>
             <td>
               <a

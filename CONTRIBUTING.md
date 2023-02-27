@@ -1,19 +1,31 @@
 # Contributing Guidelines
 
 ## Code of Conduct
-Thank you for your interest in contributing to CAST! We are dedicated to making contributing to our project a positive experience for everyone. We ask that our users and contributors review and observe our [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+Thank you for your interest in contributing to CAST! We are dedicated
+to making contributing to our project a positive experience for
+everyone. We ask that our users and contributors review and observe
+our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## The Contributor License Agreement
-In order to contribute to CAST, you will need to sign Corsha's [Contributor License Agreement](./CLA.md) and email the signed copy to legal@corsha.com.
+
+In order to contribute to CAST, you will need to sign Corsha's
+[Contributor License Agreement](./CLA.md) and email the signed copy to
+legal@corsha.com.
 
 ## Contribution Guidelines
 
-* Code style - most of the code is written in Go, please follow [these guidelines](https://golang.org/doc/effective_go)
+* Code style - most of the code is written in Go, please follow [these
+  guidelines](https://golang.org/doc/effective_go)
 * Go-tools compatible (`go get`, `go test`, etc.)
 * Code coverage for unit tests must not decrease.
-* Code must be usefully commented. Not only for developers on the project, but also for external users of these packages
-* When reviewing PRs, you are encouraged to use Golang's [code review comments page](https://github.com/golang/go/wiki/CodeReviewComments)
-* Project follows [Google JSON Style Guide](https://google.github.io/styleguide/jsoncstyleguide.xml) for the REST APIs that are provided.
+* Code must be usefully commented. Not only for developers on the
+  project, but also for external users of these packages
+* When reviewing PRs, you are encouraged to use Golang's [code review
+  comments page](https://github.com/golang/go/wiki/CodeReviewComments)
+* Project follows [Google JSON Style
+  Guide](https://google.github.io/styleguide/jsoncstyleguide.xml) for
+  the REST APIs that are provided.
 
 ## Local Development
 
@@ -28,10 +40,11 @@ skaffold dev --platform=linux/amd64 --port-forward --kube-context docker-desktop
 skaffold dev --platform=linux/amd64 --port-forward --kube-context docker-desktop --namespace "<NS>"
 ```
 
-Skaffold will watch for changes and redeploy the application to docker-desktop.
+Skaffold will watch for changes and redeploy the application to
+docker-desktop.
 
-Now that Cast is up, we can run a Kubeshark tap on all the pods locally
-
+Now that Cast is up, we can run a Kubeshark tap on all the pods
+locally
 
 ```bash
 kubectl config use-context docker-desktop
@@ -40,13 +53,21 @@ kubeshark tap -A
 
 ## Deploying the local chart to a remote cluster
 
-If you would like to test the local chart on a remote cluster, you will need to push the docker image to a docker registry that is accessible to your remote cluster.
+If you would like to test the local chart on a remote cluster, you
+will need to push the docker image to a docker registry that is
+accessible to your remote cluster.
 
-If that docker registry requires logging in, you will need to [create a docker-registry secret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials) called `regcred` in the namespace you're deploying CAST to.
+If that docker registry requires logging in, you will need to [create
+a docker-registry
+secret](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials)
+called `regcred` in the namespace you're deploying CAST to.
 
 Then set ```build.local.push: true``` in ```skaffold.yaml```.
 
-After that preliminary setup is done, we can iterate on the chart using the remote cluster in the same way we did with docker-desktop. We just need to change the docker registry with the `--default-repo` argument.
+After that preliminary setup is done, we can iterate on the chart
+using the remote cluster in the same way we did with
+docker-desktop. We just need to change the docker registry with the
+`--default-repo` argument.
 
 ```bash
 kubectl config use-context "$KUBE_CONTEXT"
@@ -56,18 +77,32 @@ skaffold dev --platform=linux/amd64 --port-forward --namespace "$NAMESPACE" --de
 ## End to End Testing
 
 Skaffold can be used to test the entire CAST pipeline:
+
 ```bash
 skaffold run --platform=linux/amd64 --port-forward
 ```
-Note: You will need to set your kube-context prior to running skaffold. 
 
-The repository's [Skaffold config](./skaffold.yaml) has a lifecycle hook that taps an HTTPBin deployment with Kubeshark and sends mock traffic data to that HTTPBin service's endpoint for CAST to analyze. The script can also be run separately for an existing CAST deployment and Kubeshark tapped service:
+Note: You will need to set your kube-context prior to running
+skaffold.
+
+The repository's [Skaffold config](./skaffold.yaml) has a lifecycle
+hook that taps an HTTPBin deployment with Kubeshark and sends mock
+traffic data to that HTTPBin service's endpoint for CAST to
+analyze. The script can also be run separately for an existing CAST
+deployment and Kubeshark tapped service:
+
 ```bash
 ./scripts/generate-pipeline-data.sh <service endpoint>
 ```
-Skaffold will not remove Kubeshark during resource cleanup. To remove Kubeshark resources, use ```kubeshark clean```. 
 
-If you wish to generate your own test traffic for CAST, you can do so with CURL calls. For example, traffic can be sent to the HTTPBin service created by the repository's [Skaffold config](./skaffold.yaml) by sending CURL requests from a curl pod in your kube cluster as follows:
+Skaffold will not remove Kubeshark during resource cleanup. To remove
+Kubeshark resources, use ```kubeshark clean```.
+
+If you wish to generate your own test traffic for CAST, you can do so
+with CURL calls. For example, traffic can be sent to the HTTPBin
+service created by the repository's [Skaffold config](./skaffold.yaml)
+by sending CURL requests from a curl pod in your kube cluster as
+follows:
 
 ```bash
 kubectl create namespace curl
@@ -77,7 +112,10 @@ kubectl wait --for=condition=Ready pod/curl -n curl
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "http://httpbin.cast.svc.cluster.local/headers?q=1"
 ```
 
-To run the UI application in development mode with generated traffic data, first update your ```./ui/.env.local``` file with the cast-postgres connection details:
+To run the UI application in development mode with generated traffic
+data, first update your ```./ui/.env.local``` file with the
+cast-postgres connection details:
+
 ```bash
 cat > ./ui/.env.local <<HERE
 PGUSER=cast
@@ -86,13 +124,18 @@ PGHOST=127.0.0.1
 PGPORT=5432
 PGDATABASE=cast
 HERE
-``` 
-Then run the skaffold command give above. In a separate terminal, use ```npm run dev``` from the ```./ui``` directory to start the application at http://localhost:3000. 
+```
+
+Then run the skaffold command give above. In a separate terminal, use
+```npm run dev``` from the ```./ui``` directory to start the
+application at <http://localhost:3000>.
 
 ## Releasing
 
-To release the chart, you just need to create a docker release. GitHub actions will do the rest.
+To release the chart, you just need to create a docker release. GitHub
+actions will do the rest.
 
 ## Communication
 
-If you have any questions or concerns, please email Max at max@corsha.com.
+If you have any questions or concerns, please email Max at
+max@corsha.com.

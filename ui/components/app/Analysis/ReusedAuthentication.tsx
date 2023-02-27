@@ -39,6 +39,7 @@ export const ReusedAuthenticationCard: React.FC<Analysis<'reused-auth'>> = ({
       filename={`${reportedAt}-ReusedAuthentication.csv`}
     />}
     {...otherProps}
+    noResults={data.length === 0}
   >
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid

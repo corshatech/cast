@@ -8,6 +8,7 @@ export type TypographyProps = {
   component?: 'h1' | 'h2' | 'h3' | 'h4' | 'p' | string;
   variant?: TypographyVariant;
   children?: React.ReactNode;
+  style?: Partial<CSSStyleDeclaration>;
   className?: string;
 };
 
@@ -37,6 +38,7 @@ export const Typography = ({
   component,
   className,
   children,
+  style,
   variant = 'body1',
 }: TypographyProps): JSX.Element => {
   // in order, use:
@@ -50,5 +52,6 @@ export const Typography = ({
   const useClasses = classes[variant] ?? classes.body1;
   return React.createElement(useComponent, {
     className: clsx(useClasses, className),
+    style,
   }, children);
 };

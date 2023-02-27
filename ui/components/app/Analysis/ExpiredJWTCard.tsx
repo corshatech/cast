@@ -69,6 +69,7 @@ export const ExpiredJWTCard: React.FC<Analysis<'expired-jwt'>> = ({
       filename={`${reportedAt}-ExpiredJWTFindings.csv`}
     />}
     {...otherProps}
+    noResults={data.length === 0}
   >
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid

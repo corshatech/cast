@@ -1,22 +1,21 @@
 import React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
+import { Card, CardContent, useTheme } from '@mui/material';
 import { AnalysesSummary } from 'lib/findings';
-import { SeverityIcon } from '@/components/atoms';
+import { SeverityIcon, Typography } from '@/components/atoms';
 
 type SummaryProps = AnalysesSummary;
 
 export const Summary = ({ faults, findings, scansPassed, severityCounts }: SummaryProps) => {
+  const theme = useTheme();
   const summaryTitle = faults
     ? `${faults} Faults (${findings} Findings)`
-    : `No problems detected`;
+    : `No problems detected yet. Live scanning will continue in the background.`;
 
   return (<Card>
     <CardContent>
-      <Typography variant="h5" component="h3">Ongoing Results</Typography>
+      <Typography variant="h4" component="h3">Ongoing Results</Typography>
       <Typography>{summaryTitle}</Typography>
-      <Typography color="text.secondary">{scansPassed} passed</Typography>
+      <Typography style={{color: theme.palette.text.secondary}}>{scansPassed} passed</Typography>
       <ul>
         {(severityCounts.critical > 0) && <li key="critical"><SeverityIcon severity='critical' /> {severityCounts.critical} Critical</li>}
         {(severityCounts.high > 0) && <li key="high"><SeverityIcon severity='high' /> {severityCounts.high} High</li>}
@@ -29,13 +28,14 @@ export const Summary = ({ faults, findings, scansPassed, severityCounts }: Summa
 }
 
 export const SummaryLoading = () => {
+  const theme = useTheme();
   const liClassName = 'w-32 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 mb-2';
 
   return (<Card className="animate-pulse">
     <CardContent>
-      <Typography variant="h5" component="h3" className="h-5 bg-gray-200 rounded-full dark:bg-gray-500 w-48 mb-2"></Typography>
+      <Typography variant="h4" component="h3" className="h-5 bg-gray-200 rounded-full dark:bg-gray-500 w-48 mb-2"></Typography>
       <Typography className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 w-40 mb-2"></Typography>
-      <Typography className="h-2 bg-gray-200 rounded-full dark:bg-gray-500 w-20 mb-2" color="text.secondary"></Typography>
+      <Typography className="h-2 bg-gray-200 rounded-full dark:bg-gray-500 w-20 mb-2" style={{color: theme.palette.text.secondary}}></Typography>
       <ul>
         <li className={liClassName} key="critical"></li>
         <li className={liClassName} key="high"></li>

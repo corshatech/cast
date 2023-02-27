@@ -22,4 +22,4 @@ const Icons: Record<Severity, React.ReactElement> = {
 export const SeverityIcon: React.FC<{severity: Severity}> = ({severity}) =>
   Icons[severity] ?? Icons.none
 
-export const Checkmark = <CheckCircleOutline color='success'/>
+export const Checkmark: React.FC = () => <CheckCircleOutline color='success'/>

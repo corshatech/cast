@@ -52,6 +52,7 @@
     "autoprefixer": "^10.4.13",
     "babel-loader": "^9.1.2",
     "cross-env": "^7.0.3",
+    "doctoc": "^2.2.1",
     "eslint": "8.32.0",
     "eslint-config-next": "13.1.4",
     "eslint-plugin-prettier": "^4.2.1",

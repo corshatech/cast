@@ -14,7 +14,7 @@ GO = GOPRIVATE=github.com/corshatech/* GO111MODULE=on go
 VERSION ?= "0.1.0-pre"
 GITSHA ?= "`git rev-parse HEAD`"
 
-all: tidy test lint image
+all: tidy test lint image markdown
 
 test: test-go test-ui
 
@@ -33,7 +33,7 @@ cast:
 tidy:
 	$(GO) mod tidy
 
-lint: lint-ui lint-go lint-helm
+lint: lint-ui lint-go lint-helm lint-markdown
 
 lint-helm:
 	helm dependency update k8s/helm/cast
@@ -44,6 +44,14 @@ lint-ui:
 
 lint-go:
 	golangci-lint run --verbose --deadline=5m
+
+markdown:
+	cd ui && npm ci
+	./ui/node_modules/.bin/doctoc README.md --github --title "## Table of Contents"
+
+lint-markdown:
+	cd ui && npm ci
+	./ui/node_modules/.bin/markdownlint-cli2-config .markdownlint.yaml "**/*.md" "#ui/node_modules" "#.github"
 
 clean:
 	$(GO) clean ./...

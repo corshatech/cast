@@ -28,7 +28,7 @@ export const UseOfBasicAuthCard: React.FC<Analysis<'use-of-basic-auth'>> = ({
   findings,
   ...otherProps
 }) => {
-  return <AnalysisCard {...otherProps}>
+  return <AnalysisCard {...otherProps} noResults={(findings ?? []).length === 0}>
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid
       rows={(findings ?? []).map(({

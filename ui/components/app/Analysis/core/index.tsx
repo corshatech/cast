@@ -18,6 +18,7 @@ import { IconButtonProps } from '@mui/material/IconButton';
 
 export type AnalysisProps = {
   children?: React.ReactNode;
+  exportButton?: React.ReactNode;
   noResults?: boolean;
 } & Pick<
   AnalysisType,
@@ -120,20 +121,25 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   title,
   noResults,
   children,
+  exportButton,
 }) => (
   noResults
-    ? <NoResults {...{
-      description,
-      reportedAt,
-      weaknessLink,
-      weaknessTitle,
-      severity,
-      title,
-      noResults,
-    }}/>
-    : <Card>
+  ? <NoResults {...{
+    description,
+    reportedAt,
+    weaknessLink,
+    weaknessTitle,
+    severity,
+    title,
+    noResults,
+  }}/>
+
+  : <Card>
     <CardContent>
-      <Typography variant='h2'><SeverityIcon severity={severity} /> {title}</Typography>
+      <div className='flex flex-nowrap'>
+        <Typography variant='h2' className='grow'><SeverityIcon severity={severity} /> {title}</Typography>
+        {exportButton}
+      </div>
       <Typography className='max-w-prose my-2' variant='body1'>{description}</Typography>
       <table className='font-light my-2 text-zinc-400 border-separate border-spacing-x-4'>
         <tbody>

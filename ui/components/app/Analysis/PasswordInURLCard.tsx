@@ -8,51 +8,63 @@ import {
 import { Analysis } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 import { AnalysisCard } from './core';
+import { CsvExportButton } from './core/CsvExportButton';
 
 const columns: GridColDef[] = [
   {
-    field: 'at',
+    field: 'Timestamp',
     headerName: 'Timestamp',
     renderCell(params: GridRenderCellParams<string>) {
       return params.value && <FormattedDate when={params.value}/>
     },
     width: 200,
   },
-  { field: 'queryParams', headerName: 'Query Param(s)', width: 300 },
-  { field: 'srcIp', headerName: 'Src IP' },
-  { field: 'destIp', headerName: 'Dest IP' },
-  { field: 'destPort', headerName: 'Dest Port' },
+  { field: 'Query Param(s)', headerName: 'Query Param(s)', width: 300 },
+  { field: 'Src IP', headerName: 'Src IP' },
+  { field: 'Dest IP', headerName: 'Dest IP' },
+  { field: 'Dest Port', headerName: 'Dest Port' },
   { field: 'URI', headerName: 'URI', width: 400 },
 ];
 
 export const PasswordInURLCard: React.FC<Analysis<'pass-in-url'>> = ({
   findings,
+  reportedAt,
   ...otherProps
 }) => {
-  return <AnalysisCard {...otherProps} noResults={(findings ?? []).length === 0}>
-    <div style={{height: '400px', width: '100%'}}>
-    <DataGrid
-      rows={(findings ?? []).map(({
-        data: {
-          queryParams,
-          inRequest: {
-            at,
-            srcIp,
-            URI,
-            destIp,
-            destPort,
-          },
-        },
-      }) => ({
-        id: `${at}${srcIp}${destIp}${destPort}${URI}${queryParams}`,
-        // each param in quotes, joined by commas into a list
-        queryParams: queryParams.map(s => `"${s}"`).join(', '),
+  const data = (findings ?? []).map(({
+    data: {
+      queryParams,
+      inRequest: {
         at,
         srcIp,
         URI,
         destIp,
         destPort,
-      }))}
+      },
+    },
+  }) => ({
+    id: `${at}${srcIp}${destIp}${destPort}${URI}${queryParams}`,
+    // each param in quotes, joined by commas into a list
+    'Query Param(s)': queryParams.map(s => `"${s}"`).join(', '),
+    'Timestamp': at,
+    'Src IP': srcIp,
+    'URI': URI,
+    'Dest IP': destIp,
+    'Dest Port': destPort,
+  }))
+  return <AnalysisCard
+    reportedAt={reportedAt}
+    {...otherProps}
+    exportButton={<CsvExportButton
+      stripID
+      data={data}
+      filename={`${reportedAt}-PasswordsInURL.csv`}
+    />}
+    noResults={data.length === 0}
+  >
+    <div style={{height: '400px', width: '100%'}}>
+    <DataGrid
+      rows={data}
       columns={columns}
       pageSize={10}
       rowsPerPageOptions={[10]}

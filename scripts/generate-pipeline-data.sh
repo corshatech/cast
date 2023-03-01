@@ -13,11 +13,22 @@
 
 # Script to generate mock data for CAST
 
+# configure the local environment to work with the skaffold
+
+echo "Creating ./ui/.env.local"
+cat > ./ui/.env.local <<HERE
+PGUSER=cast
+PGPASSWORD=dev-password
+PGHOST=127.0.0.1
+PGPORT=5432
+PGDATABASE=cast
+HERE
+
 svc=$1
 echo "service endpoint: $svc"
 
 # kubeshark tap
-nohup kubeshark tap -n cast "(httpbin*)" --set headless=true > foo.out 2> foo.err < /dev/null &
+nohup kubeshark --set kube-context=docker-desktop tap -n cast "(httpbin*)" --set headless=true > kubeshark.out 2> kubeshark.err < /dev/null &
 
 # Waiting for collector pod successfully connect to postgres and kubeshark
 collector=$(kubectl get pods --namespace=cast | grep cast-collector | cut -d' ' -f1)

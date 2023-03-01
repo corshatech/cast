@@ -1,3 +1,4 @@
+{{ if not .Values.headless }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,3 +42,4 @@ spec:
           - name: {{ $name | quote }}
             value: {{ $value | quote }}
         {{ end }}
+{{ end }}

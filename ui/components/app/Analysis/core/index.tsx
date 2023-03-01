@@ -22,7 +22,7 @@ export type AnalysisProps = {
   noResults?: boolean;
 } & Pick<
   AnalysisType,
-  'description'
+  | 'description'
   | 'reportedAt'
   | 'weaknessLink'
   | 'weaknessTitle'
@@ -46,20 +46,19 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 const Weakness: React.FC<{
-  weaknessLink?: string
-  weaknessTitle?: string
-}> = ({ weaknessLink, weaknessTitle }) => (
-  weaknessLink
-  ? (
+  weaknessLink?: string;
+  weaknessTitle?: string;
+}> = ({ weaknessLink, weaknessTitle }) =>
+  weaknessLink ? (
     <tr>
       <td>Learn&nbsp;more:</td>
       <td>
-        <Link className='underline' href={weaknessLink}>{weaknessTitle ?? weaknessLink}</Link>
+        <Link className="underline" href={weaknessLink}>
+          {weaknessTitle ?? weaknessLink}
+        </Link>
       </td>
     </tr>
-  )
-  : null
-);
+  ) : null;
 
 const NoResults: React.FC<AnalysisProps> = ({
   description,
@@ -75,42 +74,53 @@ const NoResults: React.FC<AnalysisProps> = ({
     setExpanded(!expanded);
   };
 
-  return <Card className='max-w-prose -my-3'>
-    <CardContent className='flex items-center'>
-      <Typography
-        variant='h2'
-        className='font-light grow align-text-bottom'
-        style={{color: theme.palette.success.main}}
-      >
-        <Checkmark/>{' '}
-        {title}
-        {' - OK'}
-      </Typography>
-      <ExpandMore
-        expand={expanded}
-        onClick={handleExpandClick}
-        aria-expanded={expanded}
-        aria-label="show description"
-      >
-        <GridExpandMoreIcon/>
-      </ExpandMore>
-    </CardContent>
-    <Collapse in={expanded} timeout="auto" unmountOnExit>
-      <CardContent sx={{paddingTop: 0}}>
-        <Typography className='max-w-prose mb-4 text-zinc-400' variant='body1'>{description}</Typography>
-        <table className='font-light text-zinc-400 border-separate border-spacing-x-4'>
-          <tbody>
-            <tr>
-              <td>Updated:</td>
-              <td><FormattedDate when={reportedAt}/></td>
-            </tr>
-            <Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle}/>
-          </tbody>
-        </table>
+  return (
+    <Card className="max-w-prose -my-3">
+      <CardContent className="flex items-center">
+        <Typography
+          variant="h2"
+          className="font-light grow align-text-bottom"
+          style={{ color: theme.palette.success.main }}
+        >
+          <Checkmark /> {title}
+          {' - OK'}
+        </Typography>
+        <ExpandMore
+          expand={expanded}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show description"
+        >
+          <GridExpandMoreIcon />
+        </ExpandMore>
       </CardContent>
-    </Collapse>
-  </Card>
-}
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent sx={{ paddingTop: 0 }}>
+          <Typography
+            className="max-w-prose mb-4 text-zinc-400"
+            variant="body1"
+          >
+            {description}
+          </Typography>
+          <table className="font-light text-zinc-400 border-separate border-spacing-x-4">
+            <tbody>
+              <tr>
+                <td>Updated:</td>
+                <td>
+                  <FormattedDate when={reportedAt} />
+                </td>
+              </tr>
+              <Weakness
+                weaknessLink={weaknessLink}
+                weaknessTitle={weaknessTitle}
+              />
+            </tbody>
+          </table>
+        </CardContent>
+      </Collapse>
+    </Card>
+  );
+};
 
 export const AnalysisCard: React.FC<AnalysisProps> = ({
   description,
@@ -122,40 +132,54 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   noResults,
   children,
   exportButton,
-}) => (
-  noResults
-  ? <NoResults {...{
-    description,
-    reportedAt,
-    weaknessLink,
-    weaknessTitle,
-    severity,
-    title,
-    noResults,
-  }}/>
-
-  : <Card>
-    <CardContent>
-      <div className='flex flex-nowrap'>
-        <Typography variant='h2' className='grow'><SeverityIcon severity={severity} /> {title}</Typography>
-        {exportButton}
-      </div>
-      <Typography className='max-w-prose my-2' variant='body1'>{description}</Typography>
-      <table className='font-light my-2 text-zinc-400 border-separate border-spacing-x-4'>
-        <tbody>
-          <tr>
-            <td>Updated:</td><td><FormattedDate when={reportedAt} /></td>
-          </tr>
-          <tr>
-            <td>Issue Severity:</td><td>{severity}</td>
-          </tr>
-          <Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle}/>
-        </tbody>
-      </table>
-      {children}
-    </CardContent>
-  </Card>
-);
+}) =>
+  noResults ? (
+    <NoResults
+      {...{
+        description,
+        reportedAt,
+        weaknessLink,
+        weaknessTitle,
+        severity,
+        title,
+        noResults,
+      }}
+    />
+  ) : (
+    <Card aria-labelledby="title" className="shadow-md" elevation={2}>
+      <CardContent className="p-0 last:pb-0">
+        <div className="flex flex-nowrap items-center px-2 py-4">
+          <Typography variant="h2" className="grow" aria-label="title">
+            <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
+            {title}
+          </Typography>
+          {exportButton}
+        </div>
+        <Typography className="max-w-prose pl-2.5 pr-6" variant="body1">
+          {description}
+        </Typography>
+        <table className="font-light my-2 text-zinc-400 border-separate border-spacing-x-4">
+          <tbody>
+            <tr>
+              <td>Updated:</td>
+              <td>
+                <FormattedDate when={reportedAt} />
+              </td>
+            </tr>
+            <tr>
+              <td>Issue Severity:</td>
+              <td>{severity}</td>
+            </tr>
+            <Weakness
+              weaknessLink={weaknessLink}
+              weaknessTitle={weaknessTitle}
+            />
+          </tbody>
+        </table>
+        {children}
+      </CardContent>
+    </Card>
+  );
 
 export const AnalysisCardLoading = () => {
   return (

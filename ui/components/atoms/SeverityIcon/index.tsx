@@ -7,19 +7,33 @@ import {
   CrisisAlert,
   DarkMode,
   CheckCircleOutline,
+  SvgIconComponent,
 } from '@mui/icons-material';
 
 import { Severity } from '@/lib/findings';
 
-const Icons: Record<Severity, React.ReactElement> = {
-  critical: <CrisisAlert color="error" />,
-  high: <Error color="error" />,
-  medium: <Warning color="warning" />,
-  low: <DarkMode color="warning" />,
-  none: <Lightbulb color="info" />,
+type SVGProps = React.ComponentProps<SvgIconComponent>;
+
+const Icons: Record<Severity, [
+  icon: SvgIconComponent,
+  color: SVGProps['color'],
+]> = {
+  critical: [CrisisAlert, 'error'],
+  high: [Error, 'error'],
+  medium: [Warning, 'warning'],
+  low: [DarkMode, 'warning'],
+  none: [Lightbulb, 'info'],
+};
+
+export type Props = {
+  severity: Severity
+} & SVGProps;
+
+export const SeverityIcon: React.FC<Props> = ({severity, ...otherProps}) => {
+  const [Component, color] = Icons[severity] ?? Icons.none;
+  return <Component color={color} {...otherProps} />
 }
 
-export const SeverityIcon: React.FC<{severity: Severity}> = ({severity}) =>
-  Icons[severity] ?? Icons.none
-
-export const Checkmark: React.FC = () => <CheckCircleOutline color='success'/>
+export const Checkmark: React.FC<SVGProps> = ({...otherProps}) => (
+  <CheckCircleOutline color='success' {...otherProps}/>
+);

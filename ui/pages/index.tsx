@@ -9,25 +9,17 @@ import { Layout, Summary, SummaryLoading } from '@/components/index';
 import { summarizeAnalyses } from 'lib/findings';
 
 const AnalysisGridLoading = () => {
-  return (
-    <>
-      <AnalysisCardLoading />
-      <AnalysisCardLoading />
-      <AnalysisCardLoading />
-      <AnalysisCardLoading />
-    </>
-  );
-};
-
+  return (<>
+    <AnalysisCardLoading />
+    <AnalysisCardLoading />
+    <AnalysisCardLoading />
+    <AnalysisCardLoading />
+  </>);
+}
 export default function Dashboard() {
-  const {
-    data: analysesResponse,
-    isLoading,
-    error,
-  } = useSWR<AnalysesResponse>('/api/analyses');
+  const { data: analysesResponse, error } = useSWR<AnalysesResponse>('/api/analyses');
 
   const summary =
-    !isLoading &&
     analysesResponse &&
     summarizeAnalyses(analysesResponse.analyses);
   const analyses = analysesResponse?.analyses ?? [];

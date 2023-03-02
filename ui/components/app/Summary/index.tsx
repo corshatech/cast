@@ -20,10 +20,10 @@ export const Summary = ({
   return (
     <Card className="w-full h-full">
       <CardContent className="flex flex-col space-y-5 px-4 py-8">
-        <Typography variant="h1" component="h1">
+        <Typography variant="h1">
           Ongoing Results
         </Typography>
-        <Typography variant="h4" component="h4">
+        <Typography variant="h4">
           {summaryTitle}
         </Typography>
         <Typography style={{ color: theme.palette.text.secondary }}>

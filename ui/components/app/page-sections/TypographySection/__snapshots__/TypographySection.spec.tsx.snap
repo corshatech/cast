@@ -48,6 +48,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 1 Black
         </span>
+        <br />
         <span
           className="font-black"
         >
@@ -62,6 +63,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 1 Bold
         </span>
+        <br />
         <span
           className="font-bold"
         >
@@ -74,6 +76,7 @@ exports[`Typography Section snapshot 1`] = `
         <span>
           Body 1 Regular
         </span>
+        <br />
         <span>
           Nunito Sans Regular 16px
         </span>
@@ -86,6 +89,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 1 Underlined
         </span>
+        <br />
         <span
           className="underline font-medium"
         >
@@ -104,6 +108,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 2 Bold
         </span>
+        <br />
         <span
           className="font-bold"
         >
@@ -116,6 +121,7 @@ exports[`Typography Section snapshot 1`] = `
         <span>
           Body 2 Regular
         </span>
+        <br />
         <span>
           Nunito Sans Regular 14px
         </span>
@@ -128,6 +134,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 2 Underlined
         </span>
+        <br />
         <span
           className="underline font-medium"
         >
@@ -142,6 +149,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           All Caps
         </span>
+        <br />
         <span
           className="font-black capitalize"
         >
@@ -160,6 +168,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 3 Black
         </span>
+        <br />
         <span
           className="font-black"
         >
@@ -174,6 +183,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 3 Bold
         </span>
+        <br />
         <span
           className="font-bold"
         >
@@ -186,6 +196,7 @@ exports[`Typography Section snapshot 1`] = `
         <span>
           Body 3 Regular
         </span>
+        <br />
         <span>
           Nunito Sans Regular 12px
         </span>
@@ -198,6 +209,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 3 Underlined
         </span>
+        <br />
         <span
           className="underline font-medium"
         >
@@ -216,6 +228,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 4 Black
         </span>
+        <br />
         <span
           className="font-black"
         >
@@ -230,6 +243,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 4 Bold
         </span>
+        <br />
         <span
           className="font-bold"
         >
@@ -242,6 +256,7 @@ exports[`Typography Section snapshot 1`] = `
         <span>
           Body 4 Regular
         </span>
+        <br />
         <span>
           Nunito Sans Regular 10px
         </span>
@@ -254,6 +269,7 @@ exports[`Typography Section snapshot 1`] = `
         >
           Body 4 Underlined
         </span>
+        <br />
         <span
           className="underline font-medium"
         >

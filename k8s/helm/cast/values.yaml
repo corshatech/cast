@@ -60,3 +60,6 @@ ui:
   image:
     tag: ""
     repository: ghcr.io/corshatech/cast/ui
+
+# Run CAST in headless mode which disables the UI
+headless: false

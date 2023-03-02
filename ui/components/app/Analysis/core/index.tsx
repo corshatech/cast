@@ -22,7 +22,7 @@ export type AnalysisProps = {
   noResults?: boolean;
 } & Pick<
   AnalysisType,
-  | 'description'
+  'description'
   | 'reportedAt'
   | 'weaknessLink'
   | 'weaknessTitle'
@@ -46,19 +46,20 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 const Weakness: React.FC<{
-  weaknessLink?: string;
-  weaknessTitle?: string;
-}> = ({ weaknessLink, weaknessTitle }) =>
-  weaknessLink ? (
+  weaknessLink?: string
+  weaknessTitle?: string
+}> = ({ weaknessLink, weaknessTitle }) => (
+  weaknessLink
+  ? (
     <tr>
       <td>Learn&nbsp;more:</td>
       <td>
-        <Link className="underline" href={weaknessLink}>
-          {weaknessTitle ?? weaknessLink}
-        </Link>
+        <Link className='underline' href={weaknessLink}>{weaknessTitle ?? weaknessLink}</Link>
       </td>
     </tr>
-  ) : null;
+  )
+  : null
+);
 
 const NoResults: React.FC<AnalysisProps> = ({
   description,
@@ -74,53 +75,42 @@ const NoResults: React.FC<AnalysisProps> = ({
     setExpanded(!expanded);
   };
 
-  return (
-    <Card className="max-w-prose -my-3">
-      <CardContent className="flex items-center">
-        <Typography
-          variant="h2"
-          className="font-light grow align-text-bottom"
-          style={{ color: theme.palette.success.main }}
-        >
-          <Checkmark /> {title}
-          {' - OK'}
-        </Typography>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show description"
-        >
-          <GridExpandMoreIcon />
-        </ExpandMore>
+  return <Card className='max-w-prose -my-3'>
+    <CardContent className='flex items-center'>
+      <Typography
+        variant='h2'
+        className='font-light grow align-text-bottom'
+        style={{color: theme.palette.success.main}}
+      >
+        <Checkmark/>{' '}
+        {title}
+        {' - OK'}
+      </Typography>
+      <ExpandMore
+        expand={expanded}
+        onClick={handleExpandClick}
+        aria-expanded={expanded}
+        aria-label="show description"
+      >
+        <GridExpandMoreIcon/>
+      </ExpandMore>
+    </CardContent>
+    <Collapse in={expanded} timeout="auto" unmountOnExit>
+      <CardContent sx={{paddingTop: 0}}>
+        <Typography className='max-w-prose mb-4 text-zinc-400' variant='body1'>{description}</Typography>
+        <table className='font-light text-zinc-400 border-separate border-spacing-x-4'>
+          <tbody>
+            <tr>
+              <td>Updated:</td>
+              <td><FormattedDate when={reportedAt}/></td>
+            </tr>
+            <Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle}/>
+          </tbody>
+        </table>
       </CardContent>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent sx={{ paddingTop: 0 }}>
-          <Typography
-            className="max-w-prose mb-4 text-zinc-400"
-            variant="body1"
-          >
-            {description}
-          </Typography>
-          <table className="font-light text-zinc-400 border-separate border-spacing-x-4">
-            <tbody>
-              <tr>
-                <td>Updated:</td>
-                <td>
-                  <FormattedDate when={reportedAt} />
-                </td>
-              </tr>
-              <Weakness
-                weaknessLink={weaknessLink}
-                weaknessTitle={weaknessTitle}
-              />
-            </tbody>
-          </table>
-        </CardContent>
-      </Collapse>
-    </Card>
-  );
-};
+    </Collapse>
+  </Card>
+}
 
 export const AnalysisCard: React.FC<AnalysisProps> = ({
   description,

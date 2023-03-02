@@ -15,6 +15,7 @@ export const Summary = ({
   const summaryTitle = faults
     ? `${faults} Faults (${findings} Findings)`
     : `No problems detected yet. Live scanning will continue in the background.`;
+    const liClassName = 'flex items-center text-lg font-semibold'
 
   return (
     <Card className="w-full h-full">
@@ -32,14 +33,14 @@ export const Summary = ({
           {severityCounts.critical > 0 && (
             <li
               key="critical"
-              className="flex items-center text-lg font-semibold"
+              className={liClassName}
             >
               <SeverityIcon severity="critical" className="mr-2" />{' '}
               {severityCounts.critical} Critical
             </li>
           )}
           {severityCounts.high > 0 && (
-            <li key="high" className="flex items-center text-lg font-semibold">
+            <li key="high" className={liClassName}>
               <SeverityIcon severity="high" className="mr-2" />{' '}
               {severityCounts.high} High
             </li>
@@ -47,20 +48,20 @@ export const Summary = ({
           {severityCounts.medium > 0 && (
             <li
               key="medium"
-              className="flex items-center text-lg font-semibold"
+              className={liClassName}
             >
               <SeverityIcon severity="medium" className="mr-2" />{' '}
               {severityCounts.medium} Medium
             </li>
           )}
           {severityCounts.low > 0 && (
-            <li key="low" className="flex items-center text-lg font-semibold">
+            <li key="low" className={liClassName}>
               <SeverityIcon severity="low" className="mr-2" />{' '}
               {severityCounts.low} Low
             </li>
           )}
           {severityCounts.none > 0 && (
-            <li key="none" className="flex items-center text-lg font-semibold">
+            <li key="none" className={liClassName}>
               <SeverityIcon severity="none" className="mr-2" />{' '}
               {severityCounts.none} None
             </li>

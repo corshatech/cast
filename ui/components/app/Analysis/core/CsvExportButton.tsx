@@ -16,11 +16,11 @@ export type Props = {
    * clone of all the data and removing any `id` fields.
    */
   stripID?: true;
-};
+}
 
 // List of Windows-disallowed filename chars (in particular ':' might be found
 // inside timestamps)
-const UnsafeFilenameChars = /[\\\/\:\*\?\"\<\>\|]/g;
+const UnsafeFilenameChars = /[\\\/\:\*\?\"\<\>\|]/g
 
 export const CsvExportButton: React.FC<Props> = ({
   data,
@@ -33,7 +33,7 @@ export const CsvExportButton: React.FC<Props> = ({
     const sanitizedFilename = filename.replace(UnsafeFilenameChars, '_');
     if (stripID && !Array.isArray(csvData[0])) {
       csvData = csvData.map((datum) => {
-        const shallowClone = { ...datum };
+        const shallowClone = {...datum};
         // there is likely a better way of doing this,
         // but this is the way I know how to do it while
         // satisfying TypeScript types.
@@ -43,25 +43,21 @@ export const CsvExportButton: React.FC<Props> = ({
         return shallowClone;
       });
     }
-    const blob = new Blob([unparse(csvData, config)], {
-      type: 'text/plain;charset=utf-8',
-    });
+    const blob = new Blob([unparse(csvData, config)], {type: 'text/plain;charset=utf-8'});
     FileSaver.saveAs(blob, sanitizedFilename);
   }, [data, config, filename, stripID]);
 
-  return (
-    <Tooltip title="Download data as CSV">
-      <IconButton
-        color="primary"
-        className="p-0 mb-[3px]"
-        // Not sure why, but the ARIA example has the leading d lowercased in the
-        // label. Maybe the distinction is unimportant?
-        aria-label="download data as CSV"
-        component="button"
-        onClick={onClick}
-      >
-        <FileDownloadOutlined />
-      </IconButton>
-    </Tooltip>
-  );
-};
+  return <Tooltip title='Download data as CSV'>
+    <IconButton
+      color='primary'
+      className='p-0 mb-[3px]'
+      // Not sure why, but the ARIA example has the leading d lowercased in the
+      // label. Maybe the distinction is unimportant?
+      aria-label='download data as CSV'
+      component='button'
+      onClick={onClick}
+    >
+      <FileDownloadOutlined/>
+    </IconButton>
+  </Tooltip>
+}

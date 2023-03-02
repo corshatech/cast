@@ -28,7 +28,7 @@ From the root of the project, run the following command to build and
 deploy to CAST helm chart to your local Kubernetes environment.
 
 ```bash
-skaffold run --port-forward --kube-context docker-desktop
+skaffold run --platform=linux/amd64 --port-forward --kube-context docker-desktop
 ```
 
 Given that Skaffold builds production version of the CAST Docker

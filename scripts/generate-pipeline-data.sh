@@ -15,15 +15,6 @@
 
 # configure the local environment to work with the skaffold
 
-echo "Creating ./ui/.env.local"
-cat > ./ui/.env.local <<HERE
-PGUSER=cast
-PGPASSWORD=dev-password
-PGHOST=127.0.0.1
-PGPORT=5432
-PGDATABASE=cast
-HERE
-
 svc=$1
 echo "service endpoint: $svc"
 

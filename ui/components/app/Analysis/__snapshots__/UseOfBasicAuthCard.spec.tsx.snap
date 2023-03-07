@@ -30,7 +30,7 @@ exports[`UseOfBasicAuthCard renders all passed props 1`] = `
         </h2>
         <button
           aria-label="download data as CSV"
-          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorPrimary MuiIconButton-sizeMedium p-0 mb-[3px] css-1kuq5xv-MuiButtonBase-root-MuiIconButton-root"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorPrimary MuiIconButton-sizeMedium css-1kuq5xv-MuiButtonBase-root-MuiIconButton-root"
           data-mui-internal-clone-element="true"
           tabindex="0"
           type="button"

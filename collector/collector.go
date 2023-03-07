@@ -20,6 +20,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"regexp"
@@ -36,12 +39,12 @@ import (
 )
 
 const (
-	websocketURLEnv = "WEBSOCKET_URL"
-	postgresHostEnv = "PGHOST"
-	postgresPortEnv = "PGPORT"
-	postgresUserEnv = "PGUSER"
-	postgresPassEnv = "PGPASSWORD" /* #nosec */
-	dbNameEnv       = "PGDATABASE"
+	kubesharkHubURLEnv = "KUBESHARK_HUB_URL"
+	postgresHostEnv    = "PGHOST"
+	postgresPortEnv    = "PGPORT"
+	postgresUserEnv    = "PGUSER"
+	postgresPassEnv    = "PGPASSWORD" /* #nosec */
+	dbNameEnv          = "PGDATABASE"
 )
 
 const (
@@ -73,9 +76,17 @@ type Data struct {
 	Request   Request         `messagestruct:"request"`
 }
 
+type TrafficItem struct {
+	Data Data `messagestruct:"data"`
+}
+
 type Message struct {
-	Data        Data   `messagestruct:"data"`
-	MessageType string `messagestruct:"messageType"`
+	Id    string       `json:"id"`
+	Proto MessageProto `json:"proto"`
+}
+
+type MessageProto struct {
+	Name string `json:"name"`
 }
 
 // CAST Metadata extracted from the accompanying request
@@ -103,7 +114,12 @@ func main() {
 	pgUser := requiredEnv(postgresUserEnv)
 	pgPass := requiredEnv(postgresPassEnv)
 	dbName := requiredEnv(dbNameEnv)
-	websocketURL := requiredEnv(websocketURLEnv)
+	kubesharkHubURL := requiredEnv(kubesharkHubURLEnv)
+
+	websocketURL, err := hubURLToWebsocketURL(kubesharkHubURL)
+	if err != nil {
+		log.WithError(err).WithField(kubesharkHubURLEnv, kubesharkHubURL).Fatal("could not determine kubeshark websocket URL")
+	}
 
 	var pgConnection *sql.DB
 	var ksConnection *websocket.Conn
@@ -157,7 +173,7 @@ func main() {
 		retry.Attempts(retryAttempts),
 		retry.Delay(retryDelay*time.Second),
 		retry.OnRetry(func(n uint, err error) {
-			log.Infof("Error connecting to postgres database. Retrying in %vs", retryDelay)
+			log.Infof("Error connecting to kubeshark websocket. Retrying in %vs", retryDelay)
 			time.Sleep(retryDelay * time.Second)
 		}),
 	)
@@ -200,7 +216,7 @@ func main() {
 	err = retry.Do(
 		func() error {
 			//nolint
-			err = exportRecords(pgConnection, ksConnection, ctx)
+			err = exportRecords(pgConnection, kubesharkHubURL, ksConnection, ctx)
 			return err
 		},
 		retry.Attempts(retryAttempts),
@@ -216,19 +232,19 @@ func main() {
 
 }
 
-func exportRecords(pgConnection *sql.DB, ksConnection *websocket.Conn, ctx context.Context) error {
+func exportRecords(pgConnection *sql.DB, ksHubURL string, ksConnection *websocket.Conn, ctx context.Context) error {
 	var err error
 
 	log.Info("Starting export of records.")
 
-	err = ksConnection.WriteMessage(websocket.TextMessage, []byte(`{"leftOff":"latest","query":"","enableFullEntries":true,"fetch":50,"timeoutMs":3000}`))
+	err = ksConnection.WriteMessage(websocket.TextMessage, []byte{})
 	if err != nil {
 		log.Println("write:", err)
 		return err
 	}
 
 	for {
-		err = writeRecords(pgConnection, ksConnection)
+		err = writeRecords(pgConnection, ksHubURL, ksConnection)
 		if err != nil {
 			return err
 		}
@@ -242,26 +258,48 @@ func exportRecords(pgConnection *sql.DB, ksConnection *websocket.Conn, ctx conte
 	}
 }
 
-func writeRecords(pgConnection *sql.DB, ksConnection *websocket.Conn) error {
-	_, message, err := ksConnection.ReadMessage()
+func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Conn) error {
+	_, messageBytes, err := ksConnection.ReadMessage()
+
 	if err != nil {
 		log.Println("read:", err)
 		return err
 	}
 
-	msgStruct := Message{}
-
-	finalMessageMap, metadataJson, err := handleMessage(message, &msgStruct)
+	message := Message{}
+	err = json.Unmarshal(messageBytes, &message)
 	if err != nil {
-		log.WithError(err).Info("Failed to process kubeshark record.")
-		return err
+		log.WithError(err).Error("Failed to unmarshal websocket message")
+		return fmt.Errorf("failed to unmarshal websocket message: %w", err)
+	}
+
+	if message.Proto.Name != "http" {
+		log.WithField("proto.name", message.Proto.Name).Debug("ignoring non-HTTP traffic")
+		return nil
+	}
+
+	itemUrl := fmt.Sprintf("%s/item/%s?q=", ksURL, message.Id)
+	itemBytes, err := fetchItem(context.Background(), itemUrl)
+	if err != nil {
+		log.
+			WithField("itemUrl", itemUrl).
+			WithError(err).
+			Error("Failed to fetch item from kubeshark")
+		return fmt.Errorf("Failed to fetch item from kubeshark: %w", err)
+	}
+
+	itemStruct := TrafficItem{}
+	finalMessageMap, metadataJson, err := handleTrafficItem(itemBytes, &itemStruct)
+	if err != nil {
+		log.WithError(err).Error("Failed to process kubeshark record.")
+		return fmt.Errorf("Failed to process kubeshark record: %w", err)
 	}
 
 	if finalMessageMap == nil {
 		return nil
 	}
 
-	occurredAt := time.UnixMilli(msgStruct.Data.Timestamp)
+	occurredAt := time.UnixMilli(itemStruct.Data.Timestamp)
 
 	sqlStatement := `INSERT INTO traffic (occurred_at, data, meta) VALUES ($1, $2, $3)`
 
@@ -283,6 +321,21 @@ func writeRecords(pgConnection *sql.DB, ksConnection *websocket.Conn) error {
 
 }
 
+func fetchItem(ctx context.Context, itemUrl string) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, itemUrl, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating item request: %w", err)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching item: %w", err)
+	}
+	defer resp.Body.Close()
+	return io.ReadAll(resp.Body)
+
+}
+
 // Exits with 1 if envName not set, otherwise returns env value
 func requiredEnv(envName string) string {
 	ret, ok := os.LookupEnv(envName)
@@ -295,35 +348,39 @@ func requiredEnv(envName string) string {
 	return ret
 }
 
-// handleMessage takes a message read from the kubeshark websocket and processes it for insertion
+// handleTrafficItem takes a message read from the kubeshark websocket and processes it for insertion
 // into the postgres database. It returns the processed message and a CASTMetadata struct for the message.
-func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
+func handleTrafficItem(trafficItem []byte, itemStruct *TrafficItem) ([]byte, []byte, error) {
 	var err error
 	var messageMap map[string]interface{}
 	var metadata CASTMetadata
 
-	err = json.Unmarshal(message, &messageMap)
+	err = json.Unmarshal(trafficItem, &messageMap)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	if messageMap["messageType"].(string) != "fullEntry" {
-		return nil, nil, nil
+	// In Kubeshark 38 the trafficItem JSON contains the data and a
+	// string version of data in a key called representation. This
+	// caused the JWT detection to match each JWT string twice
+	originalMessage, err := json.Marshal(messageMap["data"])
+	if err != nil {
+		return nil, nil, err
 	}
 
-	err = mapstructure.Decode(messageMap, msgStruct)
+	err = mapstructure.Decode(messageMap, itemStruct)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var absoluteURI string
-	if msgStruct.Data.Protocol.Name != "" && msgStruct.Data.Request.Headers.Host != "" && msgStruct.Data.Request.Url != "" {
-		absoluteURI = msgStruct.Data.Protocol.Name + "://" + msgStruct.Data.Request.Headers.Host + msgStruct.Data.Request.Url
+	if itemStruct.Data.Protocol.Name != "" && itemStruct.Data.Request.Headers.Host != "" && itemStruct.Data.Request.Url != "" {
+		absoluteURI = itemStruct.Data.Protocol.Name + "://" + itemStruct.Data.Request.Headers.Host + itemStruct.Data.Request.Url
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
 	}
 
-	if msgStruct.Data.Request.Headers.Authorization != "" {
-		unHashedAuth := msgStruct.Data.Request.Headers.Authorization
+	if itemStruct.Data.Request.Headers.Authorization != "" {
+		unHashedAuth := itemStruct.Data.Request.Headers.Authorization
 		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
 		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
 		metadata.UseOfBasicAuth = strings.HasPrefix(unHashedAuth, "Basic ")
@@ -344,12 +401,12 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 	}
 	// End: Handle the pass-in-url analysis
 
+	metadata.DetectedJwts = detectJwts(originalMessage)
+
 	editedMessage, err := json.Marshal(messageMap["data"])
 	if err != nil {
 		return nil, nil, err
 	}
-
-	metadata.DetectedJwts = detectJwts(message)
 
 	metadataJson, err := json.Marshal(metadata)
 	if err != nil {
@@ -361,4 +418,14 @@ func handleMessage(message []byte, msgStruct *Message) ([]byte, []byte, error) {
 func detectJwts(request []byte) []string {
 	matches := jwtRegex.FindAllString(string(request), -1)
 	return matches
+}
+
+func hubURLToWebsocketURL(hubURL string) (string, error) {
+	url, err := url.Parse(hubURL)
+	if err != nil {
+		return "", fmt.Errorf("could not parse Kubeshark Hub URL: %w", err)
+	}
+	url.Scheme = "ws"
+	url.Path = "ws"
+	return url.String(), nil
 }

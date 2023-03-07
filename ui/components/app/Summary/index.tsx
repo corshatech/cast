@@ -35,13 +35,13 @@ export const Summary = ({
               key="critical"
               className={liClassName}
             >
-              <SeverityIcon severity="critical" className="mr-2" />{' '}
+              <SeverityIcon severity="critical" className="mr-2" />
               {severityCounts.critical} Critical
             </li>
           )}
           {severityCounts.high > 0 && (
             <li key="high" className={liClassName}>
-              <SeverityIcon severity="high" className="mr-2" />{' '}
+              <SeverityIcon severity="high" className="mr-2" />
               {severityCounts.high} High
             </li>
           )}
@@ -50,19 +50,19 @@ export const Summary = ({
               key="medium"
               className={liClassName}
             >
-              <SeverityIcon severity="medium" className="mr-2" />{' '}
+              <SeverityIcon severity="medium" className="mr-2" />
               {severityCounts.medium} Medium
             </li>
           )}
           {severityCounts.low > 0 && (
             <li key="low" className={liClassName}>
-              <SeverityIcon severity="low" className="mr-2" />{' '}
+              <SeverityIcon severity="low" className="mr-2" />
               {severityCounts.low} Low
             </li>
           )}
           {severityCounts.none > 0 && (
             <li key="none" className={liClassName}>
-              <SeverityIcon severity="none" className="mr-2" />{' '}
+              <SeverityIcon severity="none" className="mr-2" />
               {severityCounts.none} None
             </li>
           )}

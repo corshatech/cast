@@ -50,6 +50,10 @@ export const CsvExportButton: React.FC<Props> = ({
   return <Tooltip title='Download data as CSV'>
     <IconButton
       color='primary'
+<<<<<<< Updated upstream
+=======
+      className='p-0'
+>>>>>>> Stashed changes
       // Not sure why, but the ARIA example has the leading d lowercased in the
       // label. Maybe the distinction is unimportant?
       aria-label='download data as CSV'

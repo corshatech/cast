@@ -4,7 +4,6 @@ import {
   CardContent,
   useTheme,
   Collapse,
-  CardActions,
   styled,
   IconButton,
 } from '@mui/material';
@@ -15,6 +14,8 @@ import { SeverityIcon, Checkmark, Typography } from '@/components/atoms';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 import { GridExpandMoreIcon } from '@mui/x-data-grid';
 import { IconButtonProps } from '@mui/material/IconButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBriefcase, faCalendar, faChain, faExclamation } from '@fortawesome/free-solid-svg-icons';
 
 export type AnalysisProps = {
   children?: React.ReactNode;
@@ -46,20 +47,14 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 const Weakness: React.FC<{
-  weaknessLink?: string
-  weaknessTitle?: string
-}> = ({ weaknessLink, weaknessTitle }) => (
-  weaknessLink
-  ? (
-    <tr>
-      <td>Learn&nbsp;more:</td>
-      <td>
-        <Link className='underline' href={weaknessLink}>{weaknessTitle ?? weaknessLink}</Link>
-      </td>
-    </tr>
-  )
-  : null
-);
+  weaknessLink?: string;
+  weaknessTitle?: string;
+}> = ({ weaknessLink, weaknessTitle }) =>
+  weaknessLink ? (
+    <Link className="underline truncate block" href={weaknessLink} target="_blank">
+      {weaknessTitle ?? weaknessLink}
+    </Link>
+  ) : null;
 
 const NoResults: React.FC<AnalysisProps> = ({
   description,
@@ -122,6 +117,7 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   noResults,
   children,
   exportButton,
+<<<<<<< Updated upstream
 }) => (
   noResults
   ? <NoResults {...{
@@ -156,6 +152,76 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
     </CardContent>
   </Card>
 );
+=======
+}) =>
+  noResults ? (
+    <NoResults
+      {...{
+        description,
+        reportedAt,
+        weaknessLink,
+        weaknessTitle,
+        severity,
+        title,
+        noResults,
+      }}
+    />
+  ) : (
+    <Card aria-labelledby="title" className="shadow-md" elevation={2}>
+      <CardContent className="p-0 last:pb-0">
+        <div className="flex flex-wrap md:flex-nowrap items-start px-2 py-4 md:py-6 md:px-8 justify-between">
+          <div>
+            <Typography variant="h2" aria-label="title">
+              <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
+              {title}
+            </Typography>
+            <div className="pl-1 mt-1 flex flex-col md:mt-0 md:flex-row md:flex-wrap md:space-x-6">
+              <div className="flex items-center text-sm text-gray-500">
+                <FontAwesomeIcon
+                  icon={faCalendar}
+                  className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-400"
+                  aria-hidden="true"
+                />
+                <FormattedDate when={reportedAt} />
+              </div>
+              <div className="flex items-center text-sm text-gray-500">
+                <SeverityIcon
+                  className="mr-1 h-3 w-3 flex-shrink-0 text-gray-400"
+                  severity={severity}
+                />
+                {severity}
+              </div>
+              {weaknessLink && (
+                <div className="flex items-center text-sm text-gray-500">
+                  <FontAwesomeIcon
+                    icon={faChain}
+                    className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-400"
+                    aria-hidden="true"
+                  />
+                  <div className="w-[320px] lg:w-auto inline-block">
+                    <Weakness
+                      weaknessLink={weaknessLink}
+                      weaknessTitle={weaknessTitle}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {exportButton}
+        </div>
+        <Typography
+          className="max-w-prose pl-2.5 pr-6 md:pl-9 pb-6"
+          variant="body1"
+        >
+          {description}
+        </Typography>
+        {children}
+      </CardContent>
+    </Card>
+  );
+>>>>>>> Stashed changes
 
 export const AnalysisCardLoading = () => {
   return (

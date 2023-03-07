@@ -51,13 +51,40 @@ without redeployment.
 To deploy CAST locally in headless mode run the following command:
 
 ```bash
-skaffold dev --profile headless --port-forward --kube-context docker-desktop
+skaffold dev --platform=linux/amd64 --profile headless --port-forward --kube-context docker-desktop
 ```
 
 Once you see the log message "Starting export of records.", the
 back-end of CAST is running.
 
-In a separate terminal start the front-end:
+> :memo: If another service is listening on 5432, Skaffold will listen
+> on another port, typically 5433.
+>
+> The log line that you want to look for looks like this:
+>
+> ```text
+> Port forwarding service/cast-postgresql in namespace cast, remote port 5432 -> http://127.0.0.1:5432
+> ```
+>
+> Make note of this port, you will need to update `./ui/.env.local`
+> with this port if it is not 5432
+
+Open a new terminal to run the front-end within.
+
+To run the UI application in development mode, first update your
+```./ui/.env.local``` file with the cast-postgres connection details:
+
+```bash
+cat > ./ui/.env.local <<HERE
+PGUSER=cast
+PGPASSWORD=dev-password
+PGHOST=127.0.0.1
+PGPORT=5432
+PGDATABASE=cast
+HERE
+```
+
+Run the following commands to start the front-end
 
 ```bash
 cd ./ui

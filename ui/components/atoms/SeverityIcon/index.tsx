@@ -5,7 +5,7 @@ import {
   Warning,
   Error,
   CrisisAlert,
-  ExpandCircleDown,
+  ArrowDownward,
   CheckCircleOutline,
   SvgIconComponent,
 } from '@mui/icons-material';
@@ -21,7 +21,7 @@ const Icons: Record<Severity, [
   critical: [CrisisAlert, 'error'],
   high: [Error, 'error'],
   medium: [Warning, 'warning'],
-  low: [ExpandCircleDown, 'warning'],
+  low: [ArrowDownward, 'warning'],
   none: [Lightbulb, 'info'],
 };
 

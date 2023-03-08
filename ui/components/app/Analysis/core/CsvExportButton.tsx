@@ -49,7 +49,7 @@ export const CsvExportButton: React.FC<Props> = ({
 
   return <Tooltip title='Download data as CSV'>
     <Button
-      variant='contained'
+      disableRipple
       startIcon={<FileDownloadOutlined />}
       color="primary"
       // Not sure why, but the ARIA example has the leading d lowercased in the

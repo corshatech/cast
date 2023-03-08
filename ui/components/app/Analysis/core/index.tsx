@@ -133,8 +133,8 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   ) : (
     <Card aria-labelledby="title" className="shadow-md" elevation={2}>
       <CardContent className="p-0 last:pb-0">
-        <div className="flex flex-wrap md:flex-nowrap items-start px-2 py-4 md:py-6 md:px-8 justify-between">
-          <div>
+        <div className="flex flex-wrap items-start px-2 py-4 md:py-6 md:px-8 justify-between">
+          <div className='mb-4 md:mb-0 pr-16'>
             <Typography variant="h2" aria-label="title">
               <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
               {title}

@@ -103,9 +103,9 @@ Flags:
 
 ### Kubeshark
 
-CAST uses Kubeshark 37.0. If you would like to install it to your ```$PATH```, the binary can be downloaded from
+CAST uses Kubeshark 37.0. If you would like to install Kubeshark system wide, the binary can be downloaded from
 the release page: [Kubeshark Release
-37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0). Otherwise, CAST will download to the app's private config 
+37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0). Otherwise, CAST will install the Kubeshark binary in the app's private config 
 directory.  
 
 More information about installing Kubeshark can be found on their

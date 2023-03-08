@@ -20,14 +20,8 @@ cryptographic material.
 - [Evaluated Security Concerns](#evaluated-security-concerns)
   - [Credential Reuse](#credential-reuse)
 - [Prerequisites](#prerequisites)
-- [Installation](#installation)
-  - [Install Kubeshark](#install-kubeshark)
-  - [Install CAST](#install-cast)
-  - [Uninstalling the Chart](#uninstalling-the-chart)
-- [CAST UI](#cast-ui)
-  - [Connecting to the UI](#connecting-to-the-ui)
-  - [Using the UI](#using-the-ui)
-- [Helm Parameters](#helm-parameters)
+- [Install CAST](#install-cast)
+  - [Kubeshark](#kubeshark)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -82,14 +76,17 @@ workloads.
 
 ## Install CAST
 
-The CAST binary can be downloaded from the [Releases](https://github.com/corshatech/cast/releases) page. To use the CAST CLI to analyze traffic in a namespace, 
-run 
-``` bash
-$ cast -n <namespace>
-```
-Once you run the CLI, the CAST UI will open in your browser at [localhost:3000](http://localhost:3000/). 
+The CAST binary can be downloaded from the [Releases](https://github.com/corshatech/cast/releases)
+page. To use the CAST CLI to analyze traffic in a namespace, run
 
-The ```cast``` command can be used with the following flags. 
+```bash
+cast -n <namespace>
+```
+
+Once you run the CLI, the CAST UI will open in your browser at [localhost:3000](http://localhost:3000/).
+
+The ```cast``` command can be used with the following flags.
+
 ```bash
 Usage:
   cast -n [namespace] [flags]
@@ -103,10 +100,10 @@ Flags:
 
 ### Kubeshark
 
-CAST uses Kubeshark 37.0. If you would like to install Kubeshark system wide, the binary can be downloaded from
-the release page: [Kubeshark Release
-37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0). Otherwise, CAST will install the Kubeshark binary in the app's private config 
-directory.  
+CAST uses Kubeshark 37.0. If you would like to install Kubeshark system wide, the
+binary can be downloaded from the release page: [Kubeshark Release
+37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0). Otherwise, CAST
+will install the Kubeshark binary in the app's private config directory.  
 
 More information about installing Kubeshark can be found on their
 site: [Kubeshark Installation](https://docs.kubeshark.co/en/install).

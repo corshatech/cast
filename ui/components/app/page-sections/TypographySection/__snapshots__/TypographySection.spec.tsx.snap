@@ -43,54 +43,58 @@ exports[`Typography Section snapshot 1`] = `
       <p
         className="leading-6 text-body1 font-nunito"
       >
-        <div
+        <span
           className="font-black"
         >
           Body 1 Black
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-black"
         >
           Nunito Sans Black 16px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body1 font-nunito"
       >
-        <div
+        <span
           className="font-bold"
         >
           Body 1 Bold
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-bold"
         >
           Nunito Sans Bold 16px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body1 font-nunito"
       >
-        <div>
+        <span>
           Body 1 Regular
-        </div>
-        <div>
+        </span>
+        <br />
+        <span>
           Nunito Sans Regular 16px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body1 font-nunito"
       >
-        <div
+        <span
           className="underline font-medium"
         >
           Body 1 Underlined
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="underline font-medium"
         >
           Nunito Sans Medium Underline 16px
-        </div>
+        </span>
       </p>
     </div>
     <div
@@ -99,54 +103,58 @@ exports[`Typography Section snapshot 1`] = `
       <p
         className="leading-6 text-body2 font-nunito"
       >
-        <div
+        <span
           className="font-bold"
         >
           Body 2 Bold
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-bold"
         >
           Nunito Sans Bold 14px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body2 font-nunito"
       >
-        <div>
+        <span>
           Body 2 Regular
-        </div>
-        <div>
+        </span>
+        <br />
+        <span>
           Nunito Sans Regular 14px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body2 font-nunito"
       >
-        <div
+        <span
           className="underline font-medium"
         >
           Body 2 Underlined
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="underline font-medium"
         >
           Nunito Sans Medium Underline 14px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body2 font-nunito"
       >
-        <div
+        <span
           className="font-medium"
         >
           All Caps
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-black capitalize"
         >
           Nunito Sans Black All Caps 14px
-        </div>
+        </span>
       </p>
     </div>
     <div
@@ -155,54 +163,58 @@ exports[`Typography Section snapshot 1`] = `
       <p
         className="leading-6 text-body3 font-nunito"
       >
-        <div
+        <span
           className="font-black"
         >
           Body 3 Black
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-black"
         >
           Nunito Sans Black 12px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body3 font-nunito"
       >
-        <div
+        <span
           className="font-bold"
         >
           Body 3 Bold
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-bold"
         >
           Nunito Sans Bold 12px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body3 font-nunito"
       >
-        <div>
+        <span>
           Body 3 Regular
-        </div>
-        <div>
+        </span>
+        <br />
+        <span>
           Nunito Sans Regular 12px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body3 font-nunito"
       >
-        <div
+        <span
           className="underline font-medium"
         >
           Body 3 Underlined
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="underline font-medium"
         >
           Nunito Sans Medium Underline 12px
-        </div>
+        </span>
       </p>
     </div>
     <div
@@ -211,54 +223,58 @@ exports[`Typography Section snapshot 1`] = `
       <p
         className="leading-6 text-body4 font-nunito"
       >
-        <div
+        <span
           className="font-black"
         >
           Body 4 Black
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-black"
         >
           Nunito Sans Black 10px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body4 font-nunito"
       >
-        <div
+        <span
           className="font-bold"
         >
           Body 4 Bold
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="font-bold"
         >
           Nunito Sans Bold 10px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body4 font-nunito"
       >
-        <div>
+        <span>
           Body 4 Regular
-        </div>
-        <div>
+        </span>
+        <br />
+        <span>
           Nunito Sans Regular 10px
-        </div>
+        </span>
       </p>
       <p
         className="leading-6 text-body4 font-nunito"
       >
-        <div
+        <span
           className="underline font-medium"
         >
           Body 4 Underlined
-        </div>
-        <div
+        </span>
+        <br />
+        <span
           className="underline font-medium"
         >
           Nunito Sans Medium Underline 10px
-        </div>
+        </span>
       </p>
     </div>
   </div>,

@@ -122,40 +122,54 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   noResults,
   children,
   exportButton,
-}) => (
-  noResults
-  ? <NoResults {...{
-    description,
-    reportedAt,
-    weaknessLink,
-    weaknessTitle,
-    severity,
-    title,
-    noResults,
-  }}/>
-
-  : <Card>
-    <CardContent>
-      <div className='flex flex-nowrap'>
-        <Typography variant='h2' className='grow'><SeverityIcon severity={severity} /> {title}</Typography>
-        {exportButton}
-      </div>
-      <Typography className='max-w-prose my-2' variant='body1'>{description}</Typography>
-      <table className='font-light my-2 text-zinc-400 border-separate border-spacing-x-4'>
-        <tbody>
-          <tr>
-            <td>Updated:</td><td><FormattedDate when={reportedAt} /></td>
-          </tr>
-          <tr>
-            <td>Issue Severity:</td><td>{severity}</td>
-          </tr>
-          <Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle}/>
-        </tbody>
-      </table>
-      {children}
-    </CardContent>
-  </Card>
-);
+}) =>
+  noResults ? (
+    <NoResults
+      {...{
+        description,
+        reportedAt,
+        weaknessLink,
+        weaknessTitle,
+        severity,
+        title,
+        noResults,
+      }}
+    />
+  ) : (
+    <Card aria-labelledby="title" className="shadow-md" elevation={2}>
+      <CardContent className="p-0 last:pb-0">
+        <div className="flex flex-nowrap items-center px-2 py-4">
+          <Typography variant="h2" className="grow" aria-label="title">
+            <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
+            {title}
+          </Typography>
+          {exportButton}
+        </div>
+        <Typography className="max-w-prose pl-2.5 pr-6" variant="body1">
+          {description}
+        </Typography>
+        <table className="font-light my-2 text-zinc-400 border-separate border-spacing-x-4">
+          <tbody>
+            <tr>
+              <td>Updated:</td>
+              <td>
+                <FormattedDate when={reportedAt} />
+              </td>
+            </tr>
+            <tr>
+              <td>Issue Severity:</td>
+              <td>{severity}</td>
+            </tr>
+            <Weakness
+              weaknessLink={weaknessLink}
+              weaknessTitle={weaknessTitle}
+            />
+          </tbody>
+        </table>
+        {children}
+      </CardContent>
+    </Card>
+  );
 
 export const AnalysisCardLoading = () => {
   return (

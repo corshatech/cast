@@ -3,20 +3,21 @@
 exports[`ReusedAuthenticationCard renders all passed props 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-bhp9pd-MuiPaper-root-MuiCard-root"
+    aria-labelledby="title"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-935hc6-MuiPaper-root-MuiCard-root"
   >
     <div
-      class="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      class="MuiCardContent-root p-0 last:pb-0 css-46bh2p-MuiCardContent-root"
     >
       <div
-        class="flex flex-nowrap"
+        class="flex flex-nowrap items-center px-2 py-4"
       >
         <h2
           class="leading-6 text-h2 font-poppins font-bold grow"
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium css-1wxstni-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium mb-[3px] pb-[1px] css-1wxstni-MuiSvgIcon-root"
             data-testid="ErrorIcon"
             focusable="false"
             viewBox="0 0 24 24"
@@ -51,7 +52,7 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
         </button>
       </div>
       <p
-        class="leading-6 text-body1 font-nunito max-w-prose my-2"
+        class="leading-6 text-body1 font-nunito max-w-prose pl-2.5 pr-6"
       >
         Test description
       </p>

@@ -92,12 +92,12 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
         <svg
           aria-hidden={true}
           className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-3adcp6-MuiSvgIcon-root"
-          data-testid="ExpandCircleDownIcon"
+          data-testid="ArrowDownwardIcon"
           focusable="false"
           viewBox="0 0 24 24"
         >
           <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 13.5L7.5 11l1.42-1.41L12 12.67l3.08-3.08L16.5 11 12 15.5z"
+            d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
           />
         </svg>
         2
@@ -239,12 +239,12 @@ exports[`Analyses Summary Component renders some problems variant 1`] = `
         <svg
           aria-hidden={true}
           className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-3adcp6-MuiSvgIcon-root"
-          data-testid="ExpandCircleDownIcon"
+          data-testid="ArrowDownwardIcon"
           focusable="false"
           viewBox="0 0 24 24"
         >
           <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 13.5L7.5 11l1.42-1.41L12 12.67l3.08-3.08L16.5 11 12 15.5z"
+            d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
           />
         </svg>
         2

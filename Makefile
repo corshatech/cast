@@ -28,7 +28,7 @@ image:
 	skaffold build -t ${VERSION} --default-repo=ghcr.io/corshatech/cast
 
 cast:
-	GOOS=linux GOARCH=amd64 $(GO) build ${LDFLAGS} -gcflags="all=-N -l" -o build/package/collector ./collector
+	$(GO) build -gcflags="all=-N -l" -o build/package/cast cast.go
 
 tidy:
 	$(GO) mod tidy
@@ -59,8 +59,8 @@ clean:
 
 # remove cast deployment resources
 cast-clean:
+	kubectl delete pvc data-cast-postgresql-0 -n cast
 	kubectl delete ns cast
 	kubeshark clean
-	kubectl delete pvc data-cast-postgresql-0 -n cast
 
 .PHONY: all test cast tidy lint lint-helm

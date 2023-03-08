@@ -80,139 +80,38 @@ workloads.
 - Helm 3.8+
 - Docker 20.10+
 
-## Installation
+## Install CAST
 
-Installation of the CAST tool can be broken up into two sections:
+The CAST binary can be downloaded from the [Releases](https://github.com/corshatech/cast/releases) page. To use the CAST CLI to analyze traffic in a namespace, 
+run 
+``` bash
+$ cast -n <namespace>
+```
+Once you run the CLI, the CAST UI will open in your browser at [localhost:3000](http://localhost:3000/). 
 
-- Installing Kubeshark on a Kubernetes stack
-- Installing the CAST tooling alongside Kubeshark's taps
+The ```cast``` command can be used with the following flags. 
+```bash
+Usage:
+  cast -n [namespace] [flags]
 
-### Install Kubeshark
+Flags:
+  -h, --help                  help for cast
+      --kube-config string    Path to kube config file. (default "$HOME/.kube/config")
+      --kube-context string   Kube context to deploy CAST into.
+  -n, --namespace string      The namespace to analyze. (default "all")
+```
 
-**CAST requires Kubeshark 37.0**. The binary can be downloaded from
+### Kubeshark
+
+CAST uses Kubeshark 37.0. If you would like to install it to your ```$PATH```, the binary can be downloaded from
 the release page: [Kubeshark Release
-37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0)
+37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0). Otherwise, CAST will download to the app's private config 
+directory.  
 
 More information about installing Kubeshark can be found on their
 site: [Kubeshark Installation](https://docs.kubeshark.co/en/install).
 NOTE: the instructions are for the latest version of Kubeshark, not
 37.0 .
-
-After installation is complete, tap the Namespaces or Clusters you
-wish CAST to evaluate
-
-```bash
-kubeshark tap -n <YOUR_NAMESPACE>
-```
-
-### Install CAST
-
-Cast images are hosted on Github's Container Registry. First, you must
-follow their very simple documentation on how to log in:
-[Authenticating to the Container
-Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)
-
-The preferred method of installation is to provide the parameters from
-a values file.  To install the CAST chart with the release name
-"my-release":
-
-```bash
-helm repo add corshatech https://corshatech.github.io/cast
-helm install my-release corshatech/cast
-```
-
-If you want to customize the helm chart, a YAML file that specifies
-the values for the parameters can be provided while installing the
-chart. Check the [Helm Parameters](#helm-parameters) section below for
-more information.
-
-> :memo: If you are re-installing CAST in a previously used namespace,
-> you will need to delete the `data-cast-postgresql-0` PVC in order to
-> remove the cached postgres password from the previous CAST
-> deployment.
->
-> ```bash
-> kubectl delete pvc data-cast-postgresql-0
-> ```
->
-> This can be avoided by setting `postgresql.auth.password` as
-> described in the [Helm Parameters](#helm-parameters) section.
-
-### Uninstalling the Chart
-
-To uninstall/delete the `my-release` deployment:
-
-```bash
-helm delete my-release
-```
-
-## CAST UI
-
-The CAST UI is the "single pane of glass" view into what
-vulnerabilities CAST has found on your system. Navigate to the CAST UI
-to monitor any vulnerabilities found on your cluster since CAST was
-installed.
-
-### Connecting to the UI
-
-The UI is automatically hosted with the cast UI. To reach it, you will
-need to connect to the pod.
-
-First, get the name of the cast UI pod via:
-
-```bash
-kubectl get pods -n <YOUR_NAMESPACE>
-```
-
-Second, connect to the pod service via:
-
-```bash
-kubectl port-forward -n <YOUR_NAMESPACE> <CAST_POD_NAME> 3000:3000
-```
-
-The web UI is now visible on `localhost:3000` via your web browser.
-
-### Using the UI
-
-Now that the web UI is launched, we can begin seeing
-vulnerabilities. Here is an example of Credential Reuse:
-
-![cast-ui-image](./docs/cast-ui-image.png)
-
-## Helm Parameters
-
-When installing a chart, you may provide a yaml file that edits
-certain parameters.
-
-| Name | Description | Value |
-| ----------------------------- | ----------------------------------- | ------ |
-| `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]` |
-| `postgresql.auth.username` | Postgres db username | `""` |
-| `postgresql.auth.database` | Postgres database name | `""` |
-| `postgresql.auth.password` | Postgres database password. If this is not set, a random password will be generated. | `""` |
-| `collector.env.PGPORT` | Which port postgres is using | `""` |
-| `collector.env.WEBSOCKET_URL` | The web socket Kubeshark has attached to | `""` |
-| `collector.image.tag` | The tag of the cast/collector image | `""` |
-| `collector.image.repository` | The repository of the cast/collector image | `""` |
-| `ui.env.PGPORT` | Which port postgres is using | `""` |
-| `ui.image.tag` | The tag of the cast/ui image | `""` |
-| `ui.image.repository` | The repository of the cast/ui image | `""` |
-
-Specify each parameter using the --set key=value[,key=value] argument
-to helm install. For example,
-
-```bash
-    helm install my-release --set ui.env.PGPORT=5432 corshatech/cast
-```
-
-The above command sets the PGPORT variable to 5432.
-
-Alternatively, a YAML file that specifies the values for the
-parameters can be provided while installing the chart. For example,
-
-```bash
-    helm install my-release -f values.yaml corshatech/cast
-```
 
 ## Contributing
 

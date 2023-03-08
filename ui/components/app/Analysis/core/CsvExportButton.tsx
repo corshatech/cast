@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { unparse } from 'papaparse';
 import FileSaver from 'file-saver';
 
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip, Button } from '@mui/material';
 import { FileDownloadOutlined } from '@mui/icons-material';
 
 export type Props = {
@@ -48,15 +48,17 @@ export const CsvExportButton: React.FC<Props> = ({
   }, [data, config, filename, stripID]);
 
   return <Tooltip title='Download data as CSV'>
-    <IconButton
-      color='primary'
+    <Button
+      variant='contained'
+      startIcon={<FileDownloadOutlined />}
+      color="primary"
       // Not sure why, but the ARIA example has the leading d lowercased in the
       // label. Maybe the distinction is unimportant?
       aria-label='download data as CSV'
       component='button'
       onClick={onClick}
     >
-      <FileDownloadOutlined/>
-    </IconButton>
+      Download
+    </Button>
   </Tooltip>
 }

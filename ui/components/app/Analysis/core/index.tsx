@@ -134,12 +134,17 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
     <Card aria-labelledby="title" className="shadow-md" elevation={2}>
       <CardContent className="p-0 last:pb-0">
         <div className="flex flex-wrap items-start px-2 py-4 md:py-6 md:px-8 justify-between">
-          <div className='mb-4 md:mb-0 pr-16'>
-            <Typography variant="h2" aria-label="title">
+          <div className="items-center flex w-full md:mb-0">
+            <Typography className="grow mr-2" variant="h2" aria-label="title">
               <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
               {title}
             </Typography>
-            <div className="pl-1 mt-1 flex flex-col md:mt-0 md:flex-row md:flex-wrap md:space-x-6">
+            <div className='shrink-0'>
+              {exportButton}
+            </div>
+          </div>
+
+          <div className="pl-1 mt-2 flex flex-col md:mt-0 md:flex-row md:flex-wrap md:space-x-6">
               <div className="flex items-center text-sm text-gray-500">
                 <FontAwesomeIcon
                   icon={faCalendar}
@@ -171,9 +176,6 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
                 </div>
               )}
             </div>
-          </div>
-
-          {exportButton}
         </div>
         <Typography
           className="max-w-prose pl-2.5 pr-6 md:pl-9 pb-6"

@@ -425,6 +425,11 @@ func hubURLToWebsocketURL(hubURL string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("could not parse Kubeshark Hub URL: %w", err)
 	}
+
+	// Lint disabled because it the constant would not mean the same
+	// thing and the two strings are only used here.
+	//
+	// nolint:goconst
 	url.Scheme = "ws"
 	url.Path = "ws"
 	return url.String(), nil

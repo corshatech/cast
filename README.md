@@ -80,7 +80,7 @@ The CAST binary can be downloaded from the [Releases](https://github.com/corshat
 page. To use the CAST CLI to analyze traffic in a namespace, run
 
 ```bash
-cast -n <namespace>
+./cast -n <namespace>
 ```
 
 Once you run the CLI, the CAST UI will open in your browser at [localhost:3000](http://localhost:3000/).
@@ -89,13 +89,14 @@ The ```cast``` command can be used with the following flags.
 
 ```bash
 Usage:
-  cast -n [namespace] [flags]
+  ./cast -n [namespace] [flags]
 
 Flags:
   -h, --help                  help for cast
       --kube-config string    Path to kube config file. (default "$HOME/.kube/config")
-      --kube-context string   Kube context to deploy CAST into.
+      --kube-context string   Kube context to deploy CAST into. (default "current-context")
   -n, --namespace string      The namespace to analyze. (default "all")
+  -p, --port string           The port the CAST UI will be available on. (default "3000")
 ```
 
 ### Kubeshark

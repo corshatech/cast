@@ -11,8 +11,7 @@
 
 GO = GOPRIVATE=github.com/corshatech/* GO111MODULE=on go
 
-VERSION ?= "0.1.0-pre"
-GITSHA ?= "`git rev-parse HEAD`"
+VERSION ?= "v0.0.1"
 
 all: tidy test lint image markdown
 

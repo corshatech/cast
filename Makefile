@@ -11,7 +11,7 @@
 
 GO = GOPRIVATE=github.com/corshatech/* GO111MODULE=on go
 
-VERSION ?= "v0.0.1"
+VERSION ?= "0.1.0"
 
 all: tidy test lint image markdown
 

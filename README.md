@@ -101,15 +101,11 @@ Flags:
 
 ### Kubeshark
 
-CAST uses Kubeshark 37.0. If you would like to install Kubeshark system wide, the
-binary can be downloaded from the release page: [Kubeshark Release
-37.0](https://github.com/kubeshark/kubeshark/releases/tag/37.0). Otherwise, CAST
-will install the Kubeshark binary in the app's private config directory.  
-
-More information about installing Kubeshark can be found on their
-site: [Kubeshark Installation](https://docs.kubeshark.co/en/install).
-NOTE: the instructions are for the latest version of Kubeshark, not
-37.0 .
+CAST uses [Kubeshark](https://kubeshark.co/) to collect traffic. Our current supported
+Kubeshark version is v38.5. If you would like to install Kubeshark system wide, the
+installation instructions can be found in their documentation:
+[Kubeshark Installation](https://docs.kubeshark.co/en/install). Otherwise, CAST
+will install the Kubeshark binary in the app's private config directory.
 
 ## Contributing
 

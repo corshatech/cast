@@ -28,9 +28,11 @@ import (
 	"k8s.io/client-go/transport/spdy"
 )
 
+const kubesharkVersion string = "38.5" // supported Kubeshark version
+
 // cast runs kubeshark tap and deploys CAST. On exit, it will clean up
 // CAST and kubeshark resources.
-func Cast(namespace string, port string, kubeConfigPath string, kubeContext string) {
+func cast(namespace string, port string, kubeConfigPath string, kubeContext string) {
 	log.Info("Namespace to be analyzed: ", namespace)
 
 	// trap Ctrl+C and call cancel on the context
@@ -40,21 +42,20 @@ func Cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 
 	// Check for Kubeshark
 
-	ksOutput, err := exec.Command("kubeshark", "version").CombinedOutput()
 	kubesharkPath := "kubeshark" // path to kubeshark binary
+	ksOutput, err := exec.Command(kubesharkPath, "version").CombinedOutput()
 
-	// TODO: remove v37.0 check once 38+ compatible
-	// If Kubeshark is not in $PATH or is not v37.0, download binary into UserConfigDir
-	if err != nil || !strings.Contains(string(ksOutput), "37.0") {
-		log.Info("Kubeshark v37.0 is not installed. Installing Kubeshark v37.0 in app config directory.")
+	// If Kubeshark is not in $PATH or is not kubesharkVersion, download binary into UserConfigDir
+	if err != nil || !strings.Contains(string(ksOutput), kubesharkVersion) {
+		log.Infof("Kubeshark v%s is not installed. Installing Kubeshark v%s in app config directory.", kubesharkVersion, kubesharkVersion)
 		kubesharkPath, err = downloadKubeshark(ctx)
 		if err != nil {
-			log.WithError(err).Error("Failed to install Kubeshark v37.0.")
+			log.WithError(err).Errorf("Failed to install Kubeshark v%s.", kubesharkVersion)
 			return
 		}
 	}
 
-	log.Info("Kubeshark v37.0 installation confirmed.")
+	log.Infof("Kubeshark v%s installation confirmed.", kubesharkVersion)
 
 	// Create helm client
 
@@ -234,17 +235,16 @@ func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernet
 	}
 }
 
-// TODO: update download link with 'latest' tag once kubeshark 38+ compatible
 // downloadKubeshark downloads the kubeshark binary to the UserConfigDir and returns the path to the binary.
 func downloadKubeshark(ctx context.Context) (string, error) {
 	osArch := fmt.Sprintf("%s_%s", runtime.GOOS, runtime.GOARCH)
 	available := []string{"darwin_amd64", "darwin_arch64", "linux_amd64", "linux_arch64"}
 	if !slices.Contains(available, osArch) {
-		return "", fmt.Errorf("Unsupported OS or architecture: %s. For more details, visit https://github.com/kubeshark/kubeshark/releases/tag/37.0.", osArch)
+		return "", fmt.Errorf("Unsupported OS or architecture: %s. For more details, visit https://github.com/kubeshark/kubeshark/releases/tag/%s.", osArch, kubesharkVersion)
 	}
 
 	// download binary to config directory
-	ksDownload := fmt.Sprintf("https://github.com/kubeshark/kubeshark/releases/download/37.0/kubeshark_%s", osArch)
+	ksDownload := fmt.Sprintf("https://github.com/kubeshark/kubeshark/releases/download/%s/kubeshark_%s", kubesharkVersion, osArch)
 
 	configPath := configdir.LocalConfig("cast")
 	err := configdir.MakePath(configPath) // Ensure it exists.
@@ -254,14 +254,14 @@ func downloadKubeshark(ctx context.Context) (string, error) {
 
 	kubesharkPath := filepath.Join(configPath, "kubeshark")
 
-	// check if Kubeshark v37.0 has already been downloaded to UserConfigDir.
+	// check if Kubeshark has already been downloaded to UserConfigDir.
 	ksOutput, err := exec.Command(kubesharkPath, "version").CombinedOutput()
 	if err == nil {
-		if strings.Contains(string(ksOutput), "37.0") {
-			log.Infof("Kubeshark v37.0 already exists in %s.", configPath)
+		if strings.Contains(string(ksOutput), kubesharkVersion) {
+			log.Infof("Kubeshark v%s already exists in %s.", kubesharkVersion, configPath)
 			return kubesharkPath, nil
 		}
-		log.Infof("Incorrect Kubeshark version found in %s. Deleting and installing v37.0.", configPath)
+		log.Infof("Incorrect Kubeshark version found in %s. Deleting and installing v%s.", configPath, kubesharkVersion)
 		os.Remove(kubesharkPath)
 	}
 
@@ -292,7 +292,7 @@ func downloadKubeshark(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("Error doing chmod 755: %v", err)
 	}
 
-	log.Infof("Kubeshark v37.0 successfully installed at %s", kubesharkPath)
+	log.Infof("Kubeshark v%s successfully installed at %s", kubesharkVersion, kubesharkPath)
 	return kubesharkPath, nil
 
 }

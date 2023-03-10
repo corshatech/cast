@@ -7,6 +7,7 @@ require (
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/emirpasic/gods v1.18.1
 	github.com/gorilla/websocket v1.5.0
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
 	github.com/lib/pq v1.10.7
 	github.com/mittwald/go-helm-client v0.11.5

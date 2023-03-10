@@ -21,7 +21,7 @@ var rootCmd = &cobra.Command{
 	Short: "CAST captures the network traffic in your namespace",
 	Long:  "CAST: A tool to evaluate security concerns surrounding API Communication and Authentication. For more info: https://github.com/corshatech/cast. cast captures the network traffic in your namespace",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		Cast(namespace, port, kubeConfig, kubeContext)
+		cast(namespace, port, kubeConfig, kubeContext)
 		return nil
 	},
 }

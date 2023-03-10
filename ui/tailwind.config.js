@@ -57,6 +57,14 @@ module.exports = {
         'icon-md': '1.25rem',
         'icon-lg': '1.5rem',
       },
+      maxWidth: {
+        '8xl': '88rem',
+        '9xl': '96rem',
+        '10xl': '104rem',
+      },
+      screens: {
+        '4K': '2560px',
+      },
     },
   },
   plugins: [],

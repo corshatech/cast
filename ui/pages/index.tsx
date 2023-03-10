@@ -16,14 +16,13 @@ const AnalysisGridLoading = () => {
     <AnalysisCardLoading />
   </>);
 }
-
 export default function Dashboard() {
-  const { data, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
-  const analysesResponse = data;
+  const { data: analysesResponse, error } = useSWR<AnalysesResponse>('/api/analyses');
 
-  const summary = !isLoading && analysesResponse && summarizeAnalyses(analysesResponse.analyses);
-  const analyses = analysesResponse?.analyses ?? []
-  const showLoadingState = error || isLoading;
+  const summary =
+    analysesResponse &&
+    summarizeAnalyses(analysesResponse.analyses);
+  const analyses = analysesResponse?.analyses ?? [];
 
   return (
     <>
@@ -33,17 +32,22 @@ export default function Dashboard() {
       <Layout>
         <Header />
         <main className="bg-gray-50 w-screen">
-          {error && <Alert severity="error"> An Error Occurred loading analysis: {error.toString()} </Alert>}
-          <div className="max-w-screen mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto">
-              <div className="w-full my-12 bg-slate-200 h-[400px] rounded-lg flex justify-center items-center">
-                {summary && <Summary {...summary} />}
-                {showLoadingState && <SummaryLoading />}
-              </div>
+          {error && (
+            <Alert severity="error">
+              An Error Occurred loading analysis: {error.toString()}
+            </Alert>
+          )}
+          <div className="max-w-screen 2xl:max-4K:max-w-10xl  mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="my-12">
+              {summary ? <Summary {...summary} /> : <SummaryLoading />}
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-              {(analyses.length > 0) && analyses.map((a) => <Analysis {...a} key={a.id} />)}
-              {showLoadingState && <AnalysisGridLoading />}
+
+            <div className="flex flex-col 4K:grid 4K:grid-cols-2 space-y-12 4K:space-y-0 4K:gap-4 mb-12">
+              {analyses.length > 0 ? (
+                analyses.map((a) => <Analysis {...a} key={a.id} />)
+              ) : (
+                <AnalysisGridLoading />
+              )}
             </div>
           </div>
         </main>

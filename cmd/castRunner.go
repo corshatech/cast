@@ -108,19 +108,13 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 	cmdContext := fmt.Sprintf("kube-context=%s", kubeContext)
 	ksCmd := exec.CommandContext(ctx, kubesharkPath, "tap", "-n", namespace, "--set", "headless=true", "--set", cmdConfig, "--set", cmdContext)
 
-	// k communicates kubeshark tap errors
-	k := make(chan error)
 	err = ksCmd.Start()
 	if err != nil {
 		log.WithError(err).Fatal("Error starting kubeshark tap. ")
 	}
-	go func() {
-		err := ksCmd.Wait()
-		k <- err
-	}()
 
 	go func() {
-		err := <-k
+		err := ksCmd.Wait()
 		if err != nil && err.Error() != "signal: killed" {
 			log.WithError(err).Fatal("Error running kubeshark tap.")
 		}
@@ -235,7 +229,7 @@ func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernet
 	}
 }
 
-// downloadKubeshark downloads the kubeshark binary to the UserConfigDir and returns the path to the binary.
+// downloadKubeshark downloads the Kubeshark binary to the UserConfigDir and returns the path to the binary.
 func downloadKubeshark(ctx context.Context) (string, error) {
 	osArch := fmt.Sprintf("%s_%s", runtime.GOOS, runtime.GOARCH)
 	available := []string{"darwin_amd64", "darwin_arch64", "linux_amd64", "linux_arch64"}
@@ -267,7 +261,7 @@ func downloadKubeshark(ctx context.Context) (string, error) {
 
 	ksOut, err := os.Create(kubesharkPath)
 	if err != nil {
-		return "", fmt.Errorf("Error creating file to download kubeshark into:%v", err)
+		return "", fmt.Errorf("Error creating file to download Kubeshark into:%v", err)
 	}
 	defer ksOut.Close()
 
@@ -285,11 +279,11 @@ func downloadKubeshark(ctx context.Context) (string, error) {
 	defer resp.Body.Close()
 	_, err = io.Copy(ksOut, resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("Error copying response into kubeshark file: %v", err)
+		return "", fmt.Errorf("Error copying response into Kubeshark file: %v", err)
 	}
 	err = os.Chmod(kubesharkPath, 0755)
 	if err != nil {
-		return "", fmt.Errorf("Error doing chmod 755: %v", err)
+		return "", fmt.Errorf("Error making Kubeshark binary executable: %v", err)
 	}
 
 	log.Infof("Kubeshark v%s successfully installed at %s", kubesharkVersion, kubesharkPath)
@@ -332,7 +326,7 @@ func castCleanup(helmClient helm.Client, clientset *kubernetes.Clientset, kubesh
 		return
 	}
 
-	// Remove kubeshark resources
+	// Remove Kubeshark resources
 	err = exec.Command(kubesharkPath, "clean").Run()
 	if err != nil {
 		log.WithError(err).Error("Error running 'kubeshark clean'. ")

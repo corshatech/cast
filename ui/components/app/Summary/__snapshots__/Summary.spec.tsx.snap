@@ -5,34 +5,38 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root w-full h-full css-bhp9pd-MuiPaper-root-MuiCard-root"
 >
   <div
-    className="MuiCardContent-root flex flex-col space-y-5 px-4 py-8 css-46bh2p-MuiCardContent-root"
+    className="MuiCardContent-root flex flex-col space-y-5 px-4 py-8 md:py-12 md:px-8 css-46bh2p-MuiCardContent-root"
   >
     <h1
-      className="leading-6 text-h1 font-poppins font-bold"
+      className="leading-6 text-h1 font-poppins font-bold md:text-5xl xl:text-7xl"
     >
       Ongoing Results
     </h1>
-    <h4
-      className="leading-6 text-h4 font-poppins font-semibold"
+    <div
+      className="flex flex-col md:flex-row space-y-5 md:space-y-0 md:items-center md:space-x-3 md:ml-1 md:pt-6 xl:pt-8"
     >
-      7 Faults (143 Findings)
-    </h4>
-    <p
-      className="leading-6 text-body1 font-nunito"
-      style={
-        {
-          "color": "rgba(0, 0, 0, 0.6)",
+      <h4
+        className="leading-6 text-h4 font-poppins font-semibold md:text-2xl xl:text-3xl"
+      >
+        7 Faults (143 Findings)
+      </h4>
+      <p
+        className="leading-6 text-body1 font-nunito xl:text-xl font-semibold"
+        style={
+          {
+            "color": "rgba(0, 0, 0, 0.6)",
+          }
         }
-      }
-    >
-      10
-       passed
-    </p>
+      >
+        10
+         passed
+      </p>
+    </div>
     <ul
-      className="max-h-40 overflow-y-scroll space-y-1 flex flex-col justify-center pt-1"
+      className="max-h-40 max-w-full xl:max-w-6xl overflow-y-scroll space-y-1 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between pt-1 md:py-12 xl:py-24"
     >
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
@@ -49,11 +53,11 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
          Critical
       </li>
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
-          className="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium mr-2 css-1wxstni-MuiSvgIcon-root"
+          className="MuiSvgIcon-root MuiSvgIcon-colorError MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-1wxstni-MuiSvgIcon-root"
           data-testid="ErrorIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -66,11 +70,11 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
          High
       </li>
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
-          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 css-3adcp6-MuiSvgIcon-root"
+          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-3adcp6-MuiSvgIcon-root"
           data-testid="WarningIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -83,28 +87,28 @@ exports[`Analyses Summary Component renders all problems variant 1`] = `
          Medium
       </li>
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
-          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 css-3adcp6-MuiSvgIcon-root"
-          data-testid="DarkModeIcon"
+          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-3adcp6-MuiSvgIcon-root"
+          data-testid="ArrowDownwardIcon"
           focusable="false"
           viewBox="0 0 24 24"
         >
           <path
-            d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"
+            d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
           />
         </svg>
         2
          Low
       </li>
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
-          className="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium mr-2 css-1yq1soz-MuiSvgIcon-root"
+          className="MuiSvgIcon-root MuiSvgIcon-colorInfo MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-1yq1soz-MuiSvgIcon-root"
           data-testid="LightbulbIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -126,31 +130,35 @@ exports[`Analyses Summary Component renders no problems variant 1`] = `
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root w-full h-full css-bhp9pd-MuiPaper-root-MuiCard-root"
 >
   <div
-    className="MuiCardContent-root flex flex-col space-y-5 px-4 py-8 css-46bh2p-MuiCardContent-root"
+    className="MuiCardContent-root flex flex-col space-y-5 px-4 py-8 md:py-12 md:px-8 css-46bh2p-MuiCardContent-root"
   >
     <h1
-      className="leading-6 text-h1 font-poppins font-bold"
+      className="leading-6 text-h1 font-poppins font-bold md:text-5xl xl:text-7xl"
     >
       Ongoing Results
     </h1>
-    <h4
-      className="leading-6 text-h4 font-poppins font-semibold"
+    <div
+      className="flex flex-col md:flex-row space-y-5 md:space-y-0 md:items-center md:space-x-3 md:ml-1 md:pt-6 xl:pt-8"
     >
-      No problems detected yet. Live scanning will continue in the background.
-    </h4>
-    <p
-      className="leading-6 text-body1 font-nunito"
-      style={
-        {
-          "color": "rgba(0, 0, 0, 0.6)",
+      <h4
+        className="leading-6 text-h4 font-poppins font-semibold md:text-2xl xl:text-3xl"
+      >
+        No problems detected yet. Live scanning will continue in the background.
+      </h4>
+      <p
+        className="leading-6 text-body1 font-nunito xl:text-xl font-semibold"
+        style={
+          {
+            "color": "rgba(0, 0, 0, 0.6)",
+          }
         }
-      }
-    >
-      17
-       passed
-    </p>
+      >
+        17
+         passed
+      </p>
+    </div>
     <ul
-      className="max-h-40 overflow-y-scroll space-y-1 flex flex-col justify-center pt-1"
+      className="max-h-40 max-w-full xl:max-w-6xl overflow-y-scroll space-y-1 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between pt-1 md:py-12 xl:py-24"
     />
   </div>
 </div>
@@ -161,34 +169,38 @@ exports[`Analyses Summary Component renders some problems variant 1`] = `
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root w-full h-full css-bhp9pd-MuiPaper-root-MuiCard-root"
 >
   <div
-    className="MuiCardContent-root flex flex-col space-y-5 px-4 py-8 css-46bh2p-MuiCardContent-root"
+    className="MuiCardContent-root flex flex-col space-y-5 px-4 py-8 md:py-12 md:px-8 css-46bh2p-MuiCardContent-root"
   >
     <h1
-      className="leading-6 text-h1 font-poppins font-bold"
+      className="leading-6 text-h1 font-poppins font-bold md:text-5xl xl:text-7xl"
     >
       Ongoing Results
     </h1>
-    <h4
-      className="leading-6 text-h4 font-poppins font-semibold"
+    <div
+      className="flex flex-col md:flex-row space-y-5 md:space-y-0 md:items-center md:space-x-3 md:ml-1 md:pt-6 xl:pt-8"
     >
-      7 Faults (143 Findings)
-    </h4>
-    <p
-      className="leading-6 text-body1 font-nunito"
-      style={
-        {
-          "color": "rgba(0, 0, 0, 0.6)",
+      <h4
+        className="leading-6 text-h4 font-poppins font-semibold md:text-2xl xl:text-3xl"
+      >
+        7 Faults (143 Findings)
+      </h4>
+      <p
+        className="leading-6 text-body1 font-nunito xl:text-xl font-semibold"
+        style={
+          {
+            "color": "rgba(0, 0, 0, 0.6)",
+          }
         }
-      }
-    >
-      10
-       passed
-    </p>
+      >
+        10
+         passed
+      </p>
+    </div>
     <ul
-      className="max-h-40 overflow-y-scroll space-y-1 flex flex-col justify-center pt-1"
+      className="max-h-40 max-w-full xl:max-w-6xl overflow-y-scroll space-y-1 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between pt-1 md:py-12 xl:py-24"
     >
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
@@ -205,11 +217,11 @@ exports[`Analyses Summary Component renders some problems variant 1`] = `
          Critical
       </li>
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
-          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 css-3adcp6-MuiSvgIcon-root"
+          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-3adcp6-MuiSvgIcon-root"
           data-testid="WarningIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -222,17 +234,17 @@ exports[`Analyses Summary Component renders some problems variant 1`] = `
          Medium
       </li>
       <li
-        className="flex items-center text-lg font-semibold"
+        className="flex items-center text-lg md:text-2xl xl:text-4xl font-semibold"
       >
         <svg
           aria-hidden={true}
-          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 css-3adcp6-MuiSvgIcon-root"
-          data-testid="DarkModeIcon"
+          className="MuiSvgIcon-root MuiSvgIcon-colorWarning MuiSvgIcon-fontSizeMedium mr-2 md:text-xl xl:text-3xl css-3adcp6-MuiSvgIcon-root"
+          data-testid="ArrowDownwardIcon"
           focusable="false"
           viewBox="0 0 24 24"
         >
           <path
-            d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"
+            d="m20 12-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
           />
         </svg>
         2
@@ -248,39 +260,65 @@ exports[`Analyses Summary Loading Component rednders correctly 1`] = `
   className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root animate-pulse css-bhp9pd-MuiPaper-root-MuiCard-root"
 >
   <div
-    className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+    className="MuiCardContent-root flex flex-col space-y-5 px-4 py-8 md:py-12 md:px-8 css-46bh2p-MuiCardContent-root"
   >
-    <h3
-      className="leading-6 text-h4 font-poppins font-semibold h-5 bg-gray-200 rounded-full dark:bg-gray-500 w-48 mb-2"
+    <div
+      className="bg-gray-200 rounded-full dark:bg-gray-500 h-12 w-60 md:h-16 md:w-[38%] xl:h-20 xl:w-[45%] xl:mb-6"
     />
-    <p
-      className="leading-6 text-body1 font-nunito h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 w-40 mb-2"
-    />
-    <p
-      className="leading-6 text-body1 font-nunito h-2 bg-gray-200 rounded-full dark:bg-gray-500 w-20 mb-2"
-      style={
-        {
-          "color": "rgba(0, 0, 0, 0.6)",
-        }
-      }
-    />
-    <ul>
-      <li
-        className="w-32 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 mb-2"
+    <div
+      className="flex flex-col md:flex-row space-y-5 md:space-y-0 md:items-center md:space-x-3 md:ml-1"
+    >
+      <div
+        className="bg-gray-200 rounded-full dark:bg-gray-500 h-6 w-48 xl:h-12 xl:w-80"
       />
-      <li
-        className="w-32 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 mb-2"
+      <div
+        className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 w-20 md:ml-4 xl:h-8 xl:w-28"
       />
-      <li
-        className="w-32 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 mb-2"
-      />
-      <li
-        className="w-32 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 mb-2"
-      />
-      <li
-        className="w-32 h-2.5 bg-gray-200 rounded-full dark:bg-gray-500 mb-2"
-      />
-    </ul>
+    </div>
+    <div
+      className="max-h-40 overflow-y-scroll space-y-2 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between md:py-16"
+    >
+      <div
+        className="flex items-center space-x-2"
+      >
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-4 xl:w-8"
+        />
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-24"
+        />
+      </div>
+      <div
+        className="flex items-center space-x-2"
+      >
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-4 xl:w-8"
+        />
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-32"
+        />
+      </div>
+      <div
+        className="flex items-center space-x-2"
+      >
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-4 xl:w-8"
+        />
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-20"
+        />
+      </div>
+      <div
+        className="hidden md:flex items-center space-x-2"
+      >
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-4 xl:w-8"
+        />
+        <div
+          className="bg-gray-200 rounded-full dark:bg-gray-500 h-4 xl:h-8 w-24"
+        />
+      </div>
+    </div>
   </div>
 </div>
 `;

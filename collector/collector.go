@@ -259,15 +259,14 @@ func exportRecords(pgConnection *sql.DB, ksHubURL string, ksConnection *websocke
 }
 
 func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Conn) error {
-	_, messageBytes, err := ksConnection.ReadMessage()
-
+	_, messageJson, err := ksConnection.ReadMessage()
 	if err != nil {
 		log.Println("read:", err)
 		return err
 	}
 
 	message := Message{}
-	err = json.Unmarshal(messageBytes, &message)
+	err = json.Unmarshal(messageJson, &message)
 	if err != nil {
 		log.WithError(err).Error("Failed to unmarshal websocket message")
 		return fmt.Errorf("failed to unmarshal websocket message: %w", err)
@@ -279,7 +278,7 @@ func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Co
 	}
 
 	itemUrl := fmt.Sprintf("%s/item/%s?q=", ksURL, message.Id)
-	itemBytes, err := fetchItem(context.Background(), itemUrl)
+	trafficItemJson, err := fetchItem(context.Background(), itemUrl)
 	if err != nil {
 		log.
 			WithField("itemUrl", itemUrl).
@@ -288,25 +287,28 @@ func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Co
 		return fmt.Errorf("Failed to fetch item from kubeshark: %w", err)
 	}
 
-	itemStruct := TrafficItem{}
-	finalMessageMap, metadataJson, err := handleTrafficItem(itemBytes, &itemStruct)
+	trafficItem := TrafficItem{}
+
+	// finalTrafficDataJson is the data object inside the trafficItemJson object
+	finalTrafficDataJson, metadataJson, err := handleTrafficItem(trafficItemJson, &trafficItem)
 	if err != nil {
 		log.WithError(err).Error("Failed to process kubeshark record.")
 		return fmt.Errorf("Failed to process kubeshark record: %w", err)
 	}
 
-	if finalMessageMap == nil {
+	// When finalTrafficDataJson is nil and err is nil, the trafficItem is not relevant so we skip it
+	if finalTrafficDataJson == nil {
 		return nil
 	}
 
-	occurredAt := time.UnixMilli(itemStruct.Data.Timestamp)
+	occurredAt := time.UnixMilli(trafficItem.Data.Timestamp)
 
 	sqlStatement := `INSERT INTO traffic (occurred_at, data, meta) VALUES ($1, $2, $3)`
 
 	err = retry.Do(
 		func() error {
 			//nolint
-			_, err = pgConnection.Exec(sqlStatement, occurredAt, finalMessageMap, metadataJson)
+			_, err = pgConnection.Exec(sqlStatement, occurredAt, finalTrafficDataJson, metadataJson)
 			return err
 		},
 		retry.Attempts(retryAttempts),
@@ -350,12 +352,12 @@ func requiredEnv(envName string) string {
 
 // handleTrafficItem takes a message read from the kubeshark websocket and processes it for insertion
 // into the postgres database. It returns the processed message and a CASTMetadata struct for the message.
-func handleTrafficItem(trafficItem []byte, itemStruct *TrafficItem) ([]byte, []byte, error) {
+func handleTrafficItem(trafficItemJson []byte, trafficItem *TrafficItem) ([]byte, []byte, error) {
 	var err error
-	var messageMap map[string]interface{}
+	var trafficItemMap map[string]interface{}
 	var metadata CASTMetadata
 
-	err = json.Unmarshal(trafficItem, &messageMap)
+	err = json.Unmarshal(trafficItemJson, &trafficItemMap)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -363,26 +365,26 @@ func handleTrafficItem(trafficItem []byte, itemStruct *TrafficItem) ([]byte, []b
 	// In Kubeshark 38 the trafficItem JSON contains the data and a
 	// string version of data in a key called representation. This
 	// caused the JWT detection to match each JWT string twice
-	originalMessage, err := json.Marshal(messageMap["data"])
+	originalTrafficDataJson, err := json.Marshal(trafficItemMap["data"])
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = mapstructure.Decode(messageMap, itemStruct)
+	err = mapstructure.Decode(trafficItemMap, trafficItem)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var absoluteURI string
-	if itemStruct.Data.Protocol.Name != "" && itemStruct.Data.Request.Headers.Host != "" && itemStruct.Data.Request.Url != "" {
-		absoluteURI = itemStruct.Data.Protocol.Name + "://" + itemStruct.Data.Request.Headers.Host + itemStruct.Data.Request.Url
-		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
+	if trafficItem.Data.Protocol.Name != "" && trafficItem.Data.Request.Headers.Host != "" && trafficItem.Data.Request.Url != "" {
+		absoluteURI = trafficItem.Data.Protocol.Name + "://" + trafficItem.Data.Request.Headers.Host + trafficItem.Data.Request.Url
+		trafficItemMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
 	}
 
-	if itemStruct.Data.Request.Headers.Authorization != "" {
-		unHashedAuth := itemStruct.Data.Request.Headers.Authorization
+	if trafficItem.Data.Request.Headers.Authorization != "" {
+		unHashedAuth := trafficItem.Data.Request.Headers.Authorization
 		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
-		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
+		trafficItemMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
 		metadata.UseOfBasicAuth = strings.HasPrefix(unHashedAuth, "Basic ")
 	}
 
@@ -397,13 +399,13 @@ func handleTrafficItem(trafficItem []byte, itemStruct *TrafficItem) ([]byte, []b
 			"PassInUrl": metadata.PassInUrl,
 		}).Debug("password detected in url")
 		metadata.PassInUrl = passInUrl
-		messageMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = metadata.PassInUrl.AbsoluteUri
+		trafficItemMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = metadata.PassInUrl.AbsoluteUri
 	}
 	// End: Handle the pass-in-url analysis
 
-	metadata.DetectedJwts = detectJwts(originalMessage)
+	metadata.DetectedJwts = detectJwts(originalTrafficDataJson)
 
-	editedMessage, err := json.Marshal(messageMap["data"])
+	editedTrafficDataJson, err := json.Marshal(trafficItemMap["data"])
 	if err != nil {
 		return nil, nil, err
 	}
@@ -412,7 +414,7 @@ func handleTrafficItem(trafficItem []byte, itemStruct *TrafficItem) ([]byte, []b
 	if err != nil {
 		return nil, nil, err
 	}
-	return editedMessage, metadataJson, nil
+	return editedTrafficDataJson, metadataJson, nil
 }
 
 func detectJwts(request []byte) []string {

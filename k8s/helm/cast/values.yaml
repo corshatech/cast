@@ -49,7 +49,8 @@ postgresql:
 collector:
   env:
     PGPORT: "5432"
-    WEBSOCKET_URL: "ws://kubeshark-api-server.kubeshark.svc.cluster.local/ws"
+    KUBESHARK_HUB_URL: "http://kubeshark-hub.kubeshark.svc.cluster.local"
+
   image:
     tag: ""
     repository: ghcr.io/corshatech/cast/collector

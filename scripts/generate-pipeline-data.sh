@@ -18,18 +18,21 @@
 svc=$1
 echo "service endpoint: $svc"
 
+export CONTEXT="docker-desktop"
+
 # kubeshark tap
-nohup kubeshark --set kube-context=docker-desktop tap -n cast "(httpbin*)" --set headless=true > kubeshark.out 2> kubeshark.err < /dev/null &
+nohup kubeshark --set kube.context="${CONTEXT}" tap -n cast "(httpbin*)" --set headless=true > kubeshark.out 2> kubeshark.err < /dev/null &
+
 
 # Waiting for collector pod successfully connect to postgres and kubeshark
-collector=$(kubectl get pods --namespace=cast | grep cast-collector | cut -d' ' -f1)
-while ! kubectl logs -n cast ${collector}|grep -q "Starting export of records." ;do echo "Waiting for collector to be ready.\n";sleep 10;done
+collector=$(kubectl --context="${CONTEXT}" get pods --namespace=cast | grep cast-collector | cut -d' ' -f1)
+while ! kubectl --context="${CONTEXT}" logs -n cast ${collector}|grep -q "Starting export of records." ;do echo "Waiting for collector to be ready.\n";sleep 10;done
 
 # create curl pod
-kubectl create namespace curl
-kubectl -n curl delete pod curl
-kubectl run curl -n curl --image=curlimages/curl -- sleep 3600
-kubectl wait --for=condition=Ready pod/curl -n curl
+kubectl --context="${CONTEXT}" create namespace curl
+kubectl --context="${CONTEXT}" -n curl delete pod curl
+kubectl --context="${CONTEXT}" run curl -n curl --image=curlimages/curl -- sleep 3600
+kubectl --context="${CONTEXT}" wait --for=condition=Ready pod/curl -n curl
 
 # password in url
 echo -e "\ninserting pass-in-url data\n"
@@ -43,7 +46,7 @@ arr=(
 
 for i in "${arr[@]}"
 do
-    kubectl exec -n curl curl -i -- curl -s -w "\n" "${svc}/base64/encode/${i}";
+    kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" "${svc}/base64/encode/${i}";
 done
 
 # 2 expired jwts, 2 unexpired jwts
@@ -57,31 +60,31 @@ jwts=(
 
 for i in "${jwts[@]}"
 do
-    kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer ${i}" "${svc}/headers?q=1"
+    kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer ${i}" "${svc}/headers?q=1"
 done
 
 # # 2 Basic Auth
 echo -e "\ninserting basic-auth data\n"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic G4sNcytKzXklcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
+kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
+kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic G4sNcytKzXklcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
 
 # 2 re-used auth tokens
 echo -e "\ninserting reused-auth data\n"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
+kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
+kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
 
-kubectl create namespace curl2
-kubectl -n curl2 delete pod curl
-kubectl run curl -n curl2 --image=curlimages/curl -- sleep 3600
-kubectl wait --for=condition=Ready pod/curl -n curl2
+kubectl --context="${CONTEXT}" create namespace curl2
+kubectl --context="${CONTEXT}" -n curl2 delete pod curl
+kubectl --context="${CONTEXT}" run curl -n curl2 --image=curlimages/curl -- sleep 3600
+kubectl --context="${CONTEXT}" wait --for=condition=Ready pod/curl -n curl2
 
-kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
-kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
+kubectl --context="${CONTEXT}" exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
+kubectl --context="${CONTEXT}" exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
 
 
 # delete curl namespaces
-kubectl delete namespace curl --wait=false --force --grace-period=0 
-kubectl delete namespace curl2 --wait=false --force --grace-period=0 
+kubectl --context="${CONTEXT}" delete namespace curl --wait=false --force --grace-period=0
+kubectl --context="${CONTEXT}" delete namespace curl2 --wait=false --force --grace-period=0
 
 echo -e "\nmock data insertion complete."
 exit 0

@@ -191,7 +191,7 @@ certain parameters.
 | `postgresql.auth.database` | Postgres database name | `""` |
 | `postgresql.auth.password` | Postgres database password. If this is not set, a random password will be generated. | `""` |
 | `collector.env.PGPORT` | Which port postgres is using | `""` |
-| `collector.env.WEBSOCKET_URL` | The web socket Kubeshark has attached to | `""` |
+| `collector.env.KUBESHARK_HUB_URL` | URL to the Kubeshark HUB | `""` |
 | `collector.image.tag` | The tag of the cast/collector image | `""` |
 | `collector.image.repository` | The repository of the cast/collector image | `""` |
 | `ui.env.PGPORT` | Which port postgres is using | `""` |

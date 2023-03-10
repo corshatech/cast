@@ -19,8 +19,20 @@ Some components may still be running if you have run Skaffold
 before. From the root of the project, run the following set of command
 to ensure everything is clean before testing features.
 
+```bash
+skaffold delete 
+```
+
 You may see error messages like the follow if your state is already
 clean.
+
+```text
+Cleaning up...
+Error: uninstall: Release not loaded: cast: release: not found
+Error: uninstall: Release not loaded: httpbin: release: not found
+exit status 1
+exit status 1
+```
 
 ## Deploying the test stack
 

@@ -5,7 +5,7 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 
-import { Analysis } from '@/lib/findings';
+import { AnalysisOf, PasswordInURL } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 import { AnalysisCard } from './core';
 import { CsvExportButton } from './core/CsvExportButton';
@@ -26,7 +26,7 @@ const columns: GridColDef[] = [
   { field: 'URI', headerName: 'URI', width: 400 },
 ];
 
-export const PasswordInURLCard: React.FC<Analysis<'pass-in-url'>> = ({
+export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
   findings,
   reportedAt,
   ...otherProps

@@ -4,7 +4,6 @@ import {
   CardContent,
   useTheme,
   Collapse,
-  CardActions,
   styled,
   IconButton,
 } from '@mui/material';
@@ -15,6 +14,8 @@ import { SeverityIcon, Checkmark, Typography } from '@/components/atoms';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 import { GridExpandMoreIcon } from '@mui/x-data-grid';
 import { IconButtonProps } from '@mui/material/IconButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendar, faChain } from '@fortawesome/free-solid-svg-icons';
 
 export type AnalysisProps = {
   children?: React.ReactNode;
@@ -46,20 +47,14 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 const Weakness: React.FC<{
-  weaknessLink?: string
-  weaknessTitle?: string
-}> = ({ weaknessLink, weaknessTitle }) => (
-  weaknessLink
-  ? (
-    <tr>
-      <td>Learn&nbsp;more:</td>
-      <td>
-        <Link className='underline' href={weaknessLink}>{weaknessTitle ?? weaknessLink}</Link>
-      </td>
-    </tr>
-  )
-  : null
-);
+  weaknessLink?: string;
+  weaknessTitle?: string;
+}> = ({ weaknessLink, weaknessTitle }) =>
+  weaknessLink ? (
+    <Link className="underline truncate block" href={weaknessLink} target="_blank">
+      {weaknessTitle ?? weaknessLink}
+    </Link>
+  ) : null;
 
 const NoResults: React.FC<AnalysisProps> = ({
   description,
@@ -138,34 +133,56 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   ) : (
     <Card aria-labelledby="title" className="shadow-md" elevation={2}>
       <CardContent className="p-0 last:pb-0">
-        <div className="flex flex-nowrap items-center px-2 py-4">
-          <Typography variant="h2" className="grow" aria-label="title">
-            <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
-            {title}
-          </Typography>
-          {exportButton}
+        <div className="flex flex-wrap items-start px-2 py-4 md:py-6 md:px-8 justify-between">
+          <div className="items-center flex w-full md:mb-0">
+            <Typography className="grow mr-2" variant="h2" aria-label="title">
+              <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
+              {title}
+            </Typography>
+            <div className='shrink-0'>
+              {exportButton}
+            </div>
+          </div>
+
+          <div className="pl-1 mt-2 flex flex-col md:mt-0 md:flex-row md:flex-wrap md:space-x-6">
+              <div className="flex items-center text-sm text-gray-500">
+                <FontAwesomeIcon
+                  icon={faCalendar}
+                  className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-400"
+                  aria-hidden="true"
+                />
+                <FormattedDate when={reportedAt} />
+              </div>
+              <div className="flex items-center text-sm text-gray-500">
+                <SeverityIcon
+                  className="mr-1 h-3 w-3 flex-shrink-0 text-gray-400"
+                  severity={severity}
+                />
+                {severity}
+              </div>
+              {weaknessLink && (
+                <div className="flex items-center text-sm text-gray-500">
+                  <FontAwesomeIcon
+                    icon={faChain}
+                    className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-400"
+                    aria-hidden="true"
+                  />
+                  <div className="w-[320px] lg:w-auto inline-block">
+                    <Weakness
+                      weaknessLink={weaknessLink}
+                      weaknessTitle={weaknessTitle}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
         </div>
-        <Typography className="max-w-prose pl-2.5 pr-6" variant="body1">
+        <Typography
+          className="max-w-prose pl-2.5 pr-6 md:pl-9 pb-6"
+          variant="body1"
+        >
           {description}
         </Typography>
-        <table className="font-light my-2 text-zinc-400 border-separate border-spacing-x-4">
-          <tbody>
-            <tr>
-              <td>Updated:</td>
-              <td>
-                <FormattedDate when={reportedAt} />
-              </td>
-            </tr>
-            <tr>
-              <td>Issue Severity:</td>
-              <td>{severity}</td>
-            </tr>
-            <Weakness
-              weaknessLink={weaknessLink}
-              weaknessTitle={weaknessTitle}
-            />
-          </tbody>
-        </table>
         {children}
       </CardContent>
     </Card>

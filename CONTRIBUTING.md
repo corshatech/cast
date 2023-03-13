@@ -99,8 +99,11 @@ redeployed by Skaffold, and changes made to the front-end will be
 reloaded by the Next.js development server
 
 ### Cleanup
-Run the following command to remove remaining resources after shutting down the Skaffold deployment.
-```
+
+Run the following command to remove remaining resources after
+shutting down the Skaffold deployment.
+
+```bash
 make cast-clean
 ```
 

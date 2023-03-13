@@ -36,9 +36,10 @@ exit status 1
 
 ## Testing CAST Locally
 
-In the [Makefile](./Makefile) for the project, confirm the ```VERSION``` environment variable
-matches with the version of the local CAST helm chart in [Chart.yaml](./k8s/helm/cast/Chart.yaml).
-Then build updated local Docker images for the CAST collector and UI.
+In the [Makefile](./Makefile) for the project, confirm the ```VERSION```
+environment variable matches with the version of the local CAST helm
+chart in [Chart.yaml](./k8s/helm/cast/Chart.yaml). Then build updated
+local Docker images for the CAST collector and UI.
 
 ```bash
 make images
@@ -59,7 +60,8 @@ kubectl create namespace httpbin
 helm install -n httpbin httpbin matheusfm/httpbin
 ```
 
-Run the CAST binary with the ```test``` flag enabled to run CAST in local testing mode.
+Run the CAST binary with the ```test``` flag enabled to run
+CAST in local testing mode.
 
 ```bash
 ./build/package/cast -n httpbin --test=true
@@ -73,5 +75,3 @@ script to send CURL requests to your sample httpbin service.
 ```bash
 sh scripts/generate-pipeline-data.sh http://httpbin.httpbin.svc.cluster.local
 ```
-
-

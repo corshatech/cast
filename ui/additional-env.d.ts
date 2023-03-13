@@ -8,9 +8,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License. */
-declare global {
-  /* eslint-disable-next-line no-unused-vars */
-  const ROARR: import("roarr").RoarrGlobalState;
-}
 
-export {};
+declare const ROARR: import('roarr').RoarrGlobalState;
+
+declare module '@roarr/middleware-serialize-error';

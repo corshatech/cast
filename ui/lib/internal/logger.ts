@@ -9,15 +9,12 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import {
-  Roarr as Logger,
-  MessageContext,
-  Message,
-  TransformMessageFunction,
-} from 'roarr';
+import { Roarr as Logger } from 'roarr';
 import { createLogWriter as createBrowserLogWriter } from '@roarr/browser-log-writer';
-import { serializeError } from 'serialize-error';
+import createSerializeErrorMiddleware from '@roarr/middleware-serialize-error';
 import { ulid } from 'ulid';
+
+let errorSplat = (arg: any) => arg;
 
 /**
  * Currenty, there are two environment variables that control logging:
@@ -29,63 +26,17 @@ import { ulid } from 'ulid';
  *     Controls whether or not logs are emitted on the server.
  */
 
-type AdditionalLoggerContext = Readonly<{
-  [key: string]: Error;
-}>;
-
-/**
- * A roarr middleware function that serializes any Error instances embedded in
- * the log message context.
- *
- * This functionality is nearly the same thing as the functionality that is
- * provided via gajus/roarr-middleware-serialize-error, but works with TS.
- *
- * See https://github.com/gajus/roarr-middleware-serialize-error
- *
- * The functionality implemented via gajus/roarr-middleware-serialize-error
- * relies on the `serialize-error` package - so we can avoid installing
- * @roarr/roarr-middleware-serialize-error and instead install the
- * `serialize-error` package and use it directly.
- *
- * @param {Message<MessageContext<AdditionalLoggerContext>>} message:
- *   The log message with any potential Error instances embedded in the context
- *   in their original, unserialized form.
- *
- * @returns {Message<MessageContext>}:
- *   The log message with any potential Error instances embedded in the context
- *   in a serialized form.
- */
-const serializedErrorMiddleware: TransformMessageFunction<
-  MessageContext<AdditionalLoggerContext>
-> = (
-  message: Message<MessageContext<AdditionalLoggerContext>>,
-): Message<MessageContext> => {
-  const entries = Object.entries(message.context);
-  return {
-    ...message,
-    context: entries.reduce(
-      (prev: MessageContext, entry: (typeof entries)[number]) => {
-        if (entry[1] instanceof Error) {
-          return { ...prev, [entry[0]]: serializeError<Error>(entry[1]) };
-        }
-        return { ...prev, [entry[0]]: entry[1] };
-      },
-      {},
-    ),
-  };
-};
-
 // The `instanceId` is used to correlate logs in a high concurrency environment.
 const instanceId = ulid();
 
 /* Only log to the browser console if the ENV variable is explicitly true and
-     we are not in the server environment.  NEXT_PUBLIC_ROARR_BROWSER_LOG is
-       exposed in both the server and in the browser, so if we do not ensure we
-       are on the server then we will be incidentally overwriting ROARR.write to
-       write to the browser when we are on the server.
-       To ensure we are not on the server, we can simply check if the window is
-       defined.
-       */
+ * we are not in the server environment.  NEXT_PUBLIC_ROARR_BROWSER_LOG is
+ * exposed in both the server and in the browser, so if we do not ensure we
+ * are on the server then we will be incidentally overwriting ROARR.write to
+ * write to the browser when we are on the server.
+ * To ensure we are not on the server, we can simply check if the window is
+ * defined.
+ */
 if (
   process.env.NEXT_PUBLIC_ROARR_BROWSER_LOG === 'true' &&
   typeof window !== 'undefined'
@@ -95,11 +46,18 @@ if (
          by default) is controlled by the value of `ROARR_LOG` in local storage -
          not an environment variable. */
   window.localStorage.setItem('ROARR_LOG', 'true');
+  errorSplat = (message) => {
+    if (message?.context?.error) {
+      console.error(message?.context?.error);
+    }
+    return message;
+  }
 }
 
-export default Logger.child<AdditionalLoggerContext>(
-  serializedErrorMiddleware,
-).child<AdditionalLoggerContext>((message: Message<MessageContext>) => ({
-  ...message,
-  context: { ...message.context, application: 'console', instanceId },
-}));
+export default Logger
+  .child({
+    application: 'console',
+    instanceId,
+  })
+  .child<{[k: string]: unknown | Error}>(createSerializeErrorMiddleware())
+  .child(errorSplat);

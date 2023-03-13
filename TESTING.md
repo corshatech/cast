@@ -1,8 +1,8 @@
 # End to End CAST Testing
 
 It is important that when reviewing and testing changes made to CAST
-that we test using a typical deployment. This is easily accomplished
-using our default Skaffold configuration.
+that we test using a typical deployment. This can be accomplished
+by building the CAST binary and Docker images locally.
 
 ## Prerequisites
 
@@ -34,28 +34,44 @@ exit status 1
 exit status 1
 ```
 
-## Deploying the test stack
+## Testing CAST Locally
 
-From the root of the project, run the following command to build and
-deploy to CAST helm chart to your local Kubernetes environment.
+In the [Makefile](./Makefile) for the project, confirm the ```VERSION``` environment variable
+matches with the version of the local CAST helm chart in [Chart.yaml](./k8s/helm/cast/Chart.yaml).
+Then build updated local Docker images for the CAST collector and UI.
 
 ```bash
-skaffold run --platform=linux/amd64 --port-forward --kube-context docker-desktop
+make images
 ```
 
-Given that Skaffold builds production version of the CAST Docker
-images, this may take multiple minutes.
+Create a local CAST binary.
 
-When you see the following in the logs, the stack is ready for
-testing. Make note of the URLs in your log, the ports may have changed
-if your computer has something using the default port.
-
-```text
-Port forwarding service/cast-postgresql in namespace cast, remote port 5432 -> http://127.0.0.1:5432
-Port forwarding service/cast-service in namespace cast, remote port 80 -> http://127.0.0.1:8000
-Port forwarding service/httpbin in namespace cast, remote port 80 -> http://127.0.0.1:8080
-Port forwarding service/cast-postgresql-hl in namespace cast, remote port 5432 -> http://127.0.0.1:5433
+```bash
+make cast
 ```
 
-The front-end is the `service/cast-service` typically located at
-<http://127.0.0.1:8000>
+Set your ```kube-context``` and create a sample httpbin service for CAST to analyze.
+
+```bash
+kubectl config set-context docker-desktop
+helm repo add matheusfm https://matheusfm.dev/charts
+kubectl create namespace httpbin
+helm install -n httpbin httpbin matheusfm/httpbin
+```
+
+Run the CAST binary with the ```test``` flag enabled to run CAST in local testing mode.
+
+```bash
+./build/package/cast -n httpbin --test=true
+```
+
+If you would like to generate testing data for the sample service,
+you can do so by running the
+[generate-pipeline-data.sh](./scripts/generate-pipeline-data.sh)
+script to send CURL requests to your sample httpbin service.
+
+```bash
+sh scripts/generate-pipeline-data.sh http://httpbin.httpbin.svc.cluster.local
+```
+
+

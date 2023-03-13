@@ -23,7 +23,7 @@ test-go:
 test-ui:
 	cd ui && npm ci && npm run "test:ci"
 
-image:
+images:
 	skaffold build -t ${VERSION} --default-repo=ghcr.io/corshatech/cast
 
 cast:

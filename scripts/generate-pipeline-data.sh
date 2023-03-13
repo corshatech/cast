@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright 2023 Corsha.
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,10 +19,6 @@ svc=$1
 echo "service endpoint: $svc"
 
 export CONTEXT="docker-desktop"
-
-# kubeshark tap
-nohup kubeshark --set kube.context="${CONTEXT}" tap -n cast "(httpbin*)" --set headless=true > kubeshark.out 2> kubeshark.err < /dev/null &
-
 
 # Waiting for collector pod successfully connect to postgres and kubeshark
 collector=$(kubectl --context="${CONTEXT}" get pods --namespace=cast | grep cast-collector | cut -d' ' -f1)

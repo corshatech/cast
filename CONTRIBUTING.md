@@ -98,6 +98,12 @@ You should be ready to work on CAST. Changes to the back-end will be
 redeployed by Skaffold, and changes made to the front-end will be
 reloaded by the Next.js development server
 
+### Cleanup
+Run the following command to remove remaining resources after shutting down the Skaffold deployment.
+```
+make cast-clean
+```
+
 ## Releasing
 
 To release the chart, you just need to create a docker release. GitHub

@@ -1,3 +1,18 @@
+/*
+Copyright 2023 Corsha.
+Licensed under the Apache License, Version 2.0 (the 'License');
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an 'AS IS' BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package cmd
 
 import (
@@ -32,7 +47,7 @@ const kubesharkVersion string = "38.5" // supported Kubeshark version
 
 // cast runs kubeshark tap and deploys CAST. On exit, it will clean up
 // CAST and kubeshark resources.
-func cast(namespace string, port string, kubeConfigPath string, kubeContext string) {
+func cast(namespace string, port string, kubeConfigPath string, kubeContext string, testMode bool) {
 	log.Info("Namespace to be analyzed: ", namespace)
 
 	// trap Ctrl+C and call cancel on the context
@@ -115,8 +130,8 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 
 	go func() {
 		err := ksCmd.Wait()
-		if err != nil && err.Error() != "signal: killed" {
-			log.WithError(err).Fatal("Error running kubeshark tap.")
+		if err != nil {
+			handleError(ctx, "Error running kubeshark tap.", err)
 		}
 	}()
 
@@ -147,7 +162,7 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 		case <-ctx.Done():
 			return
 		default:
-			deployCast(ctx, helmClient, clientset, config, port)
+			deployCast(ctx, helmClient, clientset, config, port, testMode)
 		}
 	}(ctx)
 
@@ -165,12 +180,19 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 }
 
 // deployCast is a helper function that deploys the CAST helm chart.
-func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernetes.Clientset, config *rest.Config, port string) {
+func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernetes.Clientset, config *rest.Config, port string, testMode bool) {
+
+	chartName := "corshatech/cast"
+	// if testMode=true, use local chart instead of pulling from repo
+	if testMode {
+		chartName = "k8s/helm/cast"
+		log.Info("Using local helm chart for test mode.")
+	}
 
 	chartSpec := helm.ChartSpec{
 		ReleaseName:     "cast",
 		CreateNamespace: true,
-		ChartName:       "corshatech/cast",
+		ChartName:       chartName,
 		Namespace:       "cast",
 		UpgradeCRDs:     true,
 		Wait:            true,
@@ -327,6 +349,7 @@ func castCleanup(helmClient helm.Client, clientset *kubernetes.Clientset, kubesh
 	}
 
 	// Remove Kubeshark resources
+	log.Info("Removing Kubeshark resources.")
 	err = exec.Command(kubesharkPath, "clean").Run()
 	if err != nil {
 		log.WithError(err).Error("Error running 'kubeshark clean'. ")

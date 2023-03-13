@@ -97,6 +97,7 @@ Flags:
       --kube-context string   Kube context to deploy CAST into. (default "current-context")
   -n, --namespace string      The namespace to analyze. (default "all")
   -p, --port string           The local port the CAST UI will be available on. (default "3000")
+      --test                  Enables local testing mode.
 ```
 
 ### Kubeshark

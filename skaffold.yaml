@@ -43,7 +43,7 @@ deploy:
     hooks:
       after:
         - host:
-            command: ["sh","-c", "./scripts/generate-pipeline-data.sh http://httpbin.cast.svc.cluster.local"]
+            command: ["sh","-c", "./scripts/kubeshark-tap-with-data.sh http://httpbin.cast.svc.cluster.local"]
 
 portForward:
   - resourceType: service

@@ -38,7 +38,8 @@
     "serialize-error": "^11.0.0",
     "swr": "^2.0.1",
     "typescript": "4.9.4",
-    "ulid": "^2.3.0"
+    "ulid": "^2.3.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

@@ -15,6 +15,18 @@
 
 # configure the local environment to work with the skaffold
 
+if ! [ -x "$(command -v kubeshark)" ]; then
+    echo >&2 "ERROR: kubeshark is not installed, visit https://kubeshark.co/ to install"
+    exit 1
+fi
+
+KUBESHARK_VERSION="$(kubeshark version 2>&1)"
+if [ "$KUBESHARK_VERSION" != "38.5" ]; then
+    kubeshark version
+    echo "ERROR: incorrect version of kubeshark installed, please install 38.5"
+    exit 1
+fi
+
 svc=$1
 echo "service endpoint: $svc"
 

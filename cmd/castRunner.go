@@ -244,7 +244,7 @@ func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernet
 
 	select {
 	case <-readyCh:
-		fmt.Printf("Port forwarding is ready. CAST is available at http://localhost:%s/", port)
+		fmt.Printf("Port forwarding is ready. CAST is available at http://localhost:%s/ \n", port)
 		break
 	case <-ctx.Done():
 		close(stopCh)

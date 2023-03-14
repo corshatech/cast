@@ -15,23 +15,17 @@ support within Docker Desktop.
 
 ## Cleaning up previous deployments
 
-Some components may still be running if you have run Skaffold
-before. From the root of the project, run the following set of command
-to ensure everything is clean before testing features.
+Some components may still be running if CAST exited with an error.
+To cleanup any remaining resources use the following command.
 
 ```bash
-skaffold delete 
+make cast-clean
 ```
 
-You may see error messages like the follow if your state is already
-clean.
+You may also need to delete the CAST Helm release if it still exists.
 
-```text
-Cleaning up...
-Error: uninstall: Release not loaded: cast: release: not found
-Error: uninstall: Release not loaded: httpbin: release: not found
-exit status 1
-exit status 1
+```bash
+helm delete cast
 ```
 
 ## Testing CAST Locally

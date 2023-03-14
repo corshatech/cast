@@ -15,36 +15,10 @@
 
 # configure the local environment to work with the skaffold
 
-if ! [ -x "$(command -v kubeshark)" ]; then
-    echo >&2 "ERROR: kubeshark is not installed, visit https://kubeshark.co/ to install"
-    exit 1
-fi
-
-KUBESHARK_VERSION="$(kubeshark version 2>&1)"
-if [ "$KUBESHARK_VERSION" != "38.5" ]; then
-    kubeshark version
-    echo "ERROR: incorrect version of kubeshark installed, please install 38.5"
-    exit 1
-fi
-
 svc=$1
 echo "service endpoint: $svc"
 
 export CONTEXT="docker-desktop"
-
-# clean up any existing kubeshark install
-kubectl --context="${CONTEXT}" delete ns kubeshark --wait=true || true
-
-# kubeshark tap
-nohup kubeshark --set kube.context="${CONTEXT}" tap -n cast "(httpbin*)" --set headless=true > kubeshark.out 2> kubeshark.err < /dev/null &
-
-
-# Waiting for collector pod successfully connect to postgres and kubeshark
-collector=$(kubectl --context="${CONTEXT}" get pods --namespace=cast | grep cast-collector | cut -d' ' -f1)
-while ! kubectl --context="${CONTEXT}" logs -n cast "${collector}"|grep -q "Starting export of records." ; do
-    echo "Waiting for collector to be ready."
-    sleep 10;
-done
 
 # create curl pods
 kubectl --context="${CONTEXT}" delete ns curl --wait=true || true

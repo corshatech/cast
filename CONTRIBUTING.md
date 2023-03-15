@@ -40,6 +40,10 @@ The local Skaffold deployment starts Kubeshark, CAST, creates a
 `./ui/.env.local` file, and runs `scripts/generate-pineline-data.sh`
 to insert test data.
 
+If you have run the Skaffold deployment before, the [Cleanup](#cleanup)
+steps will ensure any remaining resources from previous deployments
+have been removed before you redeploy.
+
 Typically, when you are working on CAST, you will want to run the
 application in headless mode. This skips the build and deployment of
 the front-end which can time considerable time.
@@ -97,6 +101,34 @@ This starts the front-end located at <http://localhost:3000>
 You should be ready to work on CAST. Changes to the back-end will be
 redeployed by Skaffold, and changes made to the front-end will be
 reloaded by the Next.js development server
+
+### Cleanup
+
+Some components may still be running if you have run Skaffold
+before. From the root of the project, run the following set of command
+to ensure all resources created by Skaffold are removed.
+
+```bash
+skaffold delete 
+```
+
+You may see error messages like the follow if your state is already
+clean.
+
+```text
+Cleaning up...
+Error: uninstall: Release not loaded: cast: release: not found
+Error: uninstall: Release not loaded: httpbin: release: not found
+exit status 1
+exit status 1
+```
+
+Then remove any remaining Statefulset resources and namespaces
+after shutting down the Skaffold deployment.
+
+```bash
+make cast-clean
+```
 
 ## Releasing
 

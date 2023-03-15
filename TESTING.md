@@ -30,6 +30,12 @@ helm delete cast
 
 ## Testing CAST Locally
 
+Update your on-disk dependencies to mirror CAST's Chart.yaml.
+
+```bash
+helm dependency update k8s/helm/cast
+```
+
 In the [Makefile](./Makefile) for the project, confirm the ```VERSION```
 environment variable matches with the version of the local CAST helm
 chart in [Chart.yaml](./k8s/helm/cast/Chart.yaml). Then build updated

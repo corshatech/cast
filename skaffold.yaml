@@ -36,6 +36,7 @@ deploy:
       namespace: cast
       createNamespace: true
       setValues:
+        plugins.kubesec.schedule: "* * * * *" # Every minute, in dev
         postgresql.auth.password: "dev-password"
         "imagePullSecrets[0].name": "regcred"
       setValueTemplates:

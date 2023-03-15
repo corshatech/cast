@@ -49,7 +49,8 @@ postgresql:
 plugins:
   kubesec:
     enabled: true
-    schedule: "* * * * *"
+    serverImage: docker.io/kubesec/kubesec:v2
+    schedule: "0 * * * *" # Default: Hourly
     serviceAccount:
       role:
         # Create the role from our chart, on by default.

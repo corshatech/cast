@@ -1,0 +1,15 @@
+{{ if .Values.plugins.kubesec.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: cast-plugin-kubesec-srv
+spec:
+  selector:
+    app: cast-plugin-kubesec
+    component: kubesec
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: http
+{{ end }}

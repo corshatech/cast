@@ -17,6 +17,12 @@ CREATE TABLE IF NOT EXISTS traffic (
   meta jsonb
 );
 
+CREATE TABLE IF NOT EXISTS plugins_completions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  occurred_at timestamptz DEFAULT now(),
+  plugin_name text
+);
+
 CREATE TABLE IF NOT EXISTS plugins_findings (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   occurred_at timestamptz DEFAULT now(),

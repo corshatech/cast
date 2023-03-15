@@ -36,6 +36,16 @@ to [enable
 Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
 support within Docker Desktop.
 
+Our development tooling assumes that you have [Kubeshark
+installed](https://docs.kubeshark.co/en/install) and in your PATH.
+
+You will need to add the Bitnami Helm repo in order to deploy cast
+using Skaffold
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnam
+```
+
 The local Skaffold deployment starts Kubeshark, CAST, creates a
 `./ui/.env.local` file, and runs `scripts/generate-pineline-data.sh`
 to insert test data.

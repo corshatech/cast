@@ -15,7 +15,6 @@ rules:
     - endpoints
     - events
     - ingress
-    - ingress
     - jobs
     - persistentvolumeclaims
     - persistentvolumes

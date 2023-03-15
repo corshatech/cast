@@ -21,6 +21,13 @@ build:
         - "linux/amd64"
       docker:
         dockerfile: ui/Dockerfile
+    -
+      image: cast_plugin_kubesec
+      context: plugins/kubesec
+      platforms:
+        - "linux/amd64"
+      docker:
+        dockerfile: plugins/kubesec/Dockerfile
 deploy:
   helm:
     releases:
@@ -37,6 +44,9 @@ deploy:
 
         ui.image.repository: "{{ .IMAGE_REPO2 }}"
         ui.image.tag: "{{ .IMAGE_TAG2 }}"
+
+        plugins.kubesec.image.repository: "{{ .IMAGE_REPO_cast_plugin_kubesec }}"
+        plugins.kubesec.image.tag: "{{ .IMAGE_TAG_cast_plugin_kubesec }}@{{ .IMAGE_DIGEST_cast_plugin_kubesec }}"
     - name: httpbin
       namespace: cast
       remoteChart: https://matheusfm.dev/charts/httpbin-0.1.1.tgz

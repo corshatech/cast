@@ -76,7 +76,7 @@ func scanAllForKind(
 			return nil, err
 		}
 
-		scanResult, err := kubesecScan(prefixString, b.String())
+		scanResult, err := kubesecScan(prefixString, ns, b.String())
 		if err != nil {
 			return nil, err
 		}

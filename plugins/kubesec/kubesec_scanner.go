@@ -43,7 +43,7 @@ type Finding struct {
 	Points    int    `json:"Points"`
 }
 
-func kubesecScan(resource, yamlBody string) ([]Finding, error) {
+func kubesecScan(resource, namespace, yamlBody string) ([]Finding, error) {
 	res := make([]Finding, 0)
 	receiver := make([]kubesecReceiver, 0)
 
@@ -69,22 +69,24 @@ func kubesecScan(resource, yamlBody string) ([]Finding, error) {
 
 	for _, critical := range receiver[0].Scoring.Critical {
 		res = append(res, Finding{
-			Severity: "critical",
-			Resource: resource,
-			RuleID:   critical.ID,
-			Selector: critical.Selector,
-			Reason:   critical.Reason,
-			Points:   critical.Points,
+			Severity:  "critical",
+			Resource:  resource,
+			Namespace: namespace,
+			RuleID:    critical.ID,
+			Selector:  critical.Selector,
+			Reason:    critical.Reason,
+			Points:    critical.Points,
 		})
 	}
 	for _, none := range receiver[0].Scoring.Advise {
 		res = append(res, Finding{
-			Severity: "none",
-			Resource: resource,
-			RuleID:   none.ID,
-			Selector: none.Selector,
-			Reason:   none.Reason,
-			Points:   none.Points,
+			Severity:  "none",
+			Resource:  resource,
+			Namespace: namespace,
+			RuleID:    none.ID,
+			Selector:  none.Selector,
+			Reason:    none.Reason,
+			Points:    none.Points,
 		})
 	}
 

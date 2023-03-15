@@ -24,6 +24,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "additional-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "jest.config.js",

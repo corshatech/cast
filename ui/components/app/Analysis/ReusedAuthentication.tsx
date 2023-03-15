@@ -4,7 +4,7 @@ import {
   GridColDef,
 } from '@mui/x-data-grid';
 
-import { Analysis } from '@/lib/findings';
+import { AnalysisOf, ReusedAuthentication } from '@/lib/findings';
 import { AnalysisCard } from './core';
 import { CsvExportButton } from './core/CsvExportButton';
 
@@ -16,7 +16,7 @@ const columns: GridColDef[] = [
   { field: 'Dest Port', headerName: 'Dest Port' },
 ];
 
-export const ReusedAuthenticationCard: React.FC<Analysis<'reused-auth'>> = ({
+export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>> = ({
   findings,
   reportedAt,
   ...otherProps

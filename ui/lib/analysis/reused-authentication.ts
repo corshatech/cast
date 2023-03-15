@@ -115,7 +115,7 @@ function rowsToFinding(detectedAt: string, auth: string, rows: Row[]): Finding {
       destPort: x.dst_port,
       URI: x.uri,
       at: x.timestamp.toISOString(),
-      count: x.count,
+      count: +x.count,
     }),
   );
 

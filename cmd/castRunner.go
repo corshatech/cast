@@ -244,7 +244,7 @@ func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernet
 
 	select {
 	case <-readyCh:
-		println("Port forwarding is ready. CAST is available at http://localhost:3000/")
+		fmt.Printf("Port forwarding is ready. CAST is available at http://localhost:%s/ \n", port)
 		break
 	case <-ctx.Done():
 		close(stopCh)
@@ -254,7 +254,7 @@ func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernet
 // downloadKubeshark downloads the Kubeshark binary to the UserConfigDir and returns the path to the binary.
 func downloadKubeshark(ctx context.Context) (string, error) {
 	osArch := fmt.Sprintf("%s_%s", runtime.GOOS, runtime.GOARCH)
-	available := []string{"darwin_amd64", "darwin_arch64", "linux_amd64", "linux_arch64"}
+	available := []string{"darwin_amd64", "darwin_arm64", "linux_amd64", "linux_arm64"}
 	if !slices.Contains(available, osArch) {
 		return "", fmt.Errorf("Unsupported OS or architecture: %s. For more details, visit https://github.com/kubeshark/kubeshark/releases/tag/%s.", osArch, kubesharkVersion)
 	}

@@ -5,7 +5,7 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 
-import { Analysis } from '@/lib/findings';
+import { AnalysisOf, ExpiredJWT } from '@/lib/findings';
 import { AnalysisCard } from './core';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 import { CsvExportButton } from './core/CsvExportButton';
@@ -34,7 +34,7 @@ const columns: GridColDef[] = [
   { field: 'Dest Port', headerName: 'Dest Port' },
 ];
 
-export const ExpiredJWTCard: React.FC<Analysis<'expired-jwt'>> = ({
+export const ExpiredJWTCard: React.FC<AnalysisOf<ExpiredJWT>> = ({
   findings,
   reportedAt,
   ...otherProps

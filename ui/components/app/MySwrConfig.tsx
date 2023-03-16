@@ -10,8 +10,11 @@ export async function customFetcher(url: string) {
   // If the status code is not in the range 200-299,
   // we still try to parse and throw it.
   if (!res.ok) {
-    const json = (await res.json()) as { message: string };
-    throw new Error(json.message);
+    const json = await res.json();
+    if ('error' in json && typeof json.error === 'string') {
+      throw new Error(json.error);
+    }
+    throw new Error(json);
   }
 
   return res.json();

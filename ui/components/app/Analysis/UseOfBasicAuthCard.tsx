@@ -5,7 +5,7 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 
-import { Analysis } from '@/lib/findings';
+import { AnalysisOf, UseOfBasicAuth } from '@/lib/findings';
 import { AnalysisCard } from './core';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 import { CsvExportButton } from './core/CsvExportButton';
@@ -25,7 +25,7 @@ const columns: GridColDef[] = [
   { field: 'Dest Port', headerName: 'Dest Port' },
 ];
 
-export const UseOfBasicAuthCard: React.FC<Analysis<'use-of-basic-auth'>> = ({
+export const UseOfBasicAuthCard: React.FC<AnalysisOf<UseOfBasicAuth>> = ({
   findings,
   reportedAt,
   ...otherProps

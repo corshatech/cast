@@ -17,6 +17,13 @@ CREATE TABLE IF NOT EXISTS traffic (
   meta jsonb
 );
 
+CREATE TABLE IF NOT EXISTS plugins_findings (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  occurred_at timestamptz DEFAULT now(),
+  plugin_name text,
+  data jsonb
+);
+
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);
 CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE (data->'request'->'headers'->>'Authorization');
 CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE (data->'request'->'headers'->>'Authorization', data->'src');

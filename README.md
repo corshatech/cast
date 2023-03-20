@@ -71,7 +71,6 @@ workloads.
 ## Prerequisites
 
 - Kubernetes 1.21+
-- Helm 3.8+
 - Docker 20.10+
 
 ## Install CAST
@@ -111,7 +110,7 @@ will install the Kubeshark binary in the app's private config directory.
 ## Contributing
 
 Check [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to
-contribute and developer workflows.
+contribute, developer workflows, and developer setup.
 
 If you have questions you would like to ask the developers, or
 feedback you would like to provide, feel free to create an issue on

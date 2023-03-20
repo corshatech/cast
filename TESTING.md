@@ -13,6 +13,9 @@ Desktop](https://www.docker.com/products/docker-desktop/) and
 Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
 support within Docker Desktop.
 
+Our development tooling assumes that you have [Kubeshark
+installed](https://docs.kubeshark.co/en/install) and in your PATH.
+
 ## Cleaning up previous deployments
 
 Some components may still be running if CAST exited with an error.
@@ -29,6 +32,12 @@ helm delete cast
 ```
 
 ## Testing CAST Locally
+
+Update your on-disk dependencies to mirror CAST's Chart.yaml.
+
+```bash
+helm dependency update k8s/helm/cast
+```
 
 In the [Makefile](./Makefile) for the project, confirm the ```VERSION```
 environment variable matches with the version of the local CAST helm
@@ -52,6 +61,12 @@ kubectl config set-context docker-desktop
 helm repo add matheusfm https://matheusfm.dev/charts
 kubectl create namespace httpbin
 helm install -n httpbin httpbin matheusfm/httpbin
+```
+
+Add the Bitnami Helm repo
+
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnam
 ```
 
 Run the CAST binary with the ```test``` flag enabled to run

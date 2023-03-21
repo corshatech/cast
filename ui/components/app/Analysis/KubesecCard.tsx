@@ -48,14 +48,14 @@ export const KubesecCard: React.FC<AnalysisOf<KubesecFinding>> = ({
     {...otherProps}
     noResults={data.length === 0}
   >
-    <div style={{height: '400px', width: '100%'}}>
-    <DataGrid
-      rows={data}
-      columns={columns}
-      pageSize={10}
-      rowsPerPageOptions={[10]}
-      getRowId={(r) => r.Timestamp}
-    />
+    <div style={{ height: '400px', width: '100%' }}>
+      <DataGrid
+        rows={data}
+        columns={columns}
+        pageSize={10}
+        rowsPerPageOptions={[10]}
+        getRowId={(r) => JSON.stringify(r)}
+      />
     </div>
   </AnalysisCard>
 };

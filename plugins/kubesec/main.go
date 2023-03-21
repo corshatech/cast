@@ -118,7 +118,7 @@ func main() {
 	}
 
 	log.WithField("resultsLength", len(results)).
-		Info("Scan completed. Writing results to CAST db...")
+		Info("Scan completed. Writing results to CAST DB...")
 	for _, result := range results {
 		err = writeFinding(result)
 		if err != nil {

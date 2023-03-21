@@ -43,7 +43,7 @@ You will need to add the Bitnami Helm repo in order to deploy cast
 using Skaffold
 
 ```bash
-helm repo add bitnami https://charts.bitnami.com/bitnam
+helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
 
 The local Skaffold deployment starts Kubeshark, CAST, creates a
@@ -119,7 +119,7 @@ before. From the root of the project, run the following set of command
 to ensure all resources created by Skaffold are removed.
 
 ```bash
-skaffold delete 
+skaffold delete
 ```
 
 You may see error messages like the follow if your state is already

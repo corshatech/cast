@@ -114,7 +114,7 @@ func main() {
 
 	results, err := scanAll(client)
 	if err != nil {
-		log.WithError(err).Fatal("Could not scan all K8s resources")
+		log.WithError(err).Fatal("Couldn't scan all K8s resources")
 	}
 
 	log.WithField("resultsLength", len(results)).

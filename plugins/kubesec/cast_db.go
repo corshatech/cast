@@ -87,7 +87,7 @@ func requiredEnv(envName string) string {
 }
 
 func writeFinding(f Finding) error {
-	sqlStatement := `INSERT INTO plugins_findings (plugin_name, data) VALUES ($1, $2)`
+	const sqlStatement = `INSERT INTO plugins_findings (plugin_name, data) VALUES ($1, $2)`
 
 	findingJson, err := json.Marshal(f)
 	if err != nil {
@@ -112,7 +112,7 @@ func writeFinding(f Finding) error {
 }
 
 func writeCompleted() error {
-	sqlStatement := `INSERT INTO plugins_completions (plugin_name) VALUES ($1)`
+	const sqlStatement = `INSERT INTO plugins_completions (plugin_name) VALUES ($1)`
 
 	err := retry.Do(
 		func() error {

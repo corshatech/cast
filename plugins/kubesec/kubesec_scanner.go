@@ -44,7 +44,7 @@ type Finding struct {
 }
 
 func kubesecScan(resource, namespace, yamlBody string) ([]Finding, error) {
-	receiver := make([]kubesecReceiver, 0)
+	var receiver []kubesecReceiver
 
 	response, err := http.Post(
 		"http://cast-plugin-kubesec-srv:80/",

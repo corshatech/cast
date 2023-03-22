@@ -39,7 +39,8 @@ func scanAllForKind(
 	client *dynamic.DynamicClient,
 	resource schema.GroupVersionResource,
 ) ([]Finding, error) {
-	res := make([]Finding, 0)
+	var result []Finding
+
 	list, err := client.Resource(resource).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -81,14 +82,14 @@ func scanAllForKind(
 			return nil, err
 		}
 
-		res = append(res, scanResult...)
+		result = append(result, scanResult...)
 	}
 
-	return res, nil
+	return result, nil
 }
 
 func scanAll(client *dynamic.DynamicClient) ([]Finding, error) {
-	res := make([]Finding, 0)
+	var result []Finding
 
 	for _, kind := range scanKinds {
 		log.WithField("kind", kind).Info("Inspecting resources of type")
@@ -96,9 +97,9 @@ func scanAll(client *dynamic.DynamicClient) ([]Finding, error) {
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, resultsForKind...)
+		result = append(result, resultsForKind...)
 	}
-	return res, nil
+	return result, nil
 }
 
 func main() {

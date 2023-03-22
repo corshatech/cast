@@ -44,7 +44,6 @@ type Finding struct {
 }
 
 func kubesecScan(resource, namespace, yamlBody string) ([]Finding, error) {
-	res := make([]Finding, 0)
 	receiver := make([]kubesecReceiver, 0)
 
 	response, err := http.Post(
@@ -67,8 +66,12 @@ func kubesecScan(resource, namespace, yamlBody string) ([]Finding, error) {
 		return nil, fmt.Errorf("unexpected amount of Kubesec results: there should be exactly one document")
 	}
 
+	criticalCount := len(receiver[0].Scoring.Critical)
+	adviseCount := len(receiver[0].Scoring.Advise)
+	result := make([]Finding, 0, criticalCount+adviseCount)
+
 	for _, critical := range receiver[0].Scoring.Critical {
-		res = append(res, Finding{
+		result = append(result, Finding{
 			Severity:  "critical",
 			Resource:  resource,
 			Namespace: namespace,
@@ -79,7 +82,7 @@ func kubesecScan(resource, namespace, yamlBody string) ([]Finding, error) {
 		})
 	}
 	for _, none := range receiver[0].Scoring.Advise {
-		res = append(res, Finding{
+		result = append(result, Finding{
 			Severity:  "none",
 			Resource:  resource,
 			Namespace: namespace,
@@ -90,5 +93,5 @@ func kubesecScan(resource, namespace, yamlBody string) ([]Finding, error) {
 		})
 	}
 
-	return res, nil
+	return result, nil
 }

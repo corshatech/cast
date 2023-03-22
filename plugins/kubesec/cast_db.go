@@ -66,10 +66,10 @@ func init() {
 			return pgConnection.Ping()
 		},
 		retry.Attempts(5),
-		retry.Delay(5*time.Second),
+		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			log.Infof("Unable to reach postgres database. Retrying in %vs", 5)
-			time.Sleep(5 * time.Second)
+			log.Infof("Unable to reach postgres database. Retrying in %vs", retryDelay)
+			time.Sleep(retryDelay)
 		}),
 	)
 }

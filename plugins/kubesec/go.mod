@@ -3,6 +3,8 @@ module github.com/corshatech/cast/plugins/kubesec
 go 1.19
 
 require (
+	github.com/avast/retry-go v3.0.0+incompatible
+	github.com/lib/pq v1.10.7
 	github.com/sirupsen/logrus v1.9.0
 	k8s.io/apimachinery v0.26.2
 	k8s.io/cli-runtime v0.26.2
@@ -10,14 +12,12 @@ require (
 )
 
 require (
-	github.com/avast/retry-go v3.0.0+incompatible // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/lib/pq v1.10.7 // indirect
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect

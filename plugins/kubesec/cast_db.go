@@ -49,7 +49,6 @@ func init() {
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Error connecting to postgres database. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay)
 		}),
 	)
 	if err != nil {
@@ -69,7 +68,6 @@ func init() {
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Unable to reach postgres database. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay)
 		}),
 	)
 }

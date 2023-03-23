@@ -85,7 +85,7 @@ export type IFinding = z.infer<typeof IFinding>;
  * (2) a specific `data` record given as the 2nd param `data`, provided as a
  * Zod schema.
  */
-function makeFinding<
+export function makeFinding<
   Type extends string,
   DataSchema extends z.ZodSchema<Record<string, any>>
 >(

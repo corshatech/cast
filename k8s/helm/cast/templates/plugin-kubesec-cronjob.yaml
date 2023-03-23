@@ -1,0 +1,48 @@
+{{ if .Values.plugins.kubesec.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cast-plugin-kubesec
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: cast-plugin-kubesec
+spec:
+  schedule: {{ .Values.plugins.kubesec.schedule | quote }}
+  jobTemplate:
+    metadata:
+      labels:
+        app: cast-plugin-kubesec
+    spec:
+      backoffLimit: 4
+      template:
+        metadata:
+          labels:
+            app: cast-plugin-kubesec
+        spec:
+          restartPolicy: "Never"
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ .Values.plugins.kubesec.serviceAccount.account.name | quote }}
+          containers:
+          - name: cast-plugin-kubesec
+            image: "{{ .Values.plugins.kubesec.image.repository }}:{{ .Values.plugins.kubesec.image.tag | default $.Chart.Version }}"
+            imagePullPolicy: IfNotPresent
+            env:
+              - name: PGPASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}-postgresql"
+                    key: password
+              - name: PGUSER
+                value: {{ .Values.postgresql.auth.username | quote }}
+              - name: PGDATABASE
+                value: {{ .Values.postgresql.auth.database | quote }}
+              - name: PGHOST
+                value: "{{ .Release.Name }}-postgresql"
+            {{ range $name, $value := .Values.plugins.kubesec.env }}
+              - name: {{ $name | quote }}
+                value: {{ $value | quote }}
+            {{ end }}
+{{ end }}

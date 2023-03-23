@@ -49,7 +49,7 @@ const (
 
 const (
 	retryAttempts = 3
-	retryDelay    = 3
+	retryDelay    = 3 * time.Second
 )
 
 var jwtRegex = regexp.MustCompile(`eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/]*`)
@@ -132,10 +132,10 @@ func main() {
 			return err
 		},
 		retry.Attempts(retryAttempts),
-		retry.Delay(retryDelay*time.Second),
+		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Error connecting to postgres database. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay * time.Second)
+			time.Sleep(retryDelay)
 		}),
 	)
 	if err != nil {
@@ -152,10 +152,10 @@ func main() {
 			return pgConnection.Ping()
 		},
 		retry.Attempts(5),
-		retry.Delay(5*time.Second),
+		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Unable to reach postgres database. Retrying in %vs", 5)
-			time.Sleep(5 * time.Second)
+			time.Sleep(retryDelay)
 		}),
 	)
 	if err != nil {
@@ -174,7 +174,7 @@ func main() {
 		retry.Delay(retryDelay*time.Second),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Error connecting to kubeshark websocket. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay * time.Second)
+			time.Sleep(retryDelay)
 		}),
 	)
 	if err != nil {
@@ -220,10 +220,10 @@ func main() {
 			return err
 		},
 		retry.Attempts(retryAttempts),
-		retry.Delay(retryDelay*time.Second),
+		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Error exporting records. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay * time.Second)
+			time.Sleep(retryDelay)
 		}),
 	)
 	if err != nil {
@@ -284,7 +284,7 @@ func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Co
 			WithField("itemUrl", itemUrl).
 			WithError(err).
 			Error("Failed to fetch item from kubeshark")
-		return fmt.Errorf("Failed to fetch item from kubeshark: %w", err)
+		return fmt.Errorf("failed to fetch item from kubeshark: %w", err)
 	}
 
 	trafficItem := TrafficItem{}
@@ -293,7 +293,7 @@ func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Co
 	finalTrafficDataJson, metadataJson, err := handleTrafficItem(trafficItemJson, &trafficItem)
 	if err != nil {
 		log.WithError(err).Error("Failed to process kubeshark record.")
-		return fmt.Errorf("Failed to process kubeshark record: %w", err)
+		return fmt.Errorf("failed to process kubeshark record: %w", err)
 	}
 
 	// When finalTrafficDataJson is nil and err is nil, the trafficItem is not relevant so we skip it
@@ -312,10 +312,10 @@ func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Co
 			return err
 		},
 		retry.Attempts(retryAttempts),
-		retry.Delay(retryDelay*time.Second),
+		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
 			log.WithError(err).Infof("Error inserting entry into postgres database. Retrying in %vs.", retryDelay)
-			time.Sleep(retryDelay * time.Second)
+			time.Sleep(retryDelay)
 		}),
 	)
 

@@ -46,6 +46,33 @@ postgresql:
         cpu: 250m
         memory: 1024Mi
 
+plugins:
+  kubesec:
+    enabled: true
+    serverImage: docker.io/kubesec/kubesec:v2
+    schedule: "0 * * * *" # Default: Hourly
+    serviceAccount:
+      role:
+        # Create the role from our chart, on by default.
+        #
+        # If you turn install off, you must provide your own
+        # role and rolebinding for the serviceaccount.
+        install: true
+        # The name of the created role. If you turn "install"
+        # off, name your custom role here.
+        name: kubesec-read-role
+      account:
+        # Create the serviceaccount from our chart, on by default
+        install: true
+        # The name of the created serviceaccount. If you turn "install"
+        # off, name your custom serviceaccount here.
+        name: kubesec-serviceaccount
+    env:
+      PGPORT: "5432"
+    image:
+      tag: ""
+      repository: ghcr.io/corshatech/cast/plugins/kubesec
+
 collector:
   env:
     PGPORT: "5432"

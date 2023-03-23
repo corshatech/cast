@@ -1,0 +1,33 @@
+{{ if .Values.plugins.kubesec.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast-plugin-kubesec-scanner
+  labels:
+    app: cast-plugin-kubesec
+    component: kubesec
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cast-plugin-kubesec
+      component: kubesec
+  template:
+    metadata:
+      labels:
+        app: cast-plugin-kubesec
+        component: kubesec
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: cast-plugin-kubesec-srv
+          image: "{{ .Values.plugins.kubesec.serverImage }}"
+          imagePullPolicy: IfNotPresent
+          args: ["http", "8080"]
+          ports:
+            - containerPort: 8080
+              name: http
+{{ end }}

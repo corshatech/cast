@@ -203,7 +203,7 @@ func TestWriteRecordMalformedItem(t *testing.T) {
 	)
 
 	err = writeRecords(db, s.URL, ws)
-	assert.ErrorContains(t, err, "Failed to process kubeshark record:")
+	assert.ErrorContains(t, err, "failed to process kubeshark record:")
 
 	// we make sure that all expectations were met
 	if err := mock.ExpectationsWereMet(); err != nil {
@@ -279,7 +279,7 @@ func TestExportRecords(t *testing.T) {
 
 	err = exportRecords(db, s.URL, ws, ctx)
 	// expect error from handleTrafficItem for invalid json
-	assert.ErrorContains(t, err, "Failed to process kubeshark record:")
+	assert.ErrorContains(t, err, "failed to process kubeshark record:")
 
 	//nolint
 	ws, _, err = websocket.DefaultDialer.Dial(u, nil)

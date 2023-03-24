@@ -30,7 +30,7 @@ export const Summary = ({ faults, findings, scansPassed, severityCounts }: Summa
         </Typography>
         </div>
 
-        <ul className="max-h-40 max-w-full xl:max-w-6xl overflow-y-scroll space-y-1 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between pt-1 md:py-12 xl:py-24">
+        <ul className="max-h-40 max-w-full xl:max-w-6xl overflow-y-auto md:overflow-y-hidden space-y-1 md:space-y-0 flex flex-col md:flex-row justify-center md:justify-between pt-1 md:py-12 xl:py-24">
           {severityCounts.critical > 0 && (
             <li
               key="critical"

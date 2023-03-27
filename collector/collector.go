@@ -134,8 +134,7 @@ func main() {
 		retry.Attempts(retryAttempts),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			log.Infof("Error connecting to postgres database. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay)
+			log.Infof("Error connecting to postgres database. Retrying in %v", retryDelay)
 		}),
 	)
 	if err != nil {
@@ -154,8 +153,7 @@ func main() {
 		retry.Attempts(5),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			log.Infof("Unable to reach postgres database. Retrying in %vs", 5)
-			time.Sleep(retryDelay)
+			log.Infof("Unable to reach postgres database. Retrying in %v", retryDelay)
 		}),
 	)
 	if err != nil {
@@ -171,10 +169,9 @@ func main() {
 			return err
 		},
 		retry.Attempts(retryAttempts),
-		retry.Delay(retryDelay*time.Second),
+		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			log.Infof("Error connecting to kubeshark websocket. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay)
+			log.Infof("Error connecting to kubeshark websocket. Retrying in %v", retryDelay)
 		}),
 	)
 	if err != nil {
@@ -222,8 +219,7 @@ func main() {
 		retry.Attempts(retryAttempts),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			log.Infof("Error exporting records. Retrying in %vs", retryDelay)
-			time.Sleep(retryDelay)
+			log.Infof("Error exporting records. Retrying in %v", retryDelay)
 		}),
 	)
 	if err != nil {
@@ -314,8 +310,7 @@ func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Co
 		retry.Attempts(retryAttempts),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			log.WithError(err).Infof("Error inserting entry into postgres database. Retrying in %vs.", retryDelay)
-			time.Sleep(retryDelay)
+			log.WithError(err).Infof("Error inserting entry into postgres database. Retrying in %v", retryDelay)
 		}),
 	)
 

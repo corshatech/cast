@@ -64,7 +64,7 @@ func init() {
 		func() error {
 			return pgConnection.Ping()
 		},
-		retry.Attempts(5),
+		retry.Attempts(retryAttempts),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
 			log.Infof("Unable to reach postgres database. Retrying in %vs", retryDelay)

@@ -32,7 +32,14 @@ fi
 kubectl --context="${CONTEXT}" delete ns kubeshark --wait=true || true
 
 # kubeshark tap
-nohup kubeshark --set kube.context="${CONTEXT}" tap -n cast "(httpbin*)" --set headless=true > kubeshark.out 2> kubeshark.err < /dev/null &
+nohup kubeshark \
+    --set kube.context="${CONTEXT}" \
+    tap \
+    -n cast "(httpbin*)" \
+    --set headless=true \
+    --set tap.docker.registry="ghcr.io/corshatech/kubeshark-" \
+    --set tap.docker.tag="corshav38.5"\
+    > kubeshark.out 2> kubeshark.err < /dev/null &
 
 
 # Waiting for collector pod successfully connect to postgres and kubeshark

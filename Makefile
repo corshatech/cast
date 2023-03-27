@@ -58,7 +58,6 @@ clean:
 
 # remove cast deployment resources
 cast-clean:
-	kubectl delete pvc data-cast-postgresql-0 -n cast
 	kubectl delete ns cast
 	kubeshark clean
 

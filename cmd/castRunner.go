@@ -178,7 +178,7 @@ func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernet
 		Namespace:       "cast",
 		UpgradeCRDs:     true,
 		Wait:            true,
-		Timeout:         2 * time.Minute, // postgres pod can take >30s to be ready.
+		Timeout:         10 * time.Minute, // postgres pod can take >30s to be ready.
 	}
 	if _, err := helmClient.InstallOrUpgradeChart(ctx, &chartSpec, nil); err != nil {
 		handleError(ctx, "Error installing CAST helm chart.", err)

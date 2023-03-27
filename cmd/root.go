@@ -31,13 +31,14 @@ var port string = "3000"
 var namespace string
 var kubeConfig string = filepath.Join(homedir.HomeDir(), ".kube", "config")
 var testMode bool
+var noDownload bool
 
 var rootCmd = &cobra.Command{
-	Use:   "cast -n [namespace]",
+	Use:   "cast [OPTIONS]",
 	Short: "CAST captures the network traffic in your namespace",
 	Long:  "CAST: A tool to evaluate security concerns surrounding API Communication and Authentication. For more info: https://github.com/corshatech/cast. cast captures the network traffic in your namespace",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cast(namespace, port, kubeConfig, kubeContext, testMode)
+		cast(namespace, port, kubeConfig, kubeContext, noDownload, testMode)
 		return nil
 	},
 }
@@ -48,6 +49,7 @@ func init() {
 	rootCmd.Flags().StringVar(&kubeConfig, "kube-config", kubeConfig, "Path to kube config file.")
 	rootCmd.Flags().StringVar(&kubeContext, "kube-context", kubeContext, `Kube context to deploy CAST into. (default "current-context")`)
 	rootCmd.Flags().BoolVar(&testMode, "test", false, `Enables local testing mode.`)
+	rootCmd.Flags().BoolVar(&noDownload, "no-download", false, "Do not automatically download and install Kubeshark.")
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

@@ -30,6 +30,6 @@ config/
 
 coverage.out
 /docs/badge.svg
-/build/package/cast
+/build/
 /.log/
 /.scratch/

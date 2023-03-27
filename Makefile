@@ -29,6 +29,12 @@ images:
 cast:
 	$(GO) build -gcflags="all=-N -l" -o build/package/cast cast.go
 
+all-platforms-cast:
+	GOOS=linux GOARCH=arm64 $(GO) build -gcflags="all=-N -l" -o build/cast_linux_arm64
+	GOOS=darwin GOARCH=arm64 $(GO) build -gcflags="all=-N -l" -o build/cast_darwin_arm64
+	GOOS=linux GOARCH=amd64 $(GO) build -gcflags="all=-N -l" -o build/cast_linux_amd64
+	GOOS=darwin GOARCH=amd64 $(GO) build -gcflags="all=-N -l" -o build/cast_darwin_amd64
+
 tidy:
 	$(GO) mod tidy
 

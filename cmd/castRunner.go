@@ -143,7 +143,7 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 		case <-ctx.Done():
 			return
 		default:
-			deployCast(ctx, helmClient, clientset, config, port, testMode)
+			deployCast(ctx, helmClient, clientset, config, port, castChartVersion, testMode)
 		}
 	}(ctx)
 
@@ -161,7 +161,7 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 }
 
 // deployCast is a helper function that deploys the CAST helm chart.
-func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernetes.Clientset, config *rest.Config, port string, testMode bool) {
+func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernetes.Clientset, config *rest.Config, port, version string, testMode bool) {
 
 	chartName := "corshatech/cast"
 	// if testMode=true, use local chart instead of pulling from repo
@@ -172,6 +172,7 @@ func deployCast(ctx context.Context, helmClient helm.Client, clientset *kubernet
 
 	chartSpec := helm.ChartSpec{
 		ReleaseName:     "cast",
+		Version:         version,
 		CreateNamespace: true,
 		ChartName:       chartName,
 		Namespace:       "cast",

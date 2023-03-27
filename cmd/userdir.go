@@ -155,7 +155,7 @@ func ensureKubesharkConfigfile() string {
 
 	log.WithField("file", castConfigfile).Debug("Writing default config file.")
 	// 0666 is file permission `rw-rw-rw-`
-	err = os.WriteFile(castConfigfile, []byte(defaultKubesharkConfig), 0666)
+	err = os.WriteFile(castConfigfile, []byte(defaultKubesharkConfig), 0600)
 	if err != nil {
 		log.WithError(err).WithField("file", castConfigfile).Fatal("Unable to write config file.")
 	}

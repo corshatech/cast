@@ -210,6 +210,13 @@ export function summarizeAnalyses(analyses: Analysis[]): AnalysesSummary {
     } else {
       scansPassed++;
     }
+    if (analysis.id === 'reused-auth') {
+      findings +=
+        analysis.findings.reduce(
+          (acc, curr) => (acc += curr.data.inRequests.length),
+          0,
+        ) - analysis.findings.length;
+    }
   });
 
   return {

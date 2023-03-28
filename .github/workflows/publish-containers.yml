@@ -21,6 +21,9 @@ jobs:
           - dockerfile: ./ui/Dockerfile
             image: ghcr.io/corshatech/cast/ui
             context: ui
+          - dockerfile: ./plugins/kubesec/Dockerfile
+            image: ghcr.io/corshatech/cast/plugins/kubesec
+            context: ./plugins/kubesec
     permissions:
       contents: read
       packages: write

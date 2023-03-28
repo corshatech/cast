@@ -196,7 +196,7 @@ func downloadKubeshark(ctx context.Context, noDownload bool) (string, error) {
 		"castDataDir": configdir,
 	}).Info("Unable to locate Kubeshark, installing locally", ksDownload)
 
-	ksOut, err := os.Create(castKubeshark)
+	ksOut, err := os.OpenFile(castKubeshark, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0500)
 	if err != nil {
 		return "", fmt.Errorf("error creating file \"%s\"", castKubeshark)
 	}

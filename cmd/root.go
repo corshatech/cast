@@ -30,7 +30,7 @@ var (
 var port string = "3000"
 var namespace string
 var kubeConfig string = filepath.Join(homedir.HomeDir(), ".kube", "config")
-var castChartVersion string = ""
+var castChartVersion string
 var testMode bool
 var noDownload bool
 

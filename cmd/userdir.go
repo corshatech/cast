@@ -52,7 +52,7 @@ tap:
         host: 127.0.0.1
     regex: .*
     namespaces: []
-    allnamespaces: false
+    allnamespaces: true
     storagelimit: 200MB
     dryrun: false
     pcap: ""

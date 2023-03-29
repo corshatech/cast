@@ -18,25 +18,30 @@
 svc=$1
 echo "service endpoint: $svc"
 
-export CONTEXT="${CONTEXT:-docker-desktop}"
+echo "ABOUT TO OPERATE ON CONFIG"
+kubectl config current-context
+echo "IF THIS IS NOT CORRECT, PRESS CTRL-C NOW!"
+echo ""
+read -n 1 -s -r -p "Press any key to continue."
+echo ""
 
 # create curl pods
-kubectl --context="${CONTEXT}" delete ns curl --wait=true || true
-kubectl --context="${CONTEXT}" create namespace curl
-kubectl --context="${CONTEXT}" run curl -n curl --image=curlimages/curl -- sleep 3600
-kubectl --context="${CONTEXT}" wait --for=condition=Ready pod/curl -n curl
+kubectl delete ns curl --wait=true || true
+kubectl create namespace curl
+kubectl run curl -n curl --image=curlimages/curl -- sleep 3600
+kubectl wait --for=condition=Ready pod/curl -n curl
 
-kubectl --context="${CONTEXT}" delete ns curl2 --wait=true || true
-kubectl --context="${CONTEXT}" create namespace curl2
-kubectl --context="${CONTEXT}" run curl -n curl2 --image=curlimages/curl -- sleep 3600
-kubectl --context="${CONTEXT}" wait --for=condition=Ready pod/curl -n curl2
+kubectl delete ns curl2 --wait=true || true
+kubectl create namespace curl2
+kubectl run curl -n curl2 --image=curlimages/curl -- sleep 3600
+kubectl wait --for=condition=Ready pod/curl -n curl2
 
 # wait until we can execute a command
-until kubectl --context="${CONTEXT}" exec -n curl curl -i -- true; do
+until kubectl exec -n curl curl -i -- true; do
     echo "waiting for the curl container to become available"
 done
 
-until kubectl --context="${CONTEXT}" exec -n curl2 curl -i -- true; do
+until kubectl exec -n curl2 curl -i -- true; do
     echo "waiting for the curl2 container to become available"
 done
 
@@ -53,7 +58,7 @@ arr=(
 
 for i in "${arr[@]}"
 do
-    kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" "${svc}/base64/encode/${i}";
+    kubectl exec -n curl curl -i -- curl -s -w "\n" "${svc}/base64/encode/${i}";
 done
 
 # 2 expired jwts, 2 unexpired jwts
@@ -67,27 +72,27 @@ jwts=(
 
 for i in "${jwts[@]}"
 do
-    kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer ${i}" "${svc}/headers?q=1"
+    kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer ${i}" "${svc}/headers?q=1"
 done
 
 # # 2 Basic Auth
 echo -e "\ninserting basic-auth data\n"
-kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
-kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic G4sNcytKzXklcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Basic G4sNcytKzXklcGVuIHNlc2FtZQ==" "${svc}/headers?q=1"
 
 # 2 re-used auth tokens
 echo -e "\ninserting reused-auth data\n"
-kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
-kubectl --context="${CONTEXT}" exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
 
 
-kubectl --context="${CONTEXT}" exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
-kubectl --context="${CONTEXT}" exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
 
 
 # delete curl namespaces
-kubectl --context="${CONTEXT}" delete namespace curl --wait=false --force --grace-period=0
-kubectl --context="${CONTEXT}" delete namespace curl2 --wait=false --force --grace-period=0
+kubectl delete namespace curl --wait=false --force --grace-period=0
+kubectl delete namespace curl2 --wait=false --force --grace-period=0
 
 echo -e "\nmock data insertion complete."
 exit 0

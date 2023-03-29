@@ -71,8 +71,8 @@ export async function runnerPure(query: () => Promise<Row[]>): Promise<Analysis>
   };
 }
 
-export async function useOfBasicAuth(): Promise<Analysis> {
+export async function useOfBasicAuth(): Promise<Analysis[]> {
   const queryFunction = async () => (await conn.query(query, [])).rows;
 
-  return runnerPure(queryFunction);
+  return [await runnerPure(queryFunction)];
 }

@@ -53,12 +53,10 @@ async function query(): Promise<KubesecFinding[]> {
   return rows.map(x => kubesecRowToFinding(KubesecSQLRow.parse(x)));
 }
 
-export async function kubesec(): Promise<AnalysisOf<KubesecFinding>> {
-  // TODO: What to do when Kubesec plugin hasn't run yet...?
-  // That's not the same thing as `findings: []`
+export async function kubesec(): Promise<AnalysisOf<KubesecFinding>[]> {
   const findings = await query();
   const severity = findings.find(({severity}) => severity === 'critical') ? 'critical' : 'none';
-  return {
+  return [{
     id: 'cast-kubesec',
     title: 'Kubesec',
     description: 'The Kubesec plugin scans your running Kubernetes cluster with kubesec.io, and reports the results here.',
@@ -66,5 +64,5 @@ export async function kubesec(): Promise<AnalysisOf<KubesecFinding>> {
     weaknessLink: 'https://kubesec.io/',
     severity,
     findings,
-  };
+  }];
 }

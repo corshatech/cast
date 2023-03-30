@@ -203,14 +203,14 @@ func main() {
 			log.Println("interrupt")
 			// Cleanly close the connection by sending a close message and then
 			// waiting (with timeout) for the server to close the connection.
-			err := ksConnection.SetWriteDeadline(deadline(defaultWriteDeadline))
-			if err != nil {
-				log.WithError(err).Error("Unable to set connection deadline")
+			websocketErr := ksConnection.SetWriteDeadline(deadline(defaultWriteDeadline))
+			if websocketErr != nil {
+				log.WithError(websocketErr).Error("Unable to set connection deadline")
 				return
 			}
-			err = ksConnection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				log.Println("write close:", err)
+			websocketErr = ksConnection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+			if websocketErr != nil {
+				log.Println("write close:", websocketErr)
 				return
 			}
 		case <-ctx.Done():

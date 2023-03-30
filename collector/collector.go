@@ -203,7 +203,11 @@ func main() {
 			log.Println("interrupt")
 			// Cleanly close the connection by sending a close message and then
 			// waiting (with timeout) for the server to close the connection.
-			ksConnection.SetWriteDeadline(deadline(defaultWriteDeadline))
+			err := ksConnection.SetWriteDeadline(deadline(defaultWriteDeadline))
+			if err != nil {
+				log.WithError(err).Error("Unable to set connection deadline")
+				return
+			}
 			err = ksConnection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Println("write close:", err)
@@ -236,7 +240,11 @@ func exportRecords(pgConnection *sql.DB, ksHubURL string, ksConnection *websocke
 
 	log.Info("Starting export of records.")
 
-	ksConnection.SetWriteDeadline(deadline(defaultWriteDeadline))
+	err = ksConnection.SetWriteDeadline(deadline(defaultWriteDeadline))
+	if err != nil {
+		log.WithError(err).Error("Unable to set connection deadline")
+		return err
+	}
 	err = ksConnection.WriteMessage(websocket.TextMessage, []byte{})
 	if err != nil {
 		log.Println("write:", err)
@@ -259,7 +267,11 @@ func exportRecords(pgConnection *sql.DB, ksHubURL string, ksConnection *websocke
 }
 
 func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Conn) error {
-	ksConnection.SetReadDeadline(deadline(defaultReadDeadline))
+	err := ksConnection.SetReadDeadline(deadline(defaultReadDeadline))
+	if err != nil {
+		log.WithError(err).Error("Unable to set connection deadline")
+		return err
+	}
 	_, messageJson, err := ksConnection.ReadMessage()
 	if err != nil {
 		log.Println("read:", err)

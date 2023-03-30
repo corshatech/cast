@@ -14,8 +14,7 @@ COPY ./go.sum .
 RUN go mod download
 
 COPY collector ./collector
-RUN go build -o ./bin collector/collector.go
-
+RUN go build -o ./bin ./collector
 
 FROM registry.access.redhat.com/ubi8:8.7
 

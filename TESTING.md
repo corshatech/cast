@@ -8,12 +8,16 @@ by building the CAST binary and Docker images locally.
 
 - [Docker](https://www.docker.com/products/docker-desktop/)
 - [Skaffold](https://skaffold.dev)
-- You will need access to a Kubernetes cluster. The easiest way to get one, if you don't have one is [Kubernetes in Docker Desktop](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes).
+- You will need access to a Kubernetes cluster. The easiest way to get one,
+if you don't have one is [Kubernetes in Docker
+Desktop](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes).
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 ## Installing CAST
 
-- Download the `cast` cli from [the releases page](https://github.com/corshatech/cast/releases/), appropriate for your platform and architecture.
+- Download the `cast` cli from
+[the releases page](https://github.com/corshatech/cast/releases/)
+, appropriate for your platform and architecture.
 - Move the executable (with sudo) into the `bin` directory to install it:
     ```sh
     chmod +x {YOUR_DOWNLOAD_DIRECTORY}/cast_platform_arch
@@ -26,7 +30,8 @@ by building the CAST binary and Docker images locally.
 
 # Seeding Test Data
 
-- Set your ```kube-context``` and create a sample httpbin service for CAST to analyze.
+- Set your ```kube-context``` and create a sample httpbin service for
+CAST to analyze.
     ```bash
     kubectl config set-context docker-desktop
     helm repo add matheusfm https://matheusfm.dev/charts

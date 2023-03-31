@@ -1,3 +1,4 @@
 {
-    "typescript.tsdk": "./ui/node_modules/typescript/lib"
+    "typescript.tsdk": "./ui/node_modules/typescript/lib",
+    "editor.rulers": [80]
 }

@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 /* Copyright 2023 Corsha.
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -10,6 +8,9 @@ import { z } from 'zod';
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License. */
+
+import { z } from 'zod';
+import { logger } from './internal';
 
 /** A human-readable string which accepts Markdown */
 export type MDString = string;
@@ -179,14 +180,24 @@ export type AnalysisOf<Thing extends IFinding> =
   };
 
 /** A function that produces an analysis result */
-export type AnalysisFunction = () => Promise<Analysis>;
+export type AnalysisFunction = () => Promise<Analysis[]>;
+
+async function runWithFailuresAsEmpty<T>(f: () => Promise<T[]>): Promise<T[]> {
+  try {
+    return await f();
+  } catch (error) {
+    logger.error({error}, 'Error running analysis function');
+  }
+  return [];
+}
 
 /** Evaluates all analysis functions */
 export async function runAllAnalyses(
   analyses: AnalysisFunction[],
 ): Promise<Analysis[]> {
-  const promises = analyses.map((f) => f());
-  return Promise.all(promises);
+  const promises = analyses.map(runWithFailuresAsEmpty);
+  const result = Promise.all(promises);
+  return (await result).flat();
 }
 
 export function summarizeAnalyses(analyses: Analysis[]): AnalysesSummary {

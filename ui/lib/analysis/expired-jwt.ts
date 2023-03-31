@@ -118,8 +118,8 @@ export async function runnerPure(
   };
 }
 
-export async function runner(): Promise<Analysis> {
+export async function runner(): Promise<Analysis[]> {
   const queryFunction = async () => (await conn.query(query, [])).rows;
 
-  return runnerPure(queryFunction);
+  return [await runnerPure(queryFunction)];
 }

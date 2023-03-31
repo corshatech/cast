@@ -9,8 +9,6 @@
 # See the License for the specific language governing permissions and
 # limitations.
 
-GO = GOPRIVATE=github.com/corshatech/* GO111MODULE=on go
-
 VERSION ?= "0.1.0"
 
 all: tidy test lint image markdown
@@ -18,7 +16,7 @@ all: tidy test lint image markdown
 test: test-go test-ui
 
 test-go:
-	$(GO) test -coverprofile=coverage.out ./...
+	go test -coverprofile=coverage.out ./...
 
 test-ui:
 	cd ui && npm ci && npm run "test:ci"
@@ -27,16 +25,16 @@ images:
 	skaffold build -t ${VERSION} --default-repo=ghcr.io/corshatech/cast
 
 cast:
-	$(GO) build -gcflags="all=-N -l" -o build/package/cast cast.go
+	go build -gcflags="all=-N -l" -o build/package/cast cast.go
 
 all-platforms-cast:
-	GOOS=linux GOARCH=arm64 $(GO) build -gcflags="all=-N -l" -o build/cast_linux_arm64
-	GOOS=darwin GOARCH=arm64 $(GO) build -gcflags="all=-N -l" -o build/cast_darwin_arm64
-	GOOS=linux GOARCH=amd64 $(GO) build -gcflags="all=-N -l" -o build/cast_linux_amd64
-	GOOS=darwin GOARCH=amd64 $(GO) build -gcflags="all=-N -l" -o build/cast_darwin_amd64
+	GOOS=linux GOARCH=arm64 go build -gcflags="all=-N -l" -o build/cast_linux_arm64
+	GOOS=darwin GOARCH=arm64 go build -gcflags="all=-N -l" -o build/cast_darwin_arm64
+	GOOS=linux GOARCH=amd64 go build -gcflags="all=-N -l" -o build/cast_linux_amd64
+	GOOS=darwin GOARCH=amd64 go build -gcflags="all=-N -l" -o build/cast_darwin_amd64
 
 tidy:
-	$(GO) mod tidy
+	go mod tidy
 
 lint: lint-ui lint-go lint-helm lint-markdown
 
@@ -59,7 +57,7 @@ lint-markdown:
 	./ui/node_modules/.bin/markdownlint-cli2-config .markdownlint.yaml "**/*.md" "#ui/node_modules" "#.github"
 
 clean:
-	$(GO) clean ./...
+	go clean ./...
 	$(RM) -rf build
 
 # remove cast deployment resources

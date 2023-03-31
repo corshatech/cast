@@ -35,7 +35,7 @@ using the test-data script.
     cast
     ```
 
-# Seeding Test Data
+## Seeding Test Data
 
 - Set your `kube-context` and create a sample httpbin service for
 CAST to analyze.

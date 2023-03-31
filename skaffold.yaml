@@ -9,11 +9,9 @@ build:
   artifacts:
     -
       image: collector
-      context: .
-      platforms:
-        - "linux/amd64"
+      context: collector-js/
       docker:
-        dockerfile: collector/Dockerfile
+        dockerfile: collector-js/Dockerfile
     -
       image: ui
       context: ui
@@ -51,10 +49,10 @@ deploy:
     - name: httpbin
       namespace: cast
       remoteChart: https://matheusfm.dev/charts/httpbin-0.1.1.tgz
-    hooks:
-      after:
-        - host:
-            command: ["sh","-c", "./scripts/kubeshark-tap-with-data.sh http://httpbin.cast.svc.cluster.local"]
+    # hooks:
+    #   after:
+    #     - host:
+    #         command: ["sh","-c", "./scripts/kubeshark-tap-with-data.sh http://httpbin.cast.svc.cluster.local"]
 
 portForward:
   - resourceType: service

@@ -15,9 +15,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ./collector/Dockerfile
+          - dockerfile: ./collector-js/Dockerfile
             image: ghcr.io/corshatech/cast/collector
-            context: .
+            context: ./collector-js/
           - dockerfile: ./ui/Dockerfile
             image: ghcr.io/corshatech/cast/ui
             context: ui

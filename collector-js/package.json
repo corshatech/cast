@@ -1,0 +1,17 @@
+{
+  "name": "@corshatech/cast-collector",
+  "version": "0.1.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.10.0",
+    "ws": "^8.13.0"
+  }
+}

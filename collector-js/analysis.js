@@ -39,9 +39,7 @@ function detectPassInURL(absoluteURI) {
 }
 
 function detectJWTs(str) {
-  const _m = `${str}`.matchAll(jwtRegex);
-  const matches = [..._m].map(x => x[0]);
-  console.log({_m,str, matches})
+  const matches = [...`${str}`.matchAll(jwtRegex)].map(x => x[0]);
   if (matches.length > 0) {
     return matches;
   }

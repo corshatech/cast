@@ -10,7 +10,7 @@ by building the CAST binary and Docker images locally.
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 > **Note**
-> If you will be seeding test data using our HTTPBin setup, you will additionally need [helm](https://helm.sh). You do not need helm if you are not using the test-data script.
+> If you will be seeding test data using our httpbin setup, you will additionally need [helm](https://helm.sh). You do not need helm if you are not using the test-data script.
 
 ## Installing CAST
 
@@ -33,14 +33,10 @@ by building the CAST binary and Docker images locally.
     kubectl create namespace httpbin
     helm install -n httpbin httpbin matheusfm/httpbin
     ```
-- Add the Bitnami Helm repo.
-    ```bash
-    helm repo add bitnami https://charts.bitnami.com/bitnami
-    ```
 - If you would like to generate testing data for the sample service,
 you can do so by running the
 [generate-pipeline-data.sh](./cripts/generate-pipeline-data.sh)
 script to send CURL requests to your sample httpbin service.
     ```sh
-    CONTEXT={YOUR_KUBE_CONTEXT} ./scripts/generate-pipeline-data.sh http://httpbin.httpbin.svc.cluster.local
+    ./scripts/generate-pipeline-data.sh http://httpbin.httpbin.svc.cluster.local
     ```

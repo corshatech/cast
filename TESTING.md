@@ -23,28 +23,34 @@ using the test-data script.
 [the releases page](https://github.com/corshatech/cast/releases/)
 , appropriate for your platform and architecture.
 - Move the executable (with sudo) into the `bin` directory to install it:
+
     ```sh
     chmod +x {YOUR_DOWNLOAD_DIRECTORY}/cast_platform_arch
     sudo mv {YOUR_DOWNLOAD_DIRECTORY}/cast_platform_arch /usr/local/bin/cast
     ```
+
 - Run the `cast` cli to install CAST:
+
     ```sh
     cast
     ```
 
 # Seeding Test Data
 
-- Set your ```kube-context``` and create a sample httpbin service for
+- Set your `kube-context` and create a sample httpbin service for
 CAST to analyze.
+
     ```bash
     helm repo add matheusfm https://matheusfm.dev/charts
     kubectl create namespace httpbin
     helm install -n httpbin httpbin matheusfm/httpbin
     ```
+
 - If you would like to generate testing data for the sample service,
 you can do so by running the
 [generate-pipeline-data.sh](./cripts/generate-pipeline-data.sh)
 script to send CURL requests to your sample httpbin service.
+
     ```sh
     ./scripts/generate-pipeline-data.sh http://httpbin.httpbin.svc.cluster.local
     ```

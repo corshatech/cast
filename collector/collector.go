@@ -16,23 +16,19 @@ package main
 
 import (
 	"context"
-	"crypto/sha256"
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
 	"regexp"
-	"strings"
+	"runtime"
+	"strconv"
 	"time"
 
 	"github.com/avast/retry-go"
 	"github.com/gorilla/websocket"
 	_ "github.com/lib/pq"
-	"github.com/mitchellh/mapstructure"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/corshatech/cast/collector/analysis/pass_in_url"
@@ -45,6 +41,9 @@ const (
 	postgresUserEnv    = "PGUSER"
 	postgresPassEnv    = "PGPASSWORD" /* #nosec */
 	dbNameEnv          = "PGDATABASE"
+
+	PoolWorkerNoEnv  = "NUM_WORKERS"
+	WorkerBufSizeEnv = "WORKER_BUF_SIZE"
 )
 
 const (
@@ -52,7 +51,11 @@ const (
 	retryDelay           = 3 * time.Second
 	defaultReadDeadline  = 5 * time.Minute
 	defaultWriteDeadline = 45 * time.Second
+
+	defaultWorkerBufSize = 100
 )
+
+var defaultPoolWorkerNo = runtime.NumCPU()
 
 var jwtRegex = regexp.MustCompile(`eyJ[A-Za-z0-9-_]+\.eyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/]*`)
 
@@ -107,6 +110,23 @@ type CASTMetadata struct {
 	UseOfBasicAuth bool
 }
 
+func intEnvOrDefault(env string, def int) int {
+	strEnv, ok := os.LookupEnv(env)
+	if ok {
+		parsed, err := strconv.Atoi(strEnv)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"env":          env,
+				"parsedValue":  strEnv,
+				"defaultValue": def,
+			}).Warn("Environment var was not an integer, using the default value")
+			return def
+		}
+		return parsed
+	}
+	return def
+}
+
 func main() {
 
 	var err error
@@ -117,6 +137,8 @@ func main() {
 	pgPass := requiredEnv(postgresPassEnv)
 	dbName := requiredEnv(dbNameEnv)
 	kubesharkHubURL := requiredEnv(kubesharkHubURLEnv)
+	workerBufSize := intEnvOrDefault(WorkerBufSizeEnv, defaultWorkerBufSize)
+	workerNo := intEnvOrDefault(PoolWorkerNoEnv, defaultPoolWorkerNo)
 
 	websocketURL, err := hubURLToWebsocketURL(kubesharkHubURL)
 	if err != nil {
@@ -220,7 +242,7 @@ func main() {
 	err = retry.Do(
 		func() error {
 			//nolint
-			err = exportRecords(pgConnection, kubesharkHubURL, ksConnection, ctx)
+			err = createAnalysisPool(ctx, pgConnection, ksConnection, kubesharkHubURL, workerBufSize, workerNo)
 			return err
 		},
 		retry.Attempts(retryAttempts),
@@ -266,90 +288,6 @@ func exportRecords(pgConnection *sql.DB, ksHubURL string, ksConnection *websocke
 	}
 }
 
-func writeRecords(pgConnection *sql.DB, ksURL string, ksConnection *websocket.Conn) error {
-	err := ksConnection.SetReadDeadline(deadline(defaultReadDeadline))
-	if err != nil {
-		log.WithError(err).Error("Unable to set connection deadline")
-		return err
-	}
-	_, messageJson, err := ksConnection.ReadMessage()
-	if err != nil {
-		log.Println("read:", err)
-		return err
-	}
-
-	message := Message{}
-	err = json.Unmarshal(messageJson, &message)
-	if err != nil {
-		log.WithError(err).Error("Failed to unmarshal websocket message")
-		return fmt.Errorf("failed to unmarshal websocket message: %w", err)
-	}
-
-	if message.Proto.Name != "http" {
-		log.WithField("proto.name", message.Proto.Name).Debug("ignoring non-HTTP traffic")
-		return nil
-	}
-
-	itemUrl := fmt.Sprintf("%s/item/%s?q=", ksURL, message.Id)
-	trafficItemJson, err := fetchItem(context.Background(), itemUrl)
-	if err != nil {
-		log.
-			WithField("itemUrl", itemUrl).
-			WithError(err).
-			Error("Failed to fetch item from kubeshark")
-		return fmt.Errorf("failed to fetch item from kubeshark: %w", err)
-	}
-
-	trafficItem := TrafficItem{}
-
-	// finalTrafficDataJson is the data object inside the trafficItemJson object
-	finalTrafficDataJson, metadataJson, err := handleTrafficItem(trafficItemJson, &trafficItem)
-	if err != nil {
-		log.WithError(err).Error("Failed to process kubeshark record.")
-		return fmt.Errorf("failed to process kubeshark record: %w", err)
-	}
-
-	// When finalTrafficDataJson is nil and err is nil, the trafficItem is not relevant so we skip it
-	if finalTrafficDataJson == nil {
-		return nil
-	}
-
-	occurredAt := time.UnixMilli(trafficItem.Data.Timestamp)
-
-	sqlStatement := `INSERT INTO traffic (occurred_at, data, meta) VALUES ($1, $2, $3)`
-
-	err = retry.Do(
-		func() error {
-			//nolint
-			_, err = pgConnection.Exec(sqlStatement, occurredAt, finalTrafficDataJson, metadataJson)
-			return err
-		},
-		retry.Attempts(retryAttempts),
-		retry.Delay(retryDelay),
-		retry.OnRetry(func(n uint, err error) {
-			log.WithError(err).Infof("Error inserting entry into postgres database. Retrying in %v", retryDelay)
-		}),
-	)
-
-	return err
-
-}
-
-func fetchItem(ctx context.Context, itemUrl string) ([]byte, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, itemUrl, nil)
-	if err != nil {
-		return nil, fmt.Errorf("error creating item request: %w", err)
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("error fetching item: %w", err)
-	}
-	defer resp.Body.Close()
-	return io.ReadAll(resp.Body)
-
-}
-
 // Exits with 1 if envName not set, otherwise returns env value
 func requiredEnv(envName string) string {
 	ret, ok := os.LookupEnv(envName)
@@ -360,73 +298,6 @@ func requiredEnv(envName string) string {
 		}).Fatal("Failed to load required environment variable")
 	}
 	return ret
-}
-
-// handleTrafficItem takes a message read from the kubeshark websocket and processes it for insertion
-// into the postgres database. It returns the processed message and a CASTMetadata struct for the message.
-func handleTrafficItem(trafficItemJson []byte, trafficItem *TrafficItem) ([]byte, []byte, error) {
-	var err error
-	var trafficItemMap map[string]interface{}
-	var metadata CASTMetadata
-
-	err = json.Unmarshal(trafficItemJson, &trafficItemMap)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// In Kubeshark 38 the trafficItem JSON contains the data and a
-	// string version of data in a key called representation. This
-	// caused the JWT detection to match each JWT string twice
-	originalTrafficDataJson, err := json.Marshal(trafficItemMap["data"])
-	if err != nil {
-		return nil, nil, err
-	}
-
-	err = mapstructure.Decode(trafficItemMap, trafficItem)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	var absoluteURI string
-	if trafficItem.Data.Protocol.Name != "" && trafficItem.Data.Request.Headers.Host != "" && trafficItem.Data.Request.Url != "" {
-		absoluteURI = trafficItem.Data.Protocol.Name + "://" + trafficItem.Data.Request.Headers.Host + trafficItem.Data.Request.Url
-		trafficItemMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = absoluteURI
-	}
-
-	if trafficItem.Data.Request.Headers.Authorization != "" {
-		unHashedAuth := trafficItem.Data.Request.Headers.Authorization
-		hashedAuth := sha256.Sum256([]byte(unHashedAuth))
-		trafficItemMap["data"].(map[string]interface{})["request"].(map[string]interface{})["headers"].(map[string]interface{})["Authorization"] = fmt.Sprintf("%x", hashedAuth)
-		metadata.UseOfBasicAuth = strings.HasPrefix(unHashedAuth, "Basic ")
-	}
-
-	// Start: Handle the pass-in-url analysis
-	passInUrl, err := pass_in_url.Detect(absoluteURI)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error in detecting PassInUrl: %w", err)
-	}
-	if passInUrl != nil {
-		log.WithFields(log.Fields{
-			"func":      "handleMessage",
-			"PassInUrl": metadata.PassInUrl,
-		}).Debug("password detected in url")
-		metadata.PassInUrl = passInUrl
-		trafficItemMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = metadata.PassInUrl.AbsoluteUri
-	}
-	// End: Handle the pass-in-url analysis
-
-	metadata.DetectedJwts = detectJwts(originalTrafficDataJson)
-
-	editedTrafficDataJson, err := json.Marshal(trafficItemMap["data"])
-	if err != nil {
-		return nil, nil, err
-	}
-
-	metadataJson, err := json.Marshal(metadata)
-	if err != nil {
-		return nil, nil, err
-	}
-	return editedTrafficDataJson, metadataJson, nil
 }
 
 func detectJwts(request []byte) []string {

@@ -28,7 +28,7 @@ type workerContext struct {
 	WorkerNo     int
 }
 
-func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kubesharkHubURL string, workerBufSize, workerNo int, ctx context.Context) error {
+func createAnalysisPool(ctx context.Context, pgConnection *sql.DB, ksConnection *websocket.Conn, kubesharkHubURL string, workerBufSize, workerNo int) error {
 	var wg sync.WaitGroup
 	messageQueue := make(chan Message, workerBufSize)
 

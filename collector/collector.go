@@ -242,7 +242,7 @@ func main() {
 	err = retry.Do(
 		func() error {
 			//nolint
-			err = createAnalysisPool(pgConnection, ksConnection, kubesharkHubURL, workerBufSize, workerNo, ctx)
+			err = createAnalysisPool(ctx, pgConnection, ksConnection, kubesharkHubURL, workerBufSize, workerNo)
 			return err
 		},
 		retry.Attempts(retryAttempts),

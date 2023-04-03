@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/avast/retry-go"
@@ -20,7 +21,6 @@ import (
 )
 
 type workerContext struct {
-	Ctx          context.Context
 	KsConnection *websocket.Conn
 	KsHubUrl     string
 	PgConnection *sql.DB
@@ -29,6 +29,7 @@ type workerContext struct {
 }
 
 func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kubesharkHubURL string, workerBufSize, workerNo int, ctx context.Context) error {
+	var wg sync.WaitGroup
 	messageQueue := make(chan Message, workerBufSize)
 
 	err := ksConnection.SetWriteDeadline(deadline(defaultWriteDeadline))
@@ -43,8 +44,9 @@ func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kube
 	}
 
 	for i := 0; i < workerNo; i++ {
+		wg.Add(1)
+
 		workCtx := workerContext{
-			Ctx:          ctx,
 			KsConnection: ksConnection,
 			KsHubUrl:     kubesharkHubURL,
 			PgConnection: pgConnection,
@@ -52,11 +54,15 @@ func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kube
 			WorkerNo:     i,
 		}
 
-		go analysisWorker(&workCtx)
+		go func() {
+			defer wg.Done()
+			analysisWorker(&workCtx)
+		}()
 	}
 
 	log.Info("Starting export of records.")
 
+outer:
 	for {
 		err = ksConnection.SetReadDeadline(deadline(defaultReadDeadline))
 		if err != nil {
@@ -78,7 +84,7 @@ func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kube
 
 		if message.Proto.Name != "http" {
 			log.WithField("proto.name", message.Proto.Name).Debug("ignoring non-HTTP traffic")
-			return nil
+			continue
 		}
 
 		select {
@@ -91,17 +97,23 @@ func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kube
 		select {
 		case <-ctx.Done():
 			close(messageQueue)
-			return nil
+			break outer
 		default:
 			continue
 		}
 	}
+
+	log.Infof("Ending export of records, waiting for %d workers to exit...", workerNo)
+	wg.Wait()
+	log.Info("All workers done.")
+
+	return nil
 }
 
 func analysisWorker(ctx *workerContext) {
 	for message := range ctx.Queue {
 		itemUrl := fmt.Sprintf("%s/item/%s?q=", ctx.KsHubUrl, message.Id)
-		requestContext, cancel := context.WithDeadline(ctx.Ctx, deadline(1*time.Minute))
+		requestContext, cancel := context.WithDeadline(context.Background(), deadline(1*time.Minute))
 
 		trafficItemJson, err := fetchItem(requestContext, itemUrl)
 		if err != nil {

@@ -12,10 +12,11 @@ import (
 	"time"
 
 	"github.com/avast/retry-go"
-	"github.com/corshatech/cast/collector/analysis/pass_in_url"
 	"github.com/gorilla/websocket"
 	"github.com/mitchellh/mapstructure"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/corshatech/cast/collector/analysis/pass_in_url"
 )
 
 type workerContext struct {
@@ -42,7 +43,7 @@ func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kube
 	}
 
 	for i := 0; i < workerNo; i++ {
-		workerContext := workerContext{
+		workCtx := workerContext{
 			Ctx:          ctx,
 			KsConnection: ksConnection,
 			KsHubUrl:     kubesharkHubURL,
@@ -51,7 +52,7 @@ func createAnalysisPool(pgConnection *sql.DB, ksConnection *websocket.Conn, kube
 			WorkerNo:     i,
 		}
 
-		go analysisWorker(&workerContext)
+		go analysisWorker(&workCtx)
 	}
 
 	log.Info("Starting export of records.")

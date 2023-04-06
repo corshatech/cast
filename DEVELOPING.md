@@ -1,3 +1,7 @@
+# Developing for CAST
+
+This file describes ways you can develop software for the CAST system.
+
 ## Local Development
 
 We use [Docker
@@ -18,7 +22,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
 
 The local Skaffold deployment starts Kubeshark, CAST, creates a
-`./ui/.env.local` file, and runs `scripts/generate-pineline-data.sh`
+`./ui/.env.local` file, and runs `scripts/generate-pipeline-data.sh`
 to insert test data.
 
 If you have run the Skaffold deployment before, the [Cleanup](#cleanup)

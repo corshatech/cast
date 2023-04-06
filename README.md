@@ -1,17 +1,13 @@
 
 # CAST
 
-![Go Coverage](https://img.shields.io/badge/Go%20Coverage-43.3%25-red)
-![Node
-Coverage](https://img.shields.io/badge/Node%20Coverage-79.59%25-yellow)
-
 CAST is an API security tool being developed to evaluate Kubernetes
 API traffic for authentication vulnerabilities such as reused
 credentials.
 
-Deployed as a Helm package, CAST produces a web report of API
-vulnerabilities and does not store or export any un-hashed
-cryptographic material.
+CAST deploys simply and easily with a single command into your environment,
+where it can immediately begin monitoring traffic flows and the security and
+health of your cluster.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -68,56 +64,62 @@ on-premises. It is designed to help you quickly identify poor API
 secrets hygiene, such as sharing the same key or token across multiple
 workloads.
 
-## Prerequisites
+### Kubesec
 
-- Kubernetes 1.21+
-- Docker 20.10+
+CAST will also run Kubesec scans against all the containers and workloads in
+your Kubernetes cluster.
+
+[Kubesec](https://kubesec.io/) is a tool which evaluates your Kubernetes
+resources for standards and best practices. The Kubesec scan runs and reports
+results hourly in the default configuration. Some Kubesec results are advisory,
+however, results marked "critical" may have significant impact on the security
+of your cluster or workloads.
 
 ## Install CAST
 
-The CAST binary can be downloaded from the [Releases](https://github.com/corshatech/cast/releases)
-page. To use the CAST CLI to analyze traffic in a namespace, run
+Our CAST install tool can be downloaded [from the
+Releases](https://github.com/corshatech/cast/releases) page.
 
+After downloading it you can use CAST to analyze all traffic in your cluster.
+Simply run the `cast` tool from a terminal.
+
+If you want to limit CAST to scanning a single namespace, use the `-n` flag:
 ```bash
 ./cast -n <namespace>
 ```
 
-Once you run the CLI, you can open your browser to [localhost:3000](http://localhost:3000/).
+The CAST tool automatically forwards the CAST user interface to the host where
+you started it. On the same computer where you started CAST, you can open your
+browser to [http://localhost:3000](http://localhost:3000/) to see CAST results.
 
-The ```cast``` command can be used with the following flags.
-
+For advanced usage and all CLI flags, use the `--help` flag, as in:
 ```bash
-Usage:
-  ./cast -n [namespace] [flags]
-
-Flags:
-  -h, --help                  help for cast
-      --kube-config string    Path to kube config file. (default "$HOME/.kube/config")
-      --kube-context string   Kube context to deploy CAST into. (default "current-context")
-  -n, --namespace string      The namespace to analyze. (default "all")
-  -p, --port string           The local port the CAST UI will be available on. (default "3000")
-      --test                  Enables local testing mode.
+./cast --help
 ```
 
 ### Kubeshark
 
-CAST uses [Kubeshark](https://kubeshark.co/) to collect traffic. Our current supported
-Kubeshark version is v38.5. If you would like to install Kubeshark system wide, the
-installation instructions can be found in their documentation:
-[Kubeshark Installation](https://docs.kubeshark.co/en/install). Otherwise, CAST
-will install the Kubeshark binary in the app's private config directory.
+CAST uses [Kubeshark](https://kubeshark.co/) to collect traffic. If you don't
+have Kubeshark already, CAST will download and install it for you as part
+of deployment.
+
+We currently only support Kubeshark version v38.5. If you would like to install
+Kubeshark system-wide, you can follow the installation instructions
+[found in Kubeshark's documentation](https://docs.kubeshark.co/en/install).
 
 ## Contributing
 
 Check [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to
-contribute, developer workflows, and developer setup.
+contribute. In particular, you will need to sign our CLA as an individual
+contributor, or have your employer sign it as a corporate entity.
 
-If you have questions you would like to ask the developers, or
-feedback you would like to provide, feel free to create an issue on
-our issue tracker.
+If you have questions, concerns, or feedback you would like to provide, feel
+free to [create an issue](https://github.com/corshatech/cast/issues/new/choose).
 
-Additionally, if you have a feature you would like to suggest, feel
-free to create an issue on our issue tracker.
+## Developing with CAST
+
+Please see [DEVELOPING.md](./DEVELOPING.md) for instructions on setting up a
+development environment, running CAST locally, and making code contributions.
 
 ## License
 

@@ -1,4 +1,16 @@
 {
     "typescript.tsdk": "./ui/node_modules/typescript/lib",
-    "editor.rulers": [80]
+    "editor.rulers": [
+        80
+    ],
+    "cSpell.words": [
+        "CAST",
+        "doctoc",
+        "httpbin",
+        "PGDATABASE",
+        "PGHOST",
+        "PGPASSWORD",
+        "PGUSER",
+        "statefulset"
+    ]
 }

@@ -15,10 +15,11 @@ health of your cluster.
 
 - [Evaluated Security Concerns](#evaluated-security-concerns)
   - [Credential Reuse](#credential-reuse)
-- [Prerequisites](#prerequisites)
+  - [Kubesec](#kubesec)
 - [Install CAST](#install-cast)
   - [Kubeshark](#kubeshark)
 - [Contributing](#contributing)
+- [Developing with CAST](#developing-with-cast)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -84,6 +85,7 @@ After downloading it you can use CAST to analyze all traffic in your cluster.
 Simply run the `cast` tool from a terminal.
 
 If you want to limit CAST to scanning a single namespace, use the `-n` flag:
+
 ```bash
 ./cast -n <namespace>
 ```
@@ -93,6 +95,7 @@ you started it. On the same computer where you started CAST, you can open your
 browser to [http://localhost:3000](http://localhost:3000/) to see CAST results.
 
 For advanced usage and all CLI flags, use the `--help` flag, as in:
+
 ```bash
 ./cast --help
 ```

@@ -19,7 +19,8 @@
       "@/components/*": ["./components/*"],
       "@/pages/*": ["./pages/*"],
       "@/app/*": ["./app/*"],
-      "@/lib/*": ["./lib/*"]
+      "@/lib/*": ["./lib/*"],
+      "@/styles/*": ["./styles/*"]
     }
   },
   "include": [

@@ -19,6 +19,7 @@ const customJestConfig = {
     '^@/lib/(.*)$': '<rootDir>/lib/$1',
     '^@/pages/(.*)$': '<rootDir>/pages/$1',
     '^@/app/(.*)$': '<rootDir>/app/$1',
+    '^@/styles/(.*)$': '<rootDir>/styles/$1',
   },
   fakeTimers: {
     enableGlobally: true,

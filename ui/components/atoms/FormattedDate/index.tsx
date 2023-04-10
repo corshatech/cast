@@ -1,7 +1,7 @@
 import React from 'react';
-
 import { DateTime } from 'luxon';
-import { DateString } from '@/lib/findings';
+
+import type { DateString } from '@/lib/findings';
 
 export const FormattedDate: React.FC<{when: DateString}> = ({when}) => {
   // TODO: change formats when clicked or by user preference

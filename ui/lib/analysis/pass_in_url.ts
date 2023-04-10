@@ -10,7 +10,7 @@
    limitations under the License. */
 
 import { Analysis, Finding } from 'lib/findings';
-import conn from '../../lib/db';
+import { conn } from '../../lib/db';
 
 export type AuthenticationUseRecord = {
   absoluteUri: string;
@@ -98,7 +98,7 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
   };
 }
 
-export async function runner(): Promise<Analysis[]> {
+export async function passInUrl(): Promise<Analysis[]> {
   const queryFunction = async () => (await conn.query(query, [])).rows;
   return [await runnerPure(queryFunction)];
 }

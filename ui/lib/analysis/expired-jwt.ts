@@ -10,7 +10,7 @@
    limitations under the License. */
 
 import { Analysis, ExpiredJWT } from '../findings';
-import conn from '../db';
+import { conn } from '../db';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 const query = `
@@ -118,7 +118,7 @@ export async function runnerPure(
   };
 }
 
-export async function runner(): Promise<Analysis[]> {
+export async function expiredJwt(): Promise<Analysis[]> {
   const queryFunction = async () => (await conn.query(query, [])).rows;
 
   return [await runnerPure(queryFunction)];

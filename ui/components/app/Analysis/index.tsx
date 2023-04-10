@@ -1,5 +1,16 @@
+/* Copyright 2023 Corsha.
+   Licensed under the Apache License, Version 2.0 (the 'License');
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+   http://www.apache.org/licenses/LICENSE-2.0
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an 'AS IS' BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. */
+
 import {
-  Analysis as AnalysisType,
+  Analysis,
   AnalysisOf,
   ExpiredJWT,
   ReusedAuthentication,
@@ -7,17 +18,17 @@ import {
   UseOfBasicAuth,
 } from '@/lib/findings';
 import { KubesecFinding } from '@/lib/analysis/kubesec-types';
-
 import { logger } from '@/lib/internal';
+
 import { PasswordInURLCard } from './PasswordInURLCard';
 import { ExpiredJWTCard } from './ExpiredJWTCard';
-import { ReusedAuthenticationCard } from './ReusedAuthentication';
+import { ReusedAuthenticationCard } from './ReusedAuthenticationCard';
 import { UseOfBasicAuthCard } from './UseOfBasicAuthCard';
 import { KubesecCard } from './KubesecCard';
 
 export { AnalysisCardLoading } from './core';
 
-export const Analysis: React.FC<AnalysisType> = (analysis) => {
+export const AnalysisCard: React.FC<Analysis> = (analysis) => {
   try {
     switch (analysis.id) {
       case 'expired-jwt': {

@@ -9,15 +9,13 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import type { AppProps } from 'next/app';
+import renderer from 'react-test-renderer';
 
-import '@/styles/globals.css';
-import { MySwrConfig } from '@/components/app/MySwrConfig';
+import { ButtonSection } from '@/components/app/page-sections';
 
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <MySwrConfig>
-      <Component {...pageProps} />
-    </MySwrConfig>
-  );
-}
+describe('Button', () => {
+  it('snapshot', () => {
+    const tree = renderer.create(<ButtonSection />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+});

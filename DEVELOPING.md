@@ -46,7 +46,9 @@ skaffold dev --platform=linux/amd64 --profile headless --port-forward --kube-con
 Once you see the log message "Starting export of records.", the
 back-end of CAST is running.
 
-> :memo: If another service is listening on 5432, Skaffold will listen
+> :memo:
+>
+> If another service is listening on 5432, Skaffold will listen
 > on another port, typically 5433.
 >
 > The log line that you want to look for looks like this:
@@ -57,6 +59,16 @@ back-end of CAST is running.
 >
 > Make note of this port, you will need to update `./ui/.env.local`
 > with this port if it is not 5432
+
+> **Warning**
+>
+> For Apple Silicon Mac users, you may have issues deploying the Kubesec
+> component. If you are running a kubernetes environment hosted by an Apple
+> Silicon chip (such as an M1 Mac) you can resolve this by running the command:
+> ```
+> docker pull --platform=linux/amd64 kubesec/kubesec:v2
+> ```
+> to manually pull the 64bit-Intel image for Kubesec.
 
 Open a new terminal to run the front-end within.
 

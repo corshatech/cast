@@ -100,6 +100,16 @@ For advanced usage and all CLI flags, use the `--help` flag, as in:
 ./cast --help
 ```
 
+> **Warning**
+>
+> For Apple Silicon Mac users, you may have issues deploying the Kubesec
+> component. If you are running a kubernetes environment hosted by an Apple
+> Silicon chip (such as an M1 Mac) you can resolve this by running the command:
+> ```
+> docker pull --platform=linux/amd64 kubesec/kubesec:v2
+> ```
+> to manually pull the 64bit-Intel image for Kubesec.
+
 ### Kubeshark
 
 CAST uses [Kubeshark](https://kubeshark.co/) to collect traffic. If you don't

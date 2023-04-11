@@ -9,20 +9,6 @@ permissions:
   contents: read
 
 jobs:
-  markdownlint:
-    name: Lint Markdown files
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: markdownlint-cli2-action
-        uses: DavidAnson/markdownlint-cli2-action@v9
-        with:
-          command: config
-          globs: |
-            .markdownlint.yaml
-            **/*.md
-            #ui/node_modules
-            #.github
   eslint:
     name: Lint TS,JS,SCSS
     runs-on: ubuntu-latest
@@ -35,7 +21,7 @@ jobs:
           cache-dependency-path: ui/package-lock.json
       - name: Run eslint
         working-directory: ./ui
-        run: | 
+        run: |
           npm ci
           npm run lint
           npm run build

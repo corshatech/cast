@@ -13,9 +13,20 @@ Docker Desktop](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes).
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 > **Note**
+>
 > If you will be seeding test data using our httpbin setup, you will
-additionally need [helm](https://helm.sh). You do not need helm if you are not
-using the test-data script.
+> additionally need [helm](https://helm.sh). You do not need helm if you are not
+> using the test-data script.
+
+> **Warning**
+>
+> For Apple Silicon Mac users, you may have issues deploying the Kubesec
+> component. If you are running a kubernetes environment hosted by an Apple
+> Silicon chip (such as an M1 Mac) you can resolve this by running the command:
+> ```
+> docker pull --platform=linux/amd64 kubesec/kubesec:v2
+> ```
+> to manually pull the 64bit-Intel image for Kubesec.
 
 ## Installing CAST
 

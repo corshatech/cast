@@ -9,15 +9,20 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import type { AppProps } from 'next/app';
+import React from 'react';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 
-import '@/styles/globals.css';
-import { MySwrConfig } from '@/components/app/MySwrConfig';
+import { theme } from '@/components/app/theme';
 
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <MySwrConfig>
-      <Component {...pageProps} />
-    </MySwrConfig>
-  );
+export interface LayoutProps {
+  children: React.ReactNode;
 }
+
+export const Layout = ({ children }: LayoutProps) => {
+  return (<ThemeProvider theme={theme}>
+    <CssBaseline/>
+    <div className="m-0 flex flex-col justify-between items-start w-screen">
+      {children}
+    </div>
+  </ThemeProvider>);
+};

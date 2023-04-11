@@ -1,5 +1,5 @@
 import renderer from 'react-test-renderer';
-import { ColorSection } from '@/components/index';
+import { ColorSection } from '@/components/app/page-sections';
 
 describe('Color Section', () => {
   it('snapshot', () => {

@@ -9,15 +9,17 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import type { AppProps } from 'next/app';
+import { render } from '@testing-library/react';
 
-import '@/styles/globals.css';
-import { MySwrConfig } from '@/components/app/MySwrConfig';
+import type { Severity } from '@/lib/findings';
 
-export default function App({ Component, pageProps }: AppProps) {
-  return (
-    <MySwrConfig>
-      <Component {...pageProps} />
-    </MySwrConfig>
-  );
-}
+import { SeverityIcon } from '.';
+
+describe('SeverityIcon', () => {
+  test.each(['none', 'low', 'medium', 'high', 'critical', 'UNKNOWN_-InVALID'])(
+    'matches snapshot for severity %p',
+    (severity) => {
+      const { asFragment } = render(<SeverityIcon severity={severity as Severity}/>)
+      expect(asFragment()).toMatchSnapshot()
+    })
+});

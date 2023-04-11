@@ -10,7 +10,7 @@
    limitations under the License. */
 
 import { Analysis, Finding, ReusedAuthentication } from '../../lib/findings';
-import conn from '../../lib/db';
+import { conn } from '../../lib/db';
 
 const query = `
 select
@@ -156,7 +156,7 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
   };
 }
 
-export async function runner(): Promise<Analysis[]> {
+export async function reusedAuthentication(): Promise<Analysis[]> {
   const queryFunction = async () => (await conn.query(query, [])).rows;
   return [await runnerPure(queryFunction)];
 }

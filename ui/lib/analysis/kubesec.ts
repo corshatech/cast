@@ -9,9 +9,8 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, AnalysisOf, ExpiredJWT } from '../findings';
-import conn from '../db';
-import jwtDecode, { JwtPayload } from 'jwt-decode';
+import { AnalysisOf } from '../findings';
+import { conn } from '../db';
 import { KubesecFinding, kubesecRowToFinding, KubesecSQLRow } from './kubesec-types';
 
 const lastCompletedJob = `

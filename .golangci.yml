@@ -22,7 +22,6 @@ linters:
     - misspell
     - goimports
     - bodyclose
-    - depguard
     - dogsled
     - dupl
     - goconst

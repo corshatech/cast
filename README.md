@@ -78,16 +78,21 @@ of your cluster or workloads.
 
 ## Install CAST
 
-Our CAST install tool can be downloaded [from the
-Releases](https://github.com/corshatech/cast/releases) page.
+CAST is distributed as a CLI tool that helps manage the complexity of installing
+and uninstalling the K8s components for CAST. You can install the CAST binary
+with `brew` on MacOS and Linux:
 
-After downloading it you can use CAST to analyze all traffic in your cluster.
-Simply run the `cast` tool from a terminal.
+```sh
+brew tap corshatech/cast
+brew install cast
+```
+
+Then run CAST using the newly-installed `cast` command.
 
 If you want to limit CAST to scanning a single namespace, use the `-n` flag:
 
 ```bash
-./cast -n <namespace>
+cast -n <namespace>
 ```
 
 The CAST tool automatically forwards the CAST user interface to the host where
@@ -97,7 +102,7 @@ browser to [http://localhost:3000](http://localhost:3000/) to see CAST results.
 For advanced usage and all CLI flags, use the `--help` flag, as in:
 
 ```bash
-./cast --help
+cast --help
 ```
 
 > **Warning**

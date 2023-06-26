@@ -30,17 +30,14 @@ Docker Desktop](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes).
 
 ## Installing CAST
 
-- Download the `cast` cli from
-[the releases page](https://github.com/corshatech/cast/releases/)
-, appropriate for your platform and architecture.
-- Move the executable (with sudo) into the `bin` directory to install it:
+- Install CAST with brew.
 
     ```sh
-    chmod +x {YOUR_DOWNLOAD_DIRECTORY}/cast_platform_arch
-    sudo mv {YOUR_DOWNLOAD_DIRECTORY}/cast_platform_arch /usr/local/bin/cast
+    brew tap corshatech/cast
+    brew install cast
     ```
 
-- Run the `cast` cli to install CAST:
+- Run the `cast` cli to install CAST into your K8s environment:
 
     ```sh
     cast

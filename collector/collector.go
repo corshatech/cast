@@ -87,8 +87,9 @@ type TrafficItem struct {
 }
 
 type Message struct {
-	Id    string       `json:"id"`
-	Proto MessageProto `json:"proto"`
+	Id      string       `json:"id"`
+	Context string       `json:"context"`
+	Proto   MessageProto `json:"proto"`
 }
 
 type MessageProto struct {

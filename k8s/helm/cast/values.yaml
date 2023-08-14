@@ -76,7 +76,7 @@ plugins:
 collector:
   env:
     PGPORT: "5432"
-    KUBESHARK_HUB_URL: "http://kubeshark-hub.kubeshark.svc.cluster.local"
+    KUBESHARK_HUB_URL: "http://kubeshark-hub.default.svc.cluster.local"
 
   image:
     tag: ""

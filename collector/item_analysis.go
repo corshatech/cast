@@ -127,7 +127,7 @@ outer:
 
 func analysisWorker(ctx *workerContext) {
 	for message := range ctx.Queue {
-		itemUrl := fmt.Sprintf("%s/item/%s?q=", ctx.KsHubUrl, message.Id)
+		itemUrl := fmt.Sprintf("%s/item/%s?c=%s&q=", ctx.KsHubUrl, message.Id, message.Context)
 		requestContext, cancel := context.WithDeadline(context.Background(), deadline(1*time.Minute))
 
 		trafficItemJson, err := fetchItem(requestContext, itemUrl)
@@ -281,7 +281,7 @@ func handleTrafficItem(trafficItemJson []byte, trafficItem *TrafficItem) ([]byte
 		return nil, nil, err
 	}
 
-	// In Kubeshark 38 the trafficItem JSON contains the data and a
+	// In Kubeshark 41 the trafficItem JSON contains the data and a
 	// string version of data in a key called representation. This
 	// caused the JWT detection to match each JWT string twice
 	originalTrafficDataJson, err := json.Marshal(trafficItemMap["data"])

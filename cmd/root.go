@@ -29,7 +29,7 @@ var (
 
 var port string = "3000"
 var namespace string
-var kubeConfig string = filepath.Join(homedir.HomeDir(), ".kube", "config")
+var kubeConfig string
 var castChartVersion string
 var testMode bool
 var noDownload bool
@@ -45,11 +45,11 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.Flags().StringVarP(&namespace, "namespace", "n", "all", "The namespace to analyze.")
+	rootCmd.Flags().StringVarP(&namespace, "namespace", "n", "", "The namespace to analyze.")
 	rootCmd.Flags().StringVarP(&port, "port", "p", "3000", "The port the CAST UI will be available on.")
 	rootCmd.Flags().StringVar(&castChartVersion, "use-version", "", "The version of the CAST Helm Chart to deploy. If empty, will use the latest version.")
-	rootCmd.Flags().StringVar(&kubeConfig, "kube-config", kubeConfig, "Path to kube config file.")
-	rootCmd.Flags().StringVar(&kubeContext, "kube-context", kubeContext, `Kube context to deploy CAST into. (default "current-context")`)
+	rootCmd.Flags().StringVar(&kubeConfig, "kube-config", filepath.Join(homedir.HomeDir(), ".kube", "config"), "Path to kube config file.")
+	rootCmd.Flags().StringVar(&kubeContext, "kube-context", "", `Kube context to deploy CAST into. (default "current-context")`)
 	rootCmd.Flags().BoolVar(&testMode, "test", false, `Enables local testing mode.`)
 	rootCmd.Flags().BoolVar(&noDownload, "no-download", false, "Do not automatically download and install Kubeshark.")
 }

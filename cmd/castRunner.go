@@ -50,8 +50,8 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 
 	// Get (or download) Kubeshark
 	kubesharkPath := getKubesharkCmd(ctx, noDownload)
-	// Ensure config file exists, and get its path:
-	kubesharkConfig := ensureKubesharkConfigfile()
+	// Ensure config file exists
+	ensureKubesharkConfigfile()
 
 	// Create helm client
 
@@ -100,13 +100,31 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 
 	// Start kubeshark tap of namespace
 
-	cmdConfig := fmt.Sprintf("kube-config-path=%s", kubeConfigPath)
-	cmdContext := fmt.Sprintf("kube-context=%s", kubeContext)
-	ksCmd := exec.CommandContext(ctx, kubesharkPath, "tap", "--configpath", kubesharkConfig, "-n", namespace, "--set", "headless=true", "--set", cmdConfig, "--set", cmdContext)
+	// Prepare kubeshark tap arguments
+	var kubesharkArgs []string = []string{
+		"tap",
+		".*", // Default pod regular expression
+		"--set",
+		fmt.Sprintf("kube.configpath=%s", kubeConfigPath),
+	}
+
+	// Set namespace if specified, otherwise all namespaces tapped
+	if namespace != "" {
+		kubesharkArgs = append(kubesharkArgs, "-n", namespace)
+	}
+
+	// Set kube context if specified, otherwise current context is used
+	if kubeContext != "" {
+		kubesharkArgs = append(kubesharkArgs, "--set", fmt.Sprintf("kube.context=%s", kubeContext))
+	}
+
+	ksCmd := exec.CommandContext(ctx, kubesharkPath, kubesharkArgs...)
+	ksCmd.Stdout = os.Stdout
+	ksCmd.Stderr = os.Stderr
 
 	err = ksCmd.Start()
 	if err != nil {
-		log.WithError(err).Fatal("Error starting kubeshark tap. ")
+		log.WithError(err).Fatal("Error starting kubeshark tap.")
 	}
 
 	go func() {
@@ -255,7 +273,7 @@ func portForward(pod v1.Pod, port string, config *rest.Config, stopCh <-chan str
 func castCleanup(helmClient helm.Client, clientset *kubernetes.Clientset, noDownload bool) {
 	log.Info("Removing CAST resources.")
 	kubesharkPath := getKubesharkCmd(context.TODO(), noDownload)
-	kubesharkConfig := ensureKubesharkConfigfile()
+	ensureKubesharkConfigfile()
 
 	// Delete CAST release
 	err := helmClient.UninstallReleaseByName("cast")
@@ -272,7 +290,7 @@ func castCleanup(helmClient helm.Client, clientset *kubernetes.Clientset, noDown
 
 	// Remove Kubeshark resources
 	log.Info("Removing Kubeshark resources.")
-	err = exec.Command(kubesharkPath, "clean", "--configpath", kubesharkConfig).Run()
+	err = exec.Command(kubesharkPath, "clean").Run()
 	if err != nil {
 		log.WithError(err).Error("Error running 'kubeshark clean'. ")
 		return

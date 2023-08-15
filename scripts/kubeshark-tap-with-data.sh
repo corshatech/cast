@@ -22,14 +22,14 @@ if ! [ -x "$(command -v kubeshark)" ]; then
 fi
 
 KUBESHARK_VERSION="$(kubeshark version 2>&1)"
-if [ "$KUBESHARK_VERSION" != "38.5" ]; then
+if [ "$KUBESHARK_VERSION" != "41.6" ]; then
     kubeshark version
-    echo "ERROR: incorrect version of kubeshark installed, please install 38.5"
+    echo "ERROR: incorrect version of kubeshark installed, please install 41.6"
     exit 1
 fi
 
 # clean up any existing kubeshark install
-kubectl --context="${CONTEXT}" delete ns kubeshark --wait=true || true
+kubeshark clean --set kube.context="${CONTEXT}" || true
 
 # kubeshark tap
 nohup kubeshark \
@@ -37,8 +37,8 @@ nohup kubeshark \
     tap \
     -n cast "(httpbin*)" \
     --set headless=true \
-    --set tap.docker.registry="ghcr.io/corshatech/kubeshark-" \
-    --set tap.docker.tag="corshav38.5"\
+    --set tap.docker.registry="ghcr.io/corshatech/kubeshark" \
+    --set tap.docker.tag="corshav41.6"\
     > kubeshark.out 2> kubeshark.err < /dev/null &
 
 

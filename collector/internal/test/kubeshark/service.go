@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// kubeshark implements a test service that mimics the Kubeshark 38 Hub API
+// kubeshark implements a test service that mimics the Kubeshark 41 Hub API
 package kubeshark
 
 import (

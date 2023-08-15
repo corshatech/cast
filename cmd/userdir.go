@@ -41,7 +41,7 @@ func init() {
 	}
 }
 
-const kubesharkVersion string = "38.5" // supported Kubeshark version
+const kubesharkVersion string = "41.6" // supported Kubeshark version
 
 // The default Kubeshark Config, customized for CAST.
 // This is almost, very nearly, the same thing as the default Kubeshark
@@ -49,48 +49,77 @@ const kubesharkVersion string = "38.5" // supported Kubeshark version
 // specific, supported docker image that works with CAST.
 const defaultKubesharkConfig string = `
 tap:
-    docker:
-        registry: ghcr.io/corshatech/kubeshark-
-        tag: "corshav38.5"
-        imagepullpolicy: Always
-        imagepullsecrets: []
-    proxy:
-        worker:
-            port: 8897
-            srvport: 8897
-        hub:
-            port: 8898
-            srvport: 80
-        front:
-            port: 8899
-            srvport: 80
-        host: 127.0.0.1
-    regex: .*
-    namespaces: []
-    allnamespaces: true
-    storagelimit: 200MB
-    dryrun: false
-    pcap: ""
-    resources:
-        worker:
-            cpu-limit: 750m
-            memory-limit: 1Gi
-            cpu-requests: 50m
-            memory-requests: 50Mi
-        hub:
-            cpu-limit: 750m
-            memory-limit: 1Gi
-            cpu-requests: 50m
-            memory-requests: 50Mi
-    servicemesh: true
-    tls: true
-    packetcapture: libpcap
-    debug: false
+  docker:
+    registry: ghcr.io/corshatech/kubeshark
+    tag: "corshav41.6"
+    imagepullpolicy: Always
+    imagepullsecrets: []
+  proxy:
+    worker:
+      port: 8897
+      srvport: 8897
+    hub:
+      port: 8898
+      srvport: 80
+    front:
+      port: 8899
+      srvport: 80
+    host: 127.0.0.1
+  regex: .*
+  namespaces: []
+  release:
+    namespace: default
+  persistentstorage: false
+  storagelimit: 200Mi
+  storageclass: standard
+  dryrun: false
+  pcap: ""
+  resources:
+    worker:
+      limits:
+        cpu: 750m
+        memory: 1Gi
+      requests:
+        cpu: 50m
+        memory: 50Mi
+    hub:
+      limits:
+        cpu: 750m
+        memory: 1Gi
+      requests:
+        cpu: 50m
+        memory: 50Mi
+  servicemesh: true
+  tls: true
+  packetcapture: libpcap
+  ignoretainted: false
+  labels: {}
+  annotations: {}
+  nodeselectorterms: []
+  ingress:
+    enabled: false
+    classname: kubeshark-ingress-class
+    controller: k8s.io/ingress-nginx
+    host: ks.svc.cluster.local
+    tls: []
+    auth:
+      approveddomains: []
+    certmanager: letsencrypt-prod
+  debug: false
 logs:
-    file: ""
-selfnamespace: kubeshark
+  file: ""
+config:
+  regenerate: true
+kube:
+  configpath: ""
+  context: ""
 dumplogs: false
 headless: true
+license: ""
+scripting:
+  env: {}
+  source: ""
+  watchScripts: true
 `
 
 func getConfigDir() string {
@@ -150,31 +179,43 @@ func ensureKubesharkVersion(kubesharkPath string) {
 }
 
 func ensureKubesharkConfigfile() string {
-	configdir := getConfigDir()
-	castConfigfile := path.Join(configdir, "kubeshark-config.yaml")
+	// Get user's home directory
+	homeDir, err := os.UserHomeDir()
+	// If no home directory found, end with Fatal
+	if err != nil {
+		log.WithError(err).Fatal("Unable to find home directory.")
+		return ""
+	}
 
-	info, err := os.Stat(castConfigfile)
+	kubesharkConfigPath := path.Join(homeDir, ".kubeshark")
+	kubesharkConfigfile := path.Join(kubesharkConfigPath, "config.yaml")
+
+	info, err := os.Stat(kubesharkConfigfile)
 	// If the file can be statted,
 	// and is regular,
 	// and can be read (`& modebits with mask 0444` is nonzero)
 	// then simply use it:
 	if err == nil && info.Mode().IsRegular() && info.Mode()&0444 != 0 {
-		return castConfigfile
+		return kubesharkConfigfile
 	}
 
 	// if any error other than NotExists (for which we'll write the file)
 	// end with Fatal
 	if !errors.Is(err, fs.ErrNotExist) {
-		log.WithError(err).WithField("file", castConfigfile).Fatal("Unable to read config file.")
+		log.WithError(err).WithField("file", kubesharkConfigfile).Fatal("Unable to read config file.")
 	}
 
-	log.WithField("file", castConfigfile).Debug("Writing default config file.")
-	// 0666 is file permission `rw-rw-rw-`
-	err = os.WriteFile(castConfigfile, []byte(defaultKubesharkConfig), 0600)
+	log.WithField("file", kubesharkConfigfile).Debug("Writing default config file.")
+	err = os.MkdirAll(kubesharkConfigPath, 0700)
 	if err != nil {
-		log.WithError(err).WithField("file", castConfigfile).Fatal("Unable to write config file.")
+		log.WithError(err).WithField("directory", kubesharkConfigPath).Fatal("Unable to create config directory.")
 	}
-	return castConfigfile
+	// 0666 is file permission `rw-rw-rw-`
+	err = os.WriteFile(kubesharkConfigfile, []byte(defaultKubesharkConfig), 0600)
+	if err != nil {
+		log.WithError(err).WithField("file", kubesharkConfigfile).Fatal("Unable to write config file.")
+	}
+	return kubesharkConfigfile
 }
 
 // downloadKubeshark downloads the Kubeshark binary to the UserConfigDir and returns the path to the binary.

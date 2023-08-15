@@ -121,7 +121,7 @@ CAST uses [Kubeshark](https://kubeshark.co/) to collect traffic. If you don't
 have Kubeshark already, CAST will download and install it for you as part
 of deployment.
 
-We currently only support Kubeshark version v38.5. If you would like to install
+We currently only support Kubeshark version v41.6. If you would like to install
 Kubeshark system-wide, you can follow the installation instructions
 [found in Kubeshark's documentation](https://docs.kubeshark.co/en/install).
 

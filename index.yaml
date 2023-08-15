@@ -2,6 +2,20 @@ apiVersion: v1
 entries:
   cast:
   - apiVersion: v2
+    appVersion: v0.1.0-rc.11
+    created: "2023-08-15T16:51:18.679629228Z"
+    dependencies:
+    - name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: ~12.1.3
+    description: A Helm chart for the Corsha CAST tool
+    digest: 6da422f9899277f4ff7d95549bf3b376edd5040d287bf8acb1e8c2aba1660711
+    name: cast
+    type: application
+    urls:
+    - https://github.com/corshatech/cast/releases/download/cast-v0.1.0-rc.11/cast-v0.1.0-rc.11.tgz
+    version: v0.1.0-rc.11
+  - apiVersion: v2
     appVersion: v0.1.0-rc.10
     created: "2023-04-03T16:39:22.684790992Z"
     dependencies:
@@ -106,4 +120,4 @@ entries:
     urls:
     - https://github.com/corshatech/cast/releases/download/cast-v0.0.1/cast-v0.0.1.tgz
     version: v0.0.1
-generated: "2023-04-03T16:39:22.684845392Z"
+generated: "2023-08-15T16:51:18.679765729Z"

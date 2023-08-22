@@ -43,7 +43,7 @@ export default function Dashboard() {
       </Head>
       <Layout>
         <Header />
-        <main className="bg-gray-100 w-screen">
+        <main className="w-screen">
           {error && (
             <Alert severity="error">
               An Error Occurred loading analysis: {error.toString()}

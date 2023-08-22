@@ -89,6 +89,14 @@ kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
 
+# 2 Request Too Slow
+echo -e "\ninserting request-too-slow data\n"
+data=`head -c 60 /dev/random | base64`
+kubectl exec -n curl curl -i -- curl -s -w '\n' -X POST -H 'Content-Type: application/json' "${svc}/headers?q=1" -w '\n' -d "{ 'data': '${data}' }" --limit-rate 1
+data=`head -c 180 /dev/random | base64`
+kubectl exec -n curl curl -i -- curl -s -w '\n' -X POST -H 'Content-Type: application/json' "${svc}/headers?q=1" -w '\n' -d "{ 'data': '${data}' }" --limit-rate 1
+# Sleep to allow requests to populate
+sleep 5
 
 # delete curl namespaces
 kubectl delete namespace curl --wait=false --force --grace-period=0

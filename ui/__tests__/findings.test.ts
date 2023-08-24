@@ -9,7 +9,7 @@ const analysis1: Analysis = {
   findings: [
     {
       type: 'reused-auth',
-      name: 'Broken Authentication: Reused Authorization Header',
+      name: 'Broken Authentication: Reused Authorization',
       occurredAt: {
         start: '2023-01-01T13:12:01.000Z',
         end: '2023-01-01T13:12:05.000Z',
@@ -34,7 +34,7 @@ const analysis1: Analysis = {
     },
     {
       type: 'reused-auth',
-      name: 'Broken Authentication: Reused Authorization Header',
+      name: 'Broken Authentication: Reused Authorization',
       occurredAt: {
         start: '2023-01-01T13:12:02.000Z',
         end: '2023-01-01T13:12:07.000Z',
@@ -71,7 +71,7 @@ const analysis2: Analysis = {
   findings: [
     {
       type: 'reused-auth',
-      name: 'Broken Authentication: Reused Authorization Header',
+      name: 'Broken Authentication: Reused Authorization',
       occurredAt: {
         start: '2023-01-01T13:12:01.000Z',
         end: '2023-01-01T13:12:05.000Z',

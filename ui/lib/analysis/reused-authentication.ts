@@ -121,7 +121,7 @@ function rowsToFinding(detectedAt: string, auth: string, rows: Row[]): Finding {
 
   return {
     type: 'reused-auth',
-    name: 'Broken Authentication: Reused Authorization Header',
+    name: 'Broken Authentication: Reused Authorization',
     severity: 'medium',
     occurredAt,
     detectedAt,
@@ -147,7 +147,7 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
 
   return {
     id: 'reused-auth',
-    title: 'Broken Authentication: Reused Authorization Header',
+    title: 'Broken Authentication: Reused Authorization',
     description:
       'Multiple clients were detected using the same Authorization HTTP ' +
       'header value. Clients who use the same authorization header could be ' +

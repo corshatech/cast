@@ -31,7 +31,7 @@ test('runner works', async () => {
   const results = await runnerPure(query);
   expect(results).toStrictEqual({
     id: 'reused-auth',
-    title: 'Broken Authentication: Reused Authorization Header',
+    title: 'Broken Authentication: Reused Authorization',
     description:
       'Multiple clients were detected using the same Authorization HTTP ' +
       'header value. Clients who use the same authorization header could be ' +
@@ -45,7 +45,7 @@ test('runner works', async () => {
     findings: [
       {
         type: 'reused-auth',
-        name: 'Broken Authentication: Reused Authorization Header',
+        name: 'Broken Authentication: Reused Authorization',
         occurredAt: {
           start: '2023-01-18T13:12:00.000Z',
           end: '2023-01-18T13:12:02.000Z',

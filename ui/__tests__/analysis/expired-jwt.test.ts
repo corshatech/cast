@@ -42,14 +42,14 @@ test('runner works', async () => {
     id: 'expired-jwt',
     title: 'Broken Authentication: Expired JWTs',
     description:
-      'A client is trying to authenticate with your API using an expired JWT '+
-      'token. While a correctly-configured server should reject these claims ' +
+      'A client is trying to authenticate with your API using an expired ' +
+      'JWT. While a correctly-configured server should reject these claims ' +
       'as unauthorized, this behavior could be a sign of: (1) a poorly ' +
       'behaving client that may have a bug or need to be updated with better ' +
       'token handling, or (2) a replay attack against your infrastructure. ' +
       'Ensure that your servers validate the authenticity and expiration ' +
       'date of JWTs, as well as reject unsigned/weakly signed JWTs. Also ' +
-      'ensure that your clients are well-behaved and recycle their tokens at ' +
+      'ensure that your clients are well-behaved and refresh their tokens at ' +
       'the necessary intervals.',
     reportedAt: '2023-01-17T13:12:00.000Z',
     severity: 'low',

@@ -25,7 +25,7 @@ const reusedAuth: Analysis = {
   findings: [
     {
       type: 'reused-auth',
-      name: 'Reused Authentication',
+      name: 'Broken Authentication: Reused Authorization Header',
       occurredAt: {
         start: '2023-01-01T13:12:01.000Z',
         end: '2023-01-01T13:12:05.000Z',
@@ -50,7 +50,7 @@ const reusedAuth: Analysis = {
     },
     {
       type: 'reused-auth',
-      name: 'Reused Authentication',
+      name: 'Broken Authentication: Reused Authorization Header',
       occurredAt: {
         start: '2023-01-01T13:12:02.000Z',
         end: '2023-01-01T13:12:07.000Z',

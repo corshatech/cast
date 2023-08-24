@@ -25,7 +25,7 @@ describe('ReusedAuthenticationCard', () => {
       severity="high"
       findings={[{
         type: 'reused-auth',
-        name: 'Reused Authentication',
+        name: 'Broken Authentication: Reused Authorization Header',
         detectedAt: reportedAt,
         severity: 'high',
         data: {

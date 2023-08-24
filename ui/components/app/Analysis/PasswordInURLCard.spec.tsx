@@ -15,7 +15,7 @@ import { PasswordInURLCard } from './PasswordInURLCard';
 
 const reportedAt = new Date().toISOString();
 
-describe('ReusedAuthenticationCard', () => {
+describe('PasswordInURLCard', () => {
   it('renders all passed props', () => {
     const { asFragment } = render(<PasswordInURLCard
       id="pass-in-url"

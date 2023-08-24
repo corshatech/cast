@@ -25,7 +25,7 @@ describe('UseOfBasicAuthCard', () => {
       severity="high"
       findings={[{
         type: 'use-of-basic-auth',
-        name: 'Reused Authentication',
+        name: 'Broken Authentication: Reused Authorization Header',
         detectedAt: reportedAt,
         severity: 'high',
         data: {

@@ -40,10 +40,10 @@ test('runner works', async () => {
     description:
       'Sensitive authentication details, such as auth tokens and passwords, ' +
       'were detected in a URL as a query parameter. Using secure transport ' +
-      'like HTTPS does not resolve the issue, because the URL may become ' +
+      'like HTTPS does not resolve the issue because the URL may become ' +
       'logged or leak to third parties, such as advertisers or your CDN, ' +
-      'through e.g. the Referrer header. Never include credentials in any ' +
-      'part of a URL.',
+      'through mechanisms like the Referrer header. Never include ' +
+      'credentials in any part of a URL.',
     reportedAt: '2023-01-17T13:12:00.000Z',
     weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/',
     weaknessTitle: '(OWASP) API2:2023 Broken Authentication',

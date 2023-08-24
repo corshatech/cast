@@ -36,21 +36,22 @@ test('runner works', async () => {
   const results = await runnerPure(query);
   expect(results).toStrictEqual({
     id: 'pass-in-url',
-    title: 'Password in Query String',
+    title: 'Broken Authentication: Password in Query String',
     description:
-      'A password or credential was detected in a URL as a query ' +
-      'parameter. Using secure transport like HTTPS does not resolve the ' +
-      'issue, because the URL may become logged or leak to third parties ' +
-      'through e.g. the Referrer header. Do not include credentials in any ' +
+      'Sensitive authentication details, such as auth tokens and passwords, ' +
+      'were detected in a URL as a query parameter. Using secure transport ' +
+      'like HTTPS does not resolve the issue, because the URL may become ' +
+      'logged or leak to third parties, such as advertisers or your CDN, ' +
+      'through e.g. the Referrer header. Never include credentials in any ' +
       'part of a URL.',
     reportedAt: '2023-01-17T13:12:00.000Z',
-    weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
-    weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
+    weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/',
+    weaknessTitle: '(OWASP) API2:2023 Broken Authentication',
     severity: 'high',
     findings: [
       {
         type: 'pass-in-url',
-        name: 'Password in Query String',
+        name: 'Broken Authentication: Password in Query String',
         occurredAt: { at: '2023-01-18T13:12:01.000Z' },
         detectedAt: '2023-01-17T13:12:00.000Z',
         severity: 'high',
@@ -69,7 +70,7 @@ test('runner works', async () => {
       },
       {
         type: 'pass-in-url',
-        name: 'Password in Query String',
+        name: 'Broken Authentication: Password in Query String',
         occurredAt: { at: '2023-01-18T13:12:02.000Z' },
         detectedAt: '2023-01-17T13:12:00.000Z',
         severity: 'high',

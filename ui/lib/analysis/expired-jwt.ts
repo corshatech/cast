@@ -75,7 +75,7 @@ export async function runnerPure(
       const at = new Date(row.timestamp).toISOString();
       const finding: ExpiredJWT = {
         type: 'expired-jwt',
-        name: 'Expired JWTs',
+        name: 'Broken Authentication: Expired JWTs',
         detectedAt,
         severity: 'low',
         occurredAt: { at },
@@ -105,16 +105,22 @@ export async function runnerPure(
 
   return {
     id: 'expired-jwt',
-    title: 'Expired JWTs',
+    title: 'Broken Authentication: Expired JWTs',
     description:
-      'A client is trying to authenticate with your API using an expired JWT token. While a correctly-configured ' +
-      'server should reject these claims as unauthorized, this behavior could be a sign of: (1) a poorly behaving client that' +
-      ' may have a bug or need to be updated with better token handling, or (2) a replay attack against your infrastructure. ' +
-      'Ensure that your servers are validating and properly rejecting expired tokens, and that your clients are well-behaved ' +
-      'and recycle their tokens at the necessary intervals.',
+      'A client is trying to authenticate with your API using an expired JWT '+
+      'token. While a correctly-configured server should reject these claims ' +
+      'as unauthorized, this behavior could be a sign of: (1) a poorly ' +
+      'behaving client that may have a bug or need to be updated with better ' +
+      'token handling, or (2) a replay attack against your infrastructure. ' +
+      'Ensure that your servers validate the authenticity and expiration ' +
+      'date of JWTs, as well as reject unsigned/weakly signed JWTs. Also ' +
+      'ensure that your clients are well-behaved and recycle their tokens at ' +
+      'the necessary intervals.',
     reportedAt: new Date().toISOString(),
     severity: 'low',
     findings,
+    weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/',
+    weaknessTitle: '(OWASP) API2:2023 Broken Authentication',
   };
 }
 

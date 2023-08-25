@@ -113,7 +113,9 @@ const NoResults: React.FC<AnalysisProps> = ({
               <td>Updated:</td>
               <td><FormattedDate when={reportedAt}/></td>
             </tr>
-            <Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle}/>
+            <tr>
+              <td colSpan={2}><Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle}/></td>
+            </tr>
           </tbody>
         </table>
       </CardContent>

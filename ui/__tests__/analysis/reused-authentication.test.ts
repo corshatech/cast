@@ -31,15 +31,21 @@ test('runner works', async () => {
   const results = await runnerPure(query);
   expect(results).toStrictEqual({
     id: 'reused-auth',
-    title: 'Reused Authentication',
+    title: 'Broken Authentication: Reused Authorization',
     description:
-      'An analysis that finds if multiple clients are using the same Authorization HTTP header value. Clients who use the same authorization header could be evidence of stolen credentials.',
+      'Multiple clients were detected using the same Authorization HTTP ' +
+      'header value. Clients who use the same authorization header could be ' +
+      'evidence of stolen credentials. Make use of short-lived, per-device ' + 
+      'credentials and ensure they are not shared across sessions, ' +
+      'workloads, or devices.',
     reportedAt: '2023-01-17T13:12:00.000Z',
     severity: 'medium',
+    weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/',
+    weaknessTitle: '(OWASP) API2:2023 Broken Authentication',
     findings: [
       {
         type: 'reused-auth',
-        name: 'Reused Authentication',
+        name: 'Broken Authentication: Reused Authorization',
         occurredAt: {
           start: '2023-01-18T13:12:00.000Z',
           end: '2023-01-18T13:12:02.000Z',

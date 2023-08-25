@@ -25,7 +25,7 @@ describe('ExpiredJWTCard', () => {
       severity="high"
       findings={[{
         type: 'expired-jwt',
-        name: 'Reused Authentication',
+        name: 'Broken Authentication: Reused Authorization',
         detectedAt: reportedAt,
         severity: 'high',
         data: {

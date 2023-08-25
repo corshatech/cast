@@ -42,6 +42,7 @@ func init() {
 }
 
 const kubesharkVersion string = "41.6" // supported Kubeshark version
+var kubesharkChartDefault string = fmt.Sprintf("kubeshark-%s.tgz", kubesharkVersion)
 
 // The default Kubeshark Config, customized for CAST.
 // This is almost, very nearly, the same thing as the default Kubeshark
@@ -143,6 +144,12 @@ func getConfigDir() string {
 //  3. If neither (1) nor (2) already exist, download Kubeshark locally
 //     into the config dir, then use that.
 func getKubesharkCmd(ctx context.Context, noDownload bool) string {
+
+	err := downloadKubesharkChart(ctx, noDownload)
+	if err != nil {
+		log.WithError(err).Fatal("Unable to find or install Kubeshark chart.")
+	}
+
 	kubesharkPath, err := exec.LookPath(kubesharkCmdDefault)
 	if err == nil {
 		ensureKubesharkVersion(kubesharkPath)
@@ -216,6 +223,58 @@ func ensureKubesharkConfigfile() string {
 		log.WithError(err).WithField("file", kubesharkConfigfile).Fatal("Unable to write config file.")
 	}
 	return kubesharkConfigfile
+}
+
+func downloadKubesharkChart(ctx context.Context, noDownload bool) error {
+	configdir := getConfigDir()
+	castKubesharkChart := path.Join(configdir, kubesharkChartDefault)
+
+	info, err := os.Stat(castKubesharkChart)
+	// if there is no error when statting,
+	// AND the file is regular,
+	// then we accept that this is the kubeshark chart:
+	if err == nil && info.Mode().IsRegular() {
+		os.Setenv("KUBESHARK_HELM_CHART_PATH", castKubesharkChart)
+		return nil
+	}
+
+	// bail: attempt to download and install castKubesharkChart for the user.
+	if noDownload {
+		return fmt.Errorf("unable to locate kubeshark chart, and noDownload is set, so not installing automatically")
+	}
+
+	ksChartDownload := fmt.Sprintf("https://corshatech.github.io/cast/%s", kubesharkChartDefault)
+
+	log.WithFields(log.Fields{
+		"url":         ksChartDownload,
+		"castDataDir": configdir,
+	}).Info("Unable to locate Kubeshark chart, installing locally", ksChartDownload)
+
+	ksChartOut, err := os.OpenFile(castKubesharkChart, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0500)
+	if err != nil {
+		return fmt.Errorf("error creating file \"%s\"", castKubesharkChart)
+	}
+	defer ksChartOut.Close()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ksChartDownload, nil)
+	if err != nil {
+		return fmt.Errorf("error downloading release from %s %v", ksChartDownload, err)
+	}
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("error downloading release from %s %v", ksChartDownload, err)
+	}
+	defer response.Body.Close()
+	_, err = io.Copy(ksChartOut, response.Body)
+	if err != nil {
+		return fmt.Errorf("error downloading release from %s %v", ksChartDownload, err)
+	}
+
+	os.Setenv("KUBESHARK_HELM_CHART_PATH", castKubesharkChart)
+
+	log.WithField("file", castKubesharkChart).Infof("Installed Kubeshark chart successfully")
+	return nil
 }
 
 // downloadKubeshark downloads the Kubeshark binary to the UserConfigDir and returns the path to the binary.

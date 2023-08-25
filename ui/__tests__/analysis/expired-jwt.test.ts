@@ -40,19 +40,25 @@ test('runner works', async () => {
   const results = await runnerPure(query);
   expect(results).toStrictEqual({
     id: 'expired-jwt',
-    title: 'Expired JWTs',
+    title: 'Broken Authentication: Expired JWTs',
     description:
-      'A client is trying to authenticate with your API using an expired JWT token. While a correctly-configured ' +
-      'server should reject these claims as unauthorized, this behavior could be a sign of: (1) a poorly behaving client that' +
-      ' may have a bug or need to be updated with better token handling, or (2) a replay attack against your infrastructure. ' +
-      'Ensure that your servers are validating and properly rejecting expired tokens, and that your clients are well-behaved ' +
-      'and recycle their tokens at the necessary intervals.',
+      'A client is trying to authenticate with your API using an expired ' +
+      'JWT. While a correctly-configured server should reject these claims ' +
+      'as unauthorized, this behavior could be a sign of: (1) a poorly ' +
+      'behaving client that may have a bug or need to be updated with better ' +
+      'token handling, or (2) a replay attack against your infrastructure. ' +
+      'Ensure that your servers validate the authenticity and expiration ' +
+      'date of JWTs, as well as reject unsigned/weakly signed JWTs. Also ' +
+      'ensure that your clients are well-behaved and refresh their tokens at ' +
+      'the necessary intervals.',
     reportedAt: '2023-01-17T13:12:00.000Z',
     severity: 'low',
+    weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/',
+    weaknessTitle: '(OWASP) API2:2023 Broken Authentication',
     findings: [
       {
         type: 'expired-jwt',
-        name: 'Expired JWTs',
+        name: 'Broken Authentication: Expired JWTs',
         detectedAt: '2023-01-17T13:12:00.000Z',
         severity: 'low',
         occurredAt: {
@@ -71,13 +77,6 @@ test('runner works', async () => {
             srcPort: '5432',
           },
         },
-        detectedAt: '2023-01-17T13:12:00.000Z',
-        name: 'Expired JWTs',
-        occurredAt: {
-          at: '2023-01-01T13:12:01.000Z',
-        },
-        severity: 'low',
-        type: 'expired-jwt',
       },
     ],
   });

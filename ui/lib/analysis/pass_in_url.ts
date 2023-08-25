@@ -51,7 +51,7 @@ function rowToFinding(detectedAt: string, row: Row): Finding {
   const occurredAt = { at };
   return {
     type: 'pass-in-url',
-    name: 'Password in Query String',
+    name: 'Broken Authentication: Password in Query String',
     severity: 'high',
     occurredAt,
     detectedAt,
@@ -83,16 +83,17 @@ export async function runnerPure(query: QueryFunction): Promise<Analysis> {
 
   return {
     id: 'pass-in-url',
-    title: 'Password in Query String',
+    title: 'Broken Authentication: Password in Query String',
     description:
-      'A password or credential was detected in a URL as a query ' +
-      'parameter. Using secure transport like HTTPS does not resolve the ' +
-      'issue, because the URL may become logged or leak to third parties ' +
-      'through e.g. the Referrer header. Do not include credentials in any ' +
-      'part of a URL.',
+      'Sensitive authentication details, such as auth tokens and passwords, ' +
+      'were detected in a URL as a query parameter. Using secure transport ' +
+      'like HTTPS does not resolve the issue because the URL may become ' +
+      'logged or leak to third parties, such as advertisers or your CDN, ' +
+      'through mechanisms like the Referrer header. Never include ' +
+      'credentials in any part of a URL.',
     reportedAt,
-    weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
-    weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
+    weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/',
+    weaknessTitle: '(OWASP) API2:2023 Broken Authentication',
     severity: 'high',
     findings,
   };

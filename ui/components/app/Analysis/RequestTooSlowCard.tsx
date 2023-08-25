@@ -34,7 +34,7 @@ const columns: GridColDef[] = [
     headerName: 'Severity',
   },
   { field: 'Elapsed Time',
-    headerName: 'Elapsed Time (ms)',
+    headerName: 'Elapsed Time (s)',
     width: 175,
   },
   { field: 'Src IP', headerName: 'Src IP' },

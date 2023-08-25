@@ -12,12 +12,15 @@
 import { Analysis, RequestTooSlow } from '../findings';
 import { conn } from '../db';
 
+const ELAPSED_MEDIUM_SEVERITY_THRESHOLD = 60; // Minimum time (s) to generate medium severity finding
+const ELAPSED_HIGH_SEVERITY_THRESHOLD = 180; // Minimum time (s) to generate high severity finding
+
 const query = `
 select elapsed_time, src_ip, src_port, dst_ip, dst_port, protocol, timestamp, absolute_uri, method, version, mimeType, connection_header, accept_header
 from 
   (
     select 
-      cast (data->>'elapsedTime' as integer) as elapsed_time,
+      cast (data->>'elapsedTime' as real)/1000 as elapsed_time,
       data->'src'->>'ip' as src_ip,
       data->'src'->>'port' as src_port,
       data->'dst'->>'ip' as dst_ip,
@@ -32,7 +35,13 @@ from
       data->'request'->'headers'->>'Accept' as accept_header
       from traffic
   ) as trafficinner
-where elapsed_time > 60000 and method != 'CONNECT' and coalesce(connection_header, '') != 'Upgrade' and version = 'HTTP/1.1' and mimeType != 'text/event-stream' and not accept_header ~ 'text/event-stream'
+where 
+  elapsed_time > ${ELAPSED_MEDIUM_SEVERITY_THRESHOLD} 
+  and method != 'CONNECT' 
+  and coalesce(connection_header, '') != 'Upgrade' 
+  and version = 'HTTP/1.1' 
+  and mimeType != 'text/event-stream' 
+  and not accept_header ~ 'text/event-stream'
 `;
 
 interface Row {
@@ -55,7 +64,7 @@ export async function runnerPure(
 ): Promise<Analysis> {
   const rows = await query();
   const detectedAt = new Date().toISOString();
-  const maxTime = rows.length > 0 ? rows.reduce((prev, curr) => curr.elapsed_time > prev.elapsed_time ? curr : prev).elapsed_time : 0;
+  const maxTime = (rows ?? []).reduce((prev, curr) => Math.max(prev, curr.elapsed_time), 0);
   
   // Initially sort by request time descending
   rows.sort((r1, r2) => r2.elapsed_time - r1.elapsed_time)
@@ -65,7 +74,7 @@ export async function runnerPure(
       type: 'request-too-slow',
       name: 'Request Too Slow',
       detectedAt,
-      severity: row.elapsed_time > 180000 ? 'high' : 'medium',
+      severity: row.elapsed_time > ELAPSED_HIGH_SEVERITY_THRESHOLD ? 'high' : 'medium',
       occurredAt: {
         at: new Date(row.timestamp).toISOString(),
       },
@@ -100,7 +109,7 @@ export async function runnerPure(
       'Ensure that you have implemented resource limits as well as timeouts for ' +
       'requests to your APIs.',
     reportedAt: new Date().toISOString(),
-    severity: maxTime >= 180000 ? 'high' : 'medium',
+    severity: maxTime >= ELAPSED_HIGH_SEVERITY_THRESHOLD ? 'high' : 'medium',
     findings,
     weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xaa-unsafe-consumption-of-apis/',
     weaknessTitle: '(OWASP) API10:2023 Unsafe Consumption of APIs',

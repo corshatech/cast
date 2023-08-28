@@ -33,6 +33,12 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+const kubesharkVersion string = "41.6" // supported Kubeshark version
+
+// File name of Kubeshark chart
+var kubesharkChartDefault string = fmt.Sprintf("kubeshark-%s.tgz", kubesharkVersion)
+
+// Command used to run kubeshark, changed based on OS
 var kubesharkCmdDefault string = "kubeshark"
 
 func init() {
@@ -40,9 +46,6 @@ func init() {
 		kubesharkCmdDefault = "kubeshark.exe"
 	}
 }
-
-const kubesharkVersion string = "41.6" // supported Kubeshark version
-var kubesharkChartDefault string = fmt.Sprintf("kubeshark-%s.tgz", kubesharkVersion)
 
 // The default Kubeshark Config, customized for CAST.
 // This is almost, very nearly, the same thing as the default Kubeshark

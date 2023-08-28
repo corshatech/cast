@@ -174,13 +174,13 @@ func getKubesharkCmd(ctx context.Context, noDownload bool) string {
 // Otherwise, if the detected version appears to be unsupported, we log a
 // warning but otherwise permit this.
 func ensureKubesharkVersion(kubesharkPath string) {
-	ksOutput, err := exec.Command(kubesharkPath, "version").CombinedOutput()
+	kubesharkOutput, err := exec.Command(kubesharkPath, "version").CombinedOutput()
 	if err != nil {
 		log.WithError(err).WithField("kubeshark", kubesharkPath).Fatalf("Unable to invoke Kubeshark")
 	}
 
-	if !strings.Contains(string(ksOutput), kubesharkVersion) {
-		log.Warnf("Warning: CAST is built to support Kubeshark version %s, and you're using version %s.", kubesharkVersion, ksOutput)
+	if !strings.Contains(string(kubesharkOutput), kubesharkVersion) {
+		log.Warnf("Warning: CAST is built to support Kubeshark version %s, and you're using version %s.", kubesharkVersion, kubesharkOutput)
 		log.Warn("Some commands may not work as expected.")
 	}
 }
@@ -243,32 +243,32 @@ func downloadKubesharkChart(ctx context.Context, noDownload bool) error {
 		return fmt.Errorf("unable to locate kubeshark chart, and noDownload is set, so not installing automatically")
 	}
 
-	ksChartDownload := fmt.Sprintf("https://corshatech.github.io/cast/%s", kubesharkChartDefault)
+	kubesharkChartDownload := fmt.Sprintf("https://corshatech.github.io/cast/%s", kubesharkChartDefault)
 
 	log.WithFields(log.Fields{
-		"url":         ksChartDownload,
+		"url":         kubesharkChartDownload,
 		"castDataDir": configdir,
-	}).Info("Unable to locate Kubeshark chart, installing locally", ksChartDownload)
+	}).Info("Unable to locate Kubeshark chart, installing locally", kubesharkChartDownload)
 
-	ksChartOut, err := os.OpenFile(castKubesharkChart, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0500)
+	kubesharkChartOut, err := os.OpenFile(castKubesharkChart, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0500)
 	if err != nil {
-		return fmt.Errorf("error creating file \"%s\"", castKubesharkChart)
+		return fmt.Errorf("error creating file %q", castKubesharkChart)
 	}
-	defer ksChartOut.Close()
+	defer kubesharkChartOut.Close()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ksChartDownload, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, kubesharkChartDownload, nil)
 	if err != nil {
-		return fmt.Errorf("error downloading release from %s %v", ksChartDownload, err)
+		return fmt.Errorf("error building request to %q %w", kubesharkChartDownload, err)
 	}
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("error downloading release from %s %v", ksChartDownload, err)
+		return fmt.Errorf("error connecting to %q %w", kubesharkChartDownload, err)
 	}
 	defer response.Body.Close()
-	_, err = io.Copy(ksChartOut, response.Body)
+	_, err = io.Copy(kubesharkChartOut, response.Body)
 	if err != nil {
-		return fmt.Errorf("error downloading release from %s %v", ksChartDownload, err)
+		return fmt.Errorf("error downloading release from %q %w", kubesharkChartDownload, err)
 	}
 
 	os.Setenv("KUBESHARK_HELM_CHART_PATH", castKubesharkChart)
@@ -301,35 +301,35 @@ func downloadKubeshark(ctx context.Context, noDownload bool) (string, error) {
 	osArch := fmt.Sprintf("%s_%s", runtime.GOOS, runtime.GOARCH)
 	available := []string{"darwin_amd64", "darwin_arm64", "linux_amd64", "linux_arm64"}
 	if !slices.Contains(available, osArch) {
-		return "", fmt.Errorf("unsupported OS or architecture: %s. For more details, visit https://github.com/kubeshark/kubeshark/releases/tag/%s", osArch, kubesharkVersion)
+		return "", fmt.Errorf("unsupported OS or architecture: %q. For more details, visit https://github.com/kubeshark/kubeshark/releases/tag/%s", osArch, kubesharkVersion)
 	}
 
-	ksDownload := fmt.Sprintf("https://github.com/kubeshark/kubeshark/releases/download/%s/kubeshark_%s", kubesharkVersion, osArch)
+	kubesharkDownload := fmt.Sprintf("https://github.com/kubeshark/kubeshark/releases/download/%s/kubeshark_%s", kubesharkVersion, osArch)
 
 	log.WithFields(log.Fields{
-		"url":         ksDownload,
+		"url":         kubesharkDownload,
 		"castDataDir": configdir,
-	}).Info("Unable to locate Kubeshark, installing locally", ksDownload)
+	}).Info("Unable to locate Kubeshark, installing locally", kubesharkDownload)
 
-	ksOut, err := os.OpenFile(castKubeshark, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0500)
+	kubesharkOut, err := os.OpenFile(castKubeshark, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0500)
 	if err != nil {
-		return "", fmt.Errorf("error creating file \"%s\"", castKubeshark)
+		return "", fmt.Errorf("error creating file %q", castKubeshark)
 	}
-	defer ksOut.Close()
+	defer kubesharkOut.Close()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ksDownload, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, kubesharkDownload, nil)
 	if err != nil {
-		return "", fmt.Errorf("error downloading release from %s %v", ksDownload, err)
+		return "", fmt.Errorf("error building request to %q %w", kubesharkDownload, err)
 	}
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("error downloading release from %s %v", ksDownload, err)
+		return "", fmt.Errorf("error connecting to %q %w", kubesharkDownload, err)
 	}
 	defer response.Body.Close()
-	_, err = io.Copy(ksOut, response.Body)
+	_, err = io.Copy(kubesharkOut, response.Body)
 	if err != nil {
-		return "", fmt.Errorf("error downloading release from %s %v", ksDownload, err)
+		return "", fmt.Errorf("error downloading release from %q %w", kubesharkDownload, err)
 	}
 
 	log.WithField("file", castKubeshark).Infof("Installed Kubeshark successfully")

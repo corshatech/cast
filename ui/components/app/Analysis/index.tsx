@@ -17,7 +17,7 @@ import {
   PasswordInURL,
   UseOfBasicAuth,
 } from '@/lib/findings';
-import { KubesecFinding } from '@/lib/analysis/kubesec-types';
+import { KubesecFinding, KubesecResourcesFinding } from '@/lib/analysis/kubesec-types';
 import { logger } from '@/lib/internal';
 
 import { PasswordInURLCard } from './PasswordInURLCard';
@@ -49,6 +49,10 @@ export const AnalysisCard: React.FC<Analysis> = (analysis) => {
       }
       case 'cast-kubesec': {
         const data = AnalysisOf(KubesecFinding).parse(analysis);
+        return <KubesecCard {...data} />
+      }
+      case 'cast-kubesec-resources': {
+        const data = AnalysisOf(KubesecResourcesFinding).parse(analysis);
         return <KubesecCard {...data} />
       }
     }

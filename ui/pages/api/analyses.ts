@@ -18,6 +18,7 @@ import { expiredJwt } from '@/lib/analysis/expired-jwt';
 import { useOfBasicAuth } from '@/lib/analysis/useOfBasicAuth';
 import { kubesec } from '@/lib/analysis/kubesec';
 import { TypedAPIResponse } from '@/lib/internal';
+import { kubesecResources } from '@/lib/analysis/kubesec-resources';
 
 const analysisFunctions: AnalysisFunction[] = [
   reusedAuthentication,
@@ -25,6 +26,7 @@ const analysisFunctions: AnalysisFunction[] = [
   passInUrl,
   useOfBasicAuth,
   kubesec,
+  kubesecResources,
 ];
 
 export type AnalysesResponse = {

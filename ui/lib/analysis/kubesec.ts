@@ -11,7 +11,7 @@
 
 import { AnalysisOf } from '../findings';
 import { conn } from '../db';
-import { KubesecFinding, kubesecRowToFinding, KubesecSQLRow } from './kubesec-types';
+import { KubesecFinding, kubesecResourcesRules, kubesecRowToFinding, KubesecSQLRow } from './kubesec-types';
 
 const lastCompletedJob = `
 SELECT
@@ -29,7 +29,7 @@ SELECT
   occurred_at as detectedAt,
   data
 FROM plugins_findings
-WHERE plugin_name = 'cast-kubesec'
+WHERE plugin_name = 'cast-kubesec' and not data->>'Rule ID' IN ('${kubesecResourcesRules.join('\', \'')}')
 ORDER BY occurred_at DESC
 `;
 

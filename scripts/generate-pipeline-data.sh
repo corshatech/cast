@@ -92,19 +92,22 @@ kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy
 # 5 Request Too Slow
 echo -e "\ninserting request-too-slow data\n"
 
+# The curl command is used with the "--limit-rate" flag to slow the request to the given rate in bytes/second.
+# Random data is found with the specified number of characters, 60 or 180, and given to the request so that the total time takes at least that many seconds.
+
 data=`head -c 60 /dev/random | base64`
 kubectl exec -n curl curl -i -- curl -s -w '\n' -X POST -H 'Content-Type: application/json' "${svc}/headers?q=1" -w '\n' -d "{ 'data': '${data}' }" --limit-rate 1
 
 data=`head -c 180 /dev/random | base64`
 kubectl exec -n curl curl -i -- curl -s -w '\n' -X POST -H 'Content-Type: application/json' "${svc}/headers?q=1" -w '\n' -d "{ 'data': '${data}' }" --limit-rate 1
 
-# Long running Web Sockets (not detected)
+# Long running Web Sockets (Shouldn't be detected in CAST)
 data=`head -c 60 /dev/random | base64`
 kubectl exec -n curl curl -i -- curl -s -w '\n' -X CONNECT -H 'Content-Type: application/json' "${svc}/headers?q=1" -w '\n' -d "{ 'data': '${data}' }" --limit-rate 1
 data=`head -c 60 /dev/random | base64`
 kubectl exec -n curl curl -i -- curl -s -w '\n' -X POST -H 'Connection: Upgrade' -H 'Content-Type: application/json' "${svc}/headers?q=1" -w '\n' -d "{ 'data': '${data}' }" --limit-rate 1
 
-# Long running SSE (not detected)
+# Long running Server-sent Events (Shouldn't be detected in CAST)
 data=`head -c 60 /dev/random | base64`
 kubectl exec -n curl curl -i -- curl -s -w '\n' -X POST -H 'Accept: text/event-stream' -H 'Content-Type: application/json' "${svc}/headers?q=1" -w '\n' -d "{ 'data': '${data}' }" --limit-rate 1
 

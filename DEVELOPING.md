@@ -11,8 +11,10 @@ to [enable
 Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
 support within Docker Desktop.
 
-Our development tooling assumes that you have [Kubeshark
-installed](https://docs.kubeshark.co/en/install) and in your PATH.
+Our development tooling assumes that you have downloaded the [Kubeshark 
+helm chart](https://corshatech.github.io/cast/kubeshark-41.6.tgz) and that the 
+[Kubeshark binary](https://docs.kubeshark.co/en/install) is installed and 
+in your PATH.
 
 You will need to add the Bitnami Helm repo in order to deploy cast
 using Skaffold
@@ -40,7 +42,7 @@ without redeployment.
 To deploy CAST locally in headless mode run the following command:
 
 ```bash
-skaffold dev --platform=linux/amd64 --profile headless --port-forward --kube-context docker-desktop
+KUBESHARK_HELM_CHART_PATH="/path/to/helm/chart" skaffold dev --platform=linux/amd64 --profile headless --port-forward --kube-context docker-desktop
 ```
 
 Once you see the log message "Starting export of records.", the

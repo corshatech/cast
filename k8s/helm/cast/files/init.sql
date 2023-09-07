@@ -30,6 +30,22 @@ CREATE TABLE IF NOT EXISTS plugins_findings (
   data jsonb
 );
 
+-- Schema provided by Maxmind: 
+-- https://dev.maxmind.com/geoip/importing-databases/postgresql
+CREATE TABLE IF NOT EXISTS geo_ip_data (
+  network cidr not null,
+  geoname_id int,
+  registered_country_geoname_id int,
+  represented_country_geoname_id int,
+  is_anonymous_proxy bool,
+  is_satellite_provider bool,
+  postal_code text,
+  latitude numeric,
+  longitude numeric,
+  accuracy_radius int
+);
+
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);
 CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'));
 CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'), (data->'src'));
+CREATE INDEX IF NOT EXISTS idx_geo_ip_data_network ON geo_ip_data USING gist (network inet_ops);

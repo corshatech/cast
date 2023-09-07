@@ -16,6 +16,7 @@ import {
   ReusedAuthentication,
   PasswordInURL,
   UseOfBasicAuth,
+  RequestTooSlow,
 } from '@/lib/findings';
 import { KubesecFinding } from '@/lib/analysis/kubesec-types';
 import { logger } from '@/lib/internal';
@@ -24,6 +25,7 @@ import { PasswordInURLCard } from './PasswordInURLCard';
 import { ExpiredJWTCard } from './ExpiredJWTCard';
 import { ReusedAuthenticationCard } from './ReusedAuthenticationCard';
 import { UseOfBasicAuthCard } from './UseOfBasicAuthCard';
+import { RequestTooSlowCard } from './RequestTooSlowCard';
 import { KubesecCard } from './KubesecCard';
 
 export { AnalysisCardLoading } from './core';
@@ -46,6 +48,10 @@ export const AnalysisCard: React.FC<Analysis> = (analysis) => {
       case 'use-of-basic-auth': {
         const data = AnalysisOf(UseOfBasicAuth).parse(analysis);
         return <UseOfBasicAuthCard {...data} />
+      }
+      case 'request-too-slow': {
+        const data = AnalysisOf(RequestTooSlow).parse(analysis);
+        return <RequestTooSlowCard {...data} />
       }
       case 'cast-kubesec': {
         const data = AnalysisOf(KubesecFinding).parse(analysis);

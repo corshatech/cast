@@ -19,12 +19,14 @@ import { useOfBasicAuth } from '@/lib/analysis/useOfBasicAuth';
 import { kubesec } from '@/lib/analysis/kubesec';
 import { TypedAPIResponse } from '@/lib/internal';
 import { kubesecResources } from '@/lib/analysis/kubesec-resources';
+import { requestTooSlow } from '@/lib/analysis/request_too_slow';
 
 const analysisFunctions: AnalysisFunction[] = [
   reusedAuthentication,
   expiredJwt,
   passInUrl,
   useOfBasicAuth,
+  requestTooSlow,
   kubesec,
   kubesecResources,
 ];

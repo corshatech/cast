@@ -46,6 +46,6 @@ CREATE TABLE IF NOT EXISTS geo_ip_data (
 );
 
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);
-CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE (data->'request'->'headers'->>'Authorization');
-CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE (data->'request'->'headers'->>'Authorization', data->'src');
+CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'));
+CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'), (data->'src'));
 CREATE INDEX IF NOT EXISTS idx_geo_ip_data_network ON geo_ip_data USING gist (network inet_ops);

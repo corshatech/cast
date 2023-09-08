@@ -154,11 +154,22 @@ export const UseOfBasicAuth = makeFinding(
 
 export type UseOfBasicAuth = z.infer<typeof UseOfBasicAuth>
 
+export const RequestTooSlow = makeFinding(
+  'request-too-slow',
+  z.object({
+    elapsedTime: z.number().describe('The total time the request took'),
+    inRequest: RequestContext,
+  }),
+);
+
+export type RequestTooSlow = z.infer<typeof RequestTooSlow>
+
 export type Finding =
   | ReusedAuthentication
   | ExpiredJWT
   | PasswordInURL
-  | UseOfBasicAuth;
+  | UseOfBasicAuth
+  | RequestTooSlow;
 
 export function AnalysisOf<Thing extends z.ZodObject<any>>(finding: Thing) {
   return Analysis.extend({

@@ -55,3 +55,38 @@ export const kubesecRowToFinding = ({
   type,
   data,
 });
+
+export const KubesecResourcesSQLRow = z.object({
+  // id
+  id: z.string(),
+  // sql lowercases things
+  detectedat: z.date(),
+  // plugin_name
+  type: z.literal('cast-kubesec-resources'),
+  // `data` object shape:
+  data: innerKubesecData.extend({
+    Severity,
+  }),
+}).describe('The schema for Kubesec findings data related to resources, exported by our Go plugin for Kubesec');
+
+export const KubesecResourcesFinding = makeFinding(
+  'cast-kubesec-resources',
+  innerKubesecData,
+);
+
+export type KubesecResourcesFinding = z.infer<typeof KubesecResourcesFinding>;
+
+export const kubesecResourcesRowToFinding = ({
+  type,
+  detectedat,
+  data: {
+    Severity,
+    ...data
+  },
+}: z.infer<typeof KubesecResourcesSQLRow>): KubesecResourcesFinding => ({
+  severity: Severity,
+  detectedAt: detectedat.toISOString(),
+  name: 'Kubesec Resources Finding',
+  type,
+  data,
+});

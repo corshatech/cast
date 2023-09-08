@@ -12,7 +12,7 @@
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
 import { FormattedDate } from '@/components/atoms/FormattedDate';
-import { KubesecFinding } from '@/lib/analysis/kubesec-types';
+import { KubesecFinding, KubesecResourcesFinding } from '@/lib/analysis/kubesec-types';
 import { AnalysisOf } from '@/lib/findings';
 
 import { AnalysisCard, CsvExportButton } from './core';
@@ -35,7 +35,7 @@ const columns: GridColDef[] = [
   { field: 'Points', headerName: 'Points' },
 ];
 
-export const KubesecCard: React.FC<AnalysisOf<KubesecFinding>> = ({
+export const KubesecCard: React.FC<AnalysisOf<KubesecFinding | KubesecResourcesFinding>> = ({
   findings,
   reportedAt,
   ...otherProps

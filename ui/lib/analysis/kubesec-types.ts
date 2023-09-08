@@ -90,11 +90,3 @@ export const kubesecResourcesRowToFinding = ({
   type,
   data,
 });
-
-export const kubesecResourcesRules: string[] = [
-  'RequestsMemory', 
-  'RequestsCPU',
-  'LimitsMemory',
-  'LimitsCPU',
-  'VolumeClaimRequestsStorage', 
- ];

@@ -11,7 +11,7 @@
 
    import { AnalysisOf } from '../findings';
    import { conn } from '../db';
-   import { KubesecResourcesFinding, kubesecResourcesRowToFinding, KubesecResourcesSQLRow, kubesecResourcesRules } from './kubesec-types';
+   import { KubesecResourcesFinding, kubesecResourcesRowToFinding, KubesecResourcesSQLRow } from './kubesec-types';
 
    const lastCompletedJob = `
    SELECT
@@ -30,10 +30,18 @@
      data
    FROM plugins_findings
    WHERE 
-     plugin_name = 'cast-kubesec' and 
-     data->>'Rule ID' IN ('${kubesecResourcesRules.join('\', \'')}')
+     plugin_name = 'cast-kubesec' AND
+     data->>'Rule ID' = ANY($1::text[])
    ORDER BY occurred_at DESC
    `;
+
+  export const kubesecResourcesRules: string[] = [
+    'RequestsMemory', 
+    'RequestsCPU',
+    'LimitsMemory',
+    'LimitsCPU',
+    'VolumeClaimRequestsStorage', 
+   ];
    
    async function getLastCompletedJob(): Promise<string> {
      const { rows } = await conn.query(lastCompletedJob, []);
@@ -50,7 +58,7 @@
    }
    
    async function query(): Promise<KubesecResourcesFinding[]> {
-     const { rows } = await conn.query(findingsQuery, []);
+     const { rows } = await conn.query(findingsQuery, [kubesecResourcesRules]);
      return rows.map(x => kubesecResourcesRowToFinding(KubesecResourcesSQLRow.parse(x)));
    }
    

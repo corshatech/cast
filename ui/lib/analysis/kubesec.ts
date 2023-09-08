@@ -11,7 +11,8 @@
 
 import { AnalysisOf } from '../findings';
 import { conn } from '../db';
-import { KubesecFinding, kubesecResourcesRules, kubesecRowToFinding, KubesecSQLRow } from './kubesec-types';
+import { KubesecFinding, kubesecRowToFinding, KubesecSQLRow } from './kubesec-types';
+import { kubesecResourcesRules } from './kubesec-resources';
 
 const lastCompletedJob = `
 SELECT
@@ -29,7 +30,7 @@ SELECT
   occurred_at as detectedAt,
   data
 FROM plugins_findings
-WHERE plugin_name = 'cast-kubesec' and not data->>'Rule ID' IN ('${kubesecResourcesRules.join('\', \'')}')
+WHERE plugin_name = 'cast-kubesec' AND NOT data->>'Rule ID' = ANY($1::text[])
 ORDER BY occurred_at DESC
 `;
 
@@ -48,7 +49,7 @@ async function getLastCompletedJob(): Promise<string> {
 }
 
 async function query(): Promise<KubesecFinding[]> {
-  const { rows } = await conn.query(findingsQuery, []);
+  const { rows } = await conn.query(findingsQuery, [kubesecResourcesRules]);
   return rows.map(x => kubesecRowToFinding(KubesecSQLRow.parse(x)));
 }
 

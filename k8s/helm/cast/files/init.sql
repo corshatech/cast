@@ -80,9 +80,9 @@ CREATE VIEW matview_traffic_ips AS
     WHERE data->'request'->'headers'->>'X-Forwarded-For' IS NOT NULL)
     UNION
     (SELECT
-         id AS traffic_id,
-         'src' AS direction,
-         TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Real-IP', ',')), '"[] ') AS ip_addr
-     FROM traffic
-     WHERE data->'request'->'headers'->>'X-Real-IP' IS NOT NULL);
+        id AS traffic_id,
+        'src' AS direction,
+        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Real-IP', ',')), '"[] ') AS ip_addr
+    FROM traffic
+    WHERE data->'request'->'headers'->>'X-Real-IP' IS NOT NULL);
 SELECT * FROM matview_traffic_ips;

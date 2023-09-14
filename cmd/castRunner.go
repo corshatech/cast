@@ -103,7 +103,6 @@ func cast(namespace string, port string, kubeConfigPath string, kubeContext stri
 	// Prepare kubeshark tap arguments
 	var kubesharkArgs []string = []string{
 		"tap",
-		".*", // Default pod regular expression
 		"--set",
 		fmt.Sprintf("kube.configpath=%s", kubeConfigPath),
 	}

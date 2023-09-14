@@ -90,7 +90,7 @@ func init() {
 
 	// TODO: parameterize construction of this database, and make it
 	// customizable rather than hardcoded.
-	RegexDb["PassInURL"] = CastRegexpDbEntry{
+	RegexDb["PassInUrl"] = CastRegexpDbEntry{
 		regex:         regexp.MustCompile("(password|pass|pwd|auth|api[ -_]*key|session|session[ -_]*key)="),
 		Title:         "Password in Query String",
 		Severity:      "high",

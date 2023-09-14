@@ -85,4 +85,3 @@ CREATE VIEW matview_traffic_ips AS
         TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Real-Ip', ',')), '"[] ') AS ip_addr
     FROM traffic
     WHERE data->'request'->'headers'->>'X-Real-Ip' IS NOT NULL);
-SELECT * FROM matview_traffic_ips;

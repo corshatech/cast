@@ -82,7 +82,7 @@ CREATE VIEW matview_traffic_ips AS
     (SELECT
          id AS traffic_id,
          'src' AS direction,
-         data->'request'->'headers'->>'X-Real-IP' AS ip_addr
+         TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Real-IP', ',')), '"[] ') AS ip_addr
      FROM traffic
      WHERE data->'request'->'headers'->>'X-Real-IP' IS NOT NULL);
 SELECT * FROM matview_traffic_ips;

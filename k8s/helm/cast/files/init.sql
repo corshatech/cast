@@ -75,7 +75,7 @@ CREATE VIEW matview_traffic_ips AS
     (SELECT
         id AS traffic_id,
         'src' AS direction,
-        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Forwarded-For', ','))) AS ip_addr
+        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Forwarded-For', ',')), '"[] ') AS ip_addr
     FROM traffic
     WHERE data->'request'->'headers'->>'X-Forwarded-For' IS NOT NULL)
     UNION

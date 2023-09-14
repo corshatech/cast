@@ -33,6 +33,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/corshatech/cast/collector/analysis/pass_in_url"
+	"github.com/corshatech/cast/collector/analysis/url_regex"
 )
 
 type workerContext struct {
@@ -323,6 +324,8 @@ func handleTrafficItem(trafficItemJson []byte, trafficItem *TrafficItem) ([]byte
 	// End: Handle the pass-in-url analysis
 
 	metadata.DetectedJwts = detectJwts(originalTrafficDataJson)
+
+	metadata.PatternFindings = url_regex.Detect(trafficItem.Data.Request.Url)
 
 	editedTrafficDataJson, err := json.Marshal(trafficItemMap["data"])
 	if err != nil {

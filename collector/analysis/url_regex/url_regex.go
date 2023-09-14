@@ -113,7 +113,8 @@ func Detect(url string) []CastRegexDbMatch {
 func DetectTime(url string, now time.Time) []CastRegexDbMatch {
 	r := make([]CastRegexDbMatch, 0, len(RegexDb))
 
-	for key, rule := range RegexDb {
+	for key := range RegexDb {
+		rule := RegexDb[key]
 		matchIndex := rule.regex.FindStringIndex(url)
 		if matchIndex != nil {
 			var matchString string

@@ -66,9 +66,16 @@ type CastRegexpDbEntry struct {
 	Sensitive bool
 }
 
-type CastRegDb = map[string]CastRegexpDbEntry
+// CastRegexpDatabase is a map of regex rule ID -> RegexpDbEntry structs
+type CastRegexpDatabase = map[string]CastRegexpDbEntry
 
-type CastRegexDbMatch struct {
+// CastRegexpDbMatch is a CAST representation of a regex rule infraction
+// It includes information like the rule ID; a pointer to the rule
+// so that description etc may be looked up without consulting the database;
+// and the full text (if available) of the match. It also includes a
+// DetectedAt time indicating when this match was made, which may not be
+// the same as the traffic timestamp depending on when processing was run.
+type CastRegexpDbMatch struct {
 	// Rule is a pointer to the CastRegDbEntry doing the matching
 	Rule *CastRegexpDbEntry
 
@@ -83,7 +90,7 @@ type CastRegexDbMatch struct {
 	DetectedAt time.Time
 }
 
-var RegexDb CastRegDb
+var RegexDb CastRegexpDatabase
 
 func init() {
 	RegexDb = make(map[string]CastRegexpDbEntry)
@@ -101,17 +108,21 @@ func init() {
 	}
 }
 
-func Detect(url string) []CastRegexDbMatch {
+/**
+ * Detect is the same function as DetectTime, but uses time.now() as the default
+ * DetectedAt value for all detections that matched.
+ */
+func Detect(url string) []CastRegexpDbMatch {
 	return DetectTime(url, time.Now())
 }
 
 /**
- * Detect runs the full regular expression battery against the provided URLs,
- * returning a slice of matches against rules. An empty or nil list indicates no
- * findings were generated.
+ * DetectTime runs the full regular expression battery against the provided
+ * URLs, returning a slice of matches against rules. An empty or nil list
+ * indicates no findings were generated.
  */
-func DetectTime(url string, now time.Time) []CastRegexDbMatch {
-	r := make([]CastRegexDbMatch, 0, len(RegexDb))
+func DetectTime(url string, now time.Time) []CastRegexpDbMatch {
+	r := make([]CastRegexpDbMatch, 0, len(RegexDb))
 
 	for key := range RegexDb {
 		rule := RegexDb[key]
@@ -123,7 +134,7 @@ func DetectTime(url string, now time.Time) []CastRegexDbMatch {
 				matchString = url[matchIndex[0]:matchIndex[1]]
 			}
 
-			r = append(r, CastRegexDbMatch{
+			r = append(r, CastRegexpDbMatch{
 				Rule:       &rule,
 				Id:         key,
 				MatchText:  matchString,

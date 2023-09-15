@@ -111,7 +111,7 @@ type CASTMetadata struct {
 	// PassInUrl is the data returned by the pass_in_url analysis
 	PassInUrl       *pass_in_url.PassInUrl `json:",omitempty"`
 	UseOfBasicAuth  bool
-	PatternFindings []url_regex.CastRegexDbMatch `json:",omitempty"`
+	PatternFindings []url_regex.CastRegexpDbMatch `json:",omitempty"`
 }
 
 func intEnvOrDefault(env string, def int) int {

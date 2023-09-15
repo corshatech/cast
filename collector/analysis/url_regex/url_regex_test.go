@@ -27,17 +27,17 @@ import (
 var fakeNow time.Time = time.UnixMilli(1100149200)
 
 func TestUrlRegex(t *testing.T) {
-	const PIUId = "PassInUrl"
-	passInUrlRule := url_regex.RegexDb[PIUId]
+	const matchId = "PassInUrl"
+	passInUrlRule := url_regex.RegexDb[matchId]
 
 	type urlRegexTestcase struct {
 		Name      string
 		Input     string
-		ExpectOut []url_regex.CastRegexDbMatch
+		ExpectOut []url_regex.CastRegexpDbMatch
 	}
-	var PIUMatch = []url_regex.CastRegexDbMatch{{
+	var matchValue = []url_regex.CastRegexpDbMatch{{
 		Rule:       &passInUrlRule,
-		Id:         PIUId,
+		Id:         matchId,
 		MatchText:  "",
 		DetectedAt: fakeNow,
 	}}
@@ -54,7 +54,7 @@ func TestUrlRegex(t *testing.T) {
 		{
 			Name:      "matches PIU on a URL with a password in it",
 			Input:     "http://example.com/some/path?query=4&password=blah",
-			ExpectOut: PIUMatch,
+			ExpectOut: matchValue,
 		},
 		{
 			Name:  "does not match a harmless forgot_my_password url",

@@ -15,6 +15,7 @@
 # intended for use with skaffold dev server as post deploy hook
 
 svc=$1
+KUBESHARK_SUPPORTED_VERSION="41.6"
 
 if ! [ -x "$(command -v kubeshark)" ]; then
     echo >&2 "ERROR: kubeshark is not installed, visit https://kubeshark.co/ to install"
@@ -22,9 +23,15 @@ if ! [ -x "$(command -v kubeshark)" ]; then
 fi
 
 KUBESHARK_VERSION="$(kubeshark version 2>&1)"
-if [ "$KUBESHARK_VERSION" != "41.6" ]; then
+if [ "$KUBESHARK_VERSION" != "$KUBESHARK_SUPPORTED_VERSION" ]; then
     kubeshark version
-    echo "ERROR: incorrect version of kubeshark installed, please install 41.6"
+    echo "ERROR: incorrect version of kubeshark installed, please install $KUBESHARK_SUPPORTED_VERSION"
+    exit 1
+fi
+
+if ! [ -f "$KUBESHARK_HELM_CHART_PATH" ]; then
+    echo "ERROR: Must set the variable \$KUBESHARK_HELM_CHART_PATH to the path"
+    echo "of the Kubeshark $KUBESHARK_SUPPORTED_VERSION Helm chart .tgz file."
     exit 1
 fi
 
@@ -50,4 +57,4 @@ while ! kubectl --context="${CONTEXT}" logs -n cast "${collector}"|grep -q "Star
 done
 
 # generate mock data
-./scripts/generate-pipeline-data.sh ${svc}
+yes | ./scripts/generate-pipeline-data.sh ${svc}

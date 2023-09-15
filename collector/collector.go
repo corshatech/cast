@@ -33,6 +33,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/corshatech/cast/collector/analysis/pass_in_url"
+	"github.com/corshatech/cast/collector/analysis/url_regex"
 )
 
 const (
@@ -108,8 +109,9 @@ type CASTMetadata struct {
 	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
 
 	// PassInUrl is the data returned by the pass_in_url analysis
-	PassInUrl      *pass_in_url.PassInUrl `json:",omitempty"`
-	UseOfBasicAuth bool
+	PassInUrl       *pass_in_url.PassInUrl `json:",omitempty"`
+	UseOfBasicAuth  bool
+	PatternFindings []url_regex.CastRegexpDbMatch `json:",omitempty"`
 }
 
 func intEnvOrDefault(env string, def int) int {

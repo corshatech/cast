@@ -3,12 +3,46 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   mode: 'jit',
+  darkMode: ["class"],
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
+      fontFamily: {
+        poppins: ['Poppins', ...defaultTheme.fontFamily.sans],
+        nunito: ['Nunito Sans', ...defaultTheme.fontFamily.sans],
+        sans: ['Nunito Sans', ...defaultTheme.fontFamily.sans],
+      },
+      fontSize: {
+        h1: '2rem',
+        h2: '1.5rem',
+        h3: '1.25rem',
+        h4: '1.25rem',
+        body1: '1rem',
+        body2: '.875rem',
+        body3: '.75rem',
+        body4: '.625rem',
+        'icon-sm': '1rem',
+        'icon-md': '1.25rem',
+        'icon-lg': '1.5rem',
+      },
+      maxWidth: {
+        '8xl': '88rem',
+        '9xl': '96rem',
+        '10xl': '104rem',
+      },
+      screens: {
+        '4K': '2560px',
+      },
       colors: {
         'corsha-brand-blue': '#0A2E3B',
         'corsha-brand-mid-blue': '#104457',
@@ -38,34 +72,60 @@ module.exports = {
         'medium-blue-light': '#1378FF99',
         'light-blue-light': '#37ADEB99',
         'grey-light': '#97979799',
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
-      fontFamily: {
-        poppins: ['Poppins', ...defaultTheme.fontFamily.sans],
-        nunito: ['Nunito Sans', ...defaultTheme.fontFamily.sans],
-        sans: ['Nunito Sans', ...defaultTheme.fontFamily.sans],
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
-      fontSize: {
-        h1: '2rem',
-        h2: '1.5rem',
-        h3: '1.25rem',
-        h4: '1.25rem',
-        body1: '1rem',
-        body2: '.875rem',
-        body3: '.75rem',
-        body4: '.625rem',
-        'icon-sm': '1rem',
-        'icon-md': '1.25rem',
-        'icon-lg': '1.5rem',
+      keyframes: {
+        "accordion-down": {
+          from: { height: 0 },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: 0 },
+        },
       },
-      maxWidth: {
-        '8xl': '88rem',
-        '9xl': '96rem',
-        '10xl': '104rem',
-      },
-      screens: {
-        '4K': '2560px',
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [],
-};
+  plugins: [require("tailwindcss-animate")],
+}

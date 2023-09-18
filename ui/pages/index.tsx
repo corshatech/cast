@@ -19,6 +19,9 @@ import { Header } from '@/components/app/Header';
 import { Layout } from '@/components/app/Layout';
 import { Summary, SummaryLoading } from '@/components/app/Summary';
 import { summarizeAnalyses } from '@/lib/findings';
+import { EnablementChip } from '@/components/app/EnablementChip/EnablementChip';
+import { TypedFetch } from '@/lib/TypedFetch';
+import { CASTFeaturesListing } from '@/lib/metadata';
 
 const AnalysisGridLoading = () => {
   return (<>
@@ -30,6 +33,7 @@ const AnalysisGridLoading = () => {
 }
 export default function Dashboard() {
   const { data: analysesResponse, error } = useSWR<AnalysesResponse>('/api/analyses');
+  const { data: enablemenets } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
 
   const summary =
     analysesResponse &&
@@ -52,6 +56,22 @@ export default function Dashboard() {
           <div className="max-w-screen 2xl:max-4K:max-w-10xl  mx-auto px-4 sm:px-6 lg:px-8">
             <div className="my-12">
               {summary ? <Summary {...summary} /> : <SummaryLoading />}
+            </div>
+            <div className="my-4 flex flex-col items-start">
+              { enablemenets && <>
+                <EnablementChip
+                  label='GeoIP Data'
+                  tooltipEnabled='MaxMind GeoIP data has been loaded.'
+                  tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST README for details.'
+                  enabled={enablemenets.geoIpEnabled}
+                />
+                <EnablementChip
+                  label='IP Banlist Data'
+                  tooltipEnabled='FEODOTracker data has been loaded.'
+                  tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST README for details.'
+                  enabled={enablemenets.feodoEnabled}
+                />
+              </>}
             </div>
 
             <div className="flex flex-col 4K:grid 4K:grid-cols-2 space-y-12 4K:space-y-0 4K:gap-4 mb-12">

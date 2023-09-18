@@ -9,6 +9,8 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
+import { z } from 'zod';
+
 /** CAST Metadata extracted from the accompanying request */
 
 export type CASTMetadata = {
@@ -21,3 +23,10 @@ export type CASTMetadata = {
 
   detectedJWTs?: string[]; // Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
 };
+
+export const CASTFeaturesListing = z.object({
+  geoIpEnabled: z.boolean(),
+  feodoEnabled: z.boolean(),
+});
+
+export type CASTFeaturesListing = z.infer<typeof CASTFeaturesListing>;

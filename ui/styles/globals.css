@@ -283,6 +283,11 @@ textarea::placeholder {
   color: theme('colors.gray.400', #9ca3af); /* 2 */
 }
 
+button.unbutton,
+button.unbutton:hover {
+  background-color: transparent;
+}
+
 /*
 Set the default cursor for buttons.
 */

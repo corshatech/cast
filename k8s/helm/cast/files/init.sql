@@ -30,7 +30,15 @@ CREATE TABLE IF NOT EXISTS plugins_findings (
   data jsonb
 );
 
--- Schema provided by Maxmind: 
+CREATE TABLE IF NOT EXISTS feodo_banlist (
+  ip_address text PRIMARY KEY NOT NULL,
+  country text,
+  first_seen timestamp,
+  last_online timestamp,
+  malware text
+);
+
+-- Schema provided by Maxmind:
 -- https://dev.maxmind.com/geoip/importing-databases/postgresql
 CREATE TABLE IF NOT EXISTS geo_ip_data (
   network cidr not null,

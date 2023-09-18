@@ -57,4 +57,5 @@ while ! kubectl --context="${CONTEXT}" logs -n cast "${collector}"|grep -q "Star
 done
 
 # generate mock data
+export CAST_FAST_DATA_ONLY="${CAST_FAST_DATA_ONLY:-true}"
 yes | ./scripts/generate-pipeline-data.sh ${svc}

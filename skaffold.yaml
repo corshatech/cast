@@ -73,6 +73,11 @@ portForward:
     localPort: 8080
 
 profiles:
+  - name: friendlyKubesec
+    patches:
+      - op: replace
+        path: /deploy/helm/releases/0/setValues/plugins.kubesec.schedule
+        value: "*/10 * * * *" # Slower kubesec run speed; every 10 minutes
   # Deploy the chart in headless mode
   - name: headless
     patches:

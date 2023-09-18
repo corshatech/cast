@@ -13,11 +13,15 @@ import type { AppProps } from 'next/app';
 
 import '@/styles/globals.css';
 import { MySwrConfig } from '@/components/app/MySwrConfig';
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <MySwrConfig>
-      <Component {...pageProps} />
+      {/* TODO: Using all the defaults for now */}
+      <TooltipProvider>
+        <Component {...pageProps} />
+      </TooltipProvider>
     </MySwrConfig>
   );
 }

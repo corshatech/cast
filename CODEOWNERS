@@ -46,3 +46,7 @@
 # In this example, any change inside the `/scripts` directory
 # will require approval from @doctocat or @octocat.
 # /scripts/ @doctocat @octocat
+
+/ui/  max@corsha.com jason@corsha.com david@corsha.com anusha@corsha.com
+/docs/  max@corsha.com jason@corsha.com david@corsha.com anusha@corsha.com
+/.vscode/  max@corsha.com jason@corsha.com david@corsha.com anusha@corsha.com

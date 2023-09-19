@@ -78,11 +78,10 @@ async function handlePost(
   req: NextApiRequest,
   res: TypedAPIResponse<GeneralOperationResponse>,
 ) {
-  console.log({b:req.body});
   const data = z.array(FEODOJsonType).safeParse(req.body);
   if (!data.success) {
     const error = fromZodError(data.error);
-    console.error({ error, d: error?.details });
+    logger.error({ error }, error.message);
     res.status(400).send({
       error: error.message,
     });
@@ -98,7 +97,6 @@ async function handlePost(
     }) =>
     ([ip_address, country, first_seen, last_online, malware]),
   );
-  console.log(pgValues);
   try {
     await conn.query(format(INSERT_FEODO_DATA_QUERY, pgValues));
     res.status(200).send({ success: true });

@@ -89,6 +89,20 @@ kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
 
+########
+# SLOWLY INSERTED DATA BLOCK
+#
+########
+#
+#
+#
+
+if [ "$CAST_FAST_DATA_ONLY" = "true" ]; then
+    echo "Done: Skipping long-running test data"
+    exit 0;
+fi
+
+
 # 5 Request Too Slow
 echo -e "\ninserting request-too-slow data\n"
 

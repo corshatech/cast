@@ -85,9 +85,16 @@ echo -e "\ninserting reused-auth data\n"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
 
-
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token1" "${svc}/headers?q=1"
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer dummy-token2" "${svc}/headers?q=1"
+
+# Add test data using various headers with source and/or destination IP info
+echo -e "\ninserting traffic data with X-Forwarded-For and X-Real-Ip headers\n"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token1" -H "X-Forwarded-For: 0.0.0.0" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token2" -H "X-Forwarded-For: 1.1.1.1,2.2.2.2" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token3" -H "X-Forwarded-For: [3.3.3.3, 4.4.4.4]" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token4" -H "X-Real-Ip: 5.5.5.5" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token5" -H "X-Real-Ip: 6.6.6.6,7.7.7.7" "${svc}/headers?q=1"
 
 ########
 # SLOWLY INSERTED DATA BLOCK
@@ -101,7 +108,6 @@ if [ "$CAST_FAST_DATA_ONLY" = "true" ]; then
     echo "Done: Skipping long-running test data"
     exit 0;
 fi
-
 
 # 5 Request Too Slow
 echo -e "\ninserting request-too-slow data\n"

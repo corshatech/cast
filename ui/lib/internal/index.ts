@@ -11,6 +11,14 @@
 
 import type { NextApiResponse } from 'next';
 
+import { z } from 'zod';
+
 export { default as logger } from './logger';
 
 export type TypedAPIResponse<T> = NextApiResponse<T | { error: string }>;
+
+export const GeneralOperationResponse = z.union([
+   z.object({success: z.literal(true)}),
+   z.object({success: z.literal(false).optional(), error: z.string()}),
+]);
+export type GeneralOperationResponse = z.infer<typeof GeneralOperationResponse>;

@@ -9,6 +9,7 @@ import { FEODOJsonType } from '@/lib/metadata';
 
 const INSERT_FEODO_DATA_QUERY = `DELETE FROM feodo_banlist *;
 INSERT INTO feodo_banlist (
+  id,
   ip_address,
   country,
   first_seen,
@@ -95,8 +96,8 @@ async function handlePost(
       first_seen,
       last_online,
       malware,
-    }) =>
-    ([ip_address, country, first_seen, last_online, malware]),
+    }, i) =>
+    ([i, ip_address, country, first_seen, last_online, malware]),
   );
   try {
     await conn.query(format(INSERT_FEODO_DATA_QUERY, pgValues));

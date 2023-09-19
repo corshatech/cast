@@ -33,7 +33,7 @@ export type CASTFeaturesListing = z.infer<typeof CASTFeaturesListing>;
 
 export const FEODOJsonType = z.object({
   ip_address: z.string().ip(),
-  port: z.coerce.number().positive().int().optional(),
+  port: z.coerce.number().positive().int().nullable().optional(),
   status: z.string().nullable().optional(),
   hostname: z.string().nullable().optional(),
   as_number: z.coerce.number().positive().int().nullable().optional(),

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS plugins_findings (
 );
 
 CREATE TABLE IF NOT EXISTS feodo_banlist (
-  id int PRIMARY KEY,
+  id decimal PRIMARY KEY,
   ip_address text NOT NULL,
   country text,
   first_seen timestamp,

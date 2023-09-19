@@ -16,6 +16,7 @@ INSERT INTO feodo_banlist (
   malware
 ) VALUES %L;`;
 
+/** Dev-only testing HTML page */
 async function testGet(
   req: NextApiRequest,
   res: any,

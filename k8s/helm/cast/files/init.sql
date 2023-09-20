@@ -58,3 +58,30 @@ CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);
 CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'));
 CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'), (data->'src'));
 CREATE INDEX IF NOT EXISTS idx_geo_ip_data_network ON geo_ip_data USING gist (network inet_ops);
+
+CREATE VIEW matview_traffic_ips AS
+    SELECT
+        id AS traffic_id,
+        'src' AS direction,
+        data->'src'->>'ip' AS ip_addr
+    FROM traffic
+    UNION
+    SELECT
+        id AS traffic_id,
+        'dst' AS direction,
+        data->'dst'->>'ip' AS ip_addr
+    FROM traffic
+    UNION
+    (SELECT
+        id AS traffic_id,
+        'src' AS direction,
+        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Forwarded-For', ',')), '"[] ') AS ip_addr
+    FROM traffic
+    WHERE data->'request'->'headers'->>'X-Forwarded-For' IS NOT NULL)
+    UNION
+    (SELECT
+        id AS traffic_id,
+        'src' AS direction,
+        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Real-Ip', ',')), '"[] ') AS ip_addr
+    FROM traffic
+    WHERE data->'request'->'headers'->>'X-Real-Ip' IS NOT NULL);

@@ -13,6 +13,7 @@
         "PGHOST",
         "PGPASSWORD",
         "PGUSER",
-        "statefulset"
+        "statefulset",
+        "geoip"
     ]
 }

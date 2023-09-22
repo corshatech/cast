@@ -1,5 +1,5 @@
 import type { NextApiRequest } from 'next';
-import { Readable } from 'stream';
+import type { Readable } from 'stream';
 import { pipeline } from 'stream/promises'
 import busboy from 'busboy'
 import { from as copyFrom } from 'pg-copy-streams'
@@ -10,6 +10,11 @@ import { GeneralOperationResponse, logger, TypedAPIResponse } from '@/lib/intern
 const DELETE_GEO_IP_DATA_QUERY = 'DELETE FROM geo_ip_data *';
 const INSERT_GEO_IP_DATA_QUERY = `COPY geo_ip_data FROM STDIN DELIMITER ',' CSV HEADER`;
 
+/** File uploads require handling the body stream ourselves,
+  * so setting `config: { api: { bodyParser: false } }` disables
+  * Next's builtin body handling.
+  * @see{@link{https://nextjs.org/docs/pages/building-your-application/routing/api-routes#custom-config}}
+  */
 export const config = {
   api: {
     bodyParser: false,
@@ -79,7 +84,6 @@ async function handlePost(
 
   // Open file stream with busboy
   try {
-
     geoip_file = await new Promise((resolve, reject) => {
       const bb = busboy({ 
         headers: req.headers,  
@@ -91,7 +95,6 @@ async function handlePost(
       });
     
       bb.on('file', (name, stream) => {
-
         if (name === 'geoip_file'){
           resolve(stream)
         }
@@ -123,9 +126,7 @@ async function handlePost(
     client = await conn.connect()
     let postgresStream = client.query(copyFrom(INSERT_GEO_IP_DATA_QUERY));
     await pipeline(geoip_file, postgresStream)
-
   } catch (e) {
-
     const error = 'An SQL error occurred while inserting geoip data.';
     logger.error({ error: e }, error);
     res.status(500).send({error});

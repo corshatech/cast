@@ -10,22 +10,16 @@ build:
     -
       image: collector
       context: .
-      platforms:
-        - "linux/amd64"
       docker:
         dockerfile: collector/Dockerfile
     -
       image: ui
       context: ui
-      platforms:
-        - "linux/amd64"
       docker:
         dockerfile: ui/Dockerfile
     -
       image: cast_plugin_kubesec
       context: plugins/kubesec
-      platforms:
-        - "linux/amd64"
       docker:
         dockerfile: plugins/kubesec/Dockerfile
 deploy:

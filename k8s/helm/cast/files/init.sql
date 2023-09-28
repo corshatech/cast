@@ -78,7 +78,7 @@ CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE ((data->'reque
 CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'), (data->'src'));
 CREATE INDEX IF NOT EXISTS idx_geo_ip_data_network ON geo_ip_data USING gist (network inet_ops);
 
-CREATE VIEW matview_traffic_ips AS
+CREATE MATERIALIZED VIEW matview_traffic_ips AS
     SELECT
         id AS traffic_id,
         'src' AS direction,

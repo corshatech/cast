@@ -93,7 +93,7 @@ echo -e "\ninserting traffic data with X-Forwarded-For and X-Real-Ip headers\n"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token1" -H "X-Forwarded-For: 0.0.0.0" "${svc}/headers?q=1"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token2" -H "X-Forwarded-For: 1.1.1.1,2.2.2.2" "${svc}/headers?q=1"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token3" -H "X-Forwarded-For: [3.3.3.3, 4.4.4.4]" "${svc}/headers?q=1"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token4" -H "X-Real-Ip: 5.5.5.5" "${svc}/headers?q=1"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token4" -H "X-Forwarded-For: 8.8.8.8" -H "X-Real-Ip: 5.5.5.5" "${svc}/headers?q=1"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token5" -H "X-Real-Ip: 6.6.6.6,7.7.7.7" "${svc}/headers?q=1"
 
 # 2 Reused Auth: GeoIP

@@ -62,13 +62,13 @@ export default function Dashboard() {
                 <EnablementChip
                   label='GeoIP Data'
                   tooltipEnabled='MaxMind GeoIP data has been loaded.'
-                  tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST README for details.'
+                  tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST Wiki for details.'
                   enabled={enablemenets.geoIpEnabled}
                 />
                 <EnablementChip
                   label='IP Banlist Data'
                   tooltipEnabled='FEODOTracker data has been loaded.'
-                  tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST README for details.'
+                  tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST Wiki for details.'
                   enabled={enablemenets.feodoEnabled}
                 />
               </>}

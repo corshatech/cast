@@ -100,6 +100,7 @@ export function makeFinding<
 }
 
 export const RequestContext = z.object({
+  id: z.string().optional().describe('The traffic id assigned by the collector'),
   srcIp: z.string().ip().describe('The source IP address'),
   srcPort: z.string().regex(/[0-9]+/).describe('The source port number'),
   proto: z.union([
@@ -115,11 +116,47 @@ export const RequestContext = z.object({
 
 export type RequestContext = z.infer<typeof RequestContext>;
 
+export const LocationDatum = z.object({
+  id: z.string().describe('The traffic id assigned by the collector'),
+  dst: z.string().ip().describe('Destination IP address'),
+  src: z.string().ip().describe('Source IP address'),
+  lat: z.string().describe('Decimal number with WGS84 latitude for source'),
+  long: z.string().describe('Decimal number with WGS84 longitude for source'),
+  country: z.string().describe('Two character country code (ISO 3166-1) for source'),
+  error: z.number().describe('Radius of accuracy in kilometers'),
+})
+
+export type LocationDatum = z.infer<typeof LocationDatum>;
+
+export const GeoDist = z.object({
+  dst: z.string().ip().describe('Destination IP address'),
+  src1_ip: z.string().ip().describe('First recorded IP to hit destination'),
+  src1_lat: z.string().describe('Decimal number with WGS84 latitude for source 1'),
+  src1_long: z.string().describe('Decimal number with WGS84 longitude for source 1'),
+  src1_country: z.string().describe('Two character country code (ISO 3166-1) for source 1'),
+  src2_ip: z.string().ip().describe('Second recorded IP to hit destination'),
+  src2_lat: z.string().describe('Decimal number with WGS84 latitude for source 2'),
+  src2_long: z.string().describe('Decimal number with WGS84 longitude for source 2'),
+  src2_country: z.string().describe('Two character country code (ISO 3166-1) for source 2'),
+  dist: z.number().describe('Distance between two found points in kilometers'),
+  error: z.number().describe('Combined accuracy with error radius from each source'),
+});
+
+export type GeoDist = z.infer<typeof GeoDist>;
+
+export const GeoIP = z.object({
+  geoLocation: z.array(LocationDatum), 
+  maxDist: GeoDist,
+})
+
+export type GeoIP = z.infer<typeof GeoIP>;
+
 export const ReusedAuthentication = makeFinding(
   'reused-auth',
   z.object({
     auth: z.string().describe('The identifier for the particular reused authentication'),
     inRequests: z.array(RequestContext.extend({ count: z.number() })),
+    geoIP: GeoIP.optional(),
   }),
 )
 export type ReusedAuthentication = z.infer<typeof ReusedAuthentication>;

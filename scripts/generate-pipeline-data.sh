@@ -96,6 +96,14 @@ kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-t
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token4" -H "X-Real-Ip: 5.5.5.5" "${svc}/headers?q=1"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token5" -H "X-Real-Ip: 6.6.6.6,7.7.7.7" "${svc}/headers?q=1"
 
+# 2 Reused Auth: GeoIP
+# US
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token1" -H "X-Forwarded-For: 3.0.0.0" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token2" -H "X-Forwarded-For: 3.0.0.0" "${svc}/headers?q=1&geo_ip=true"
+# AU, FR
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token1" -H "X-Forwarded-For: 1.0.0.0,2.0.0.0" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token2" -H "X-Real-Ip: [1.0.0.0, 2.0.0.0]" "${svc}/headers?q=1&geo_ip=true"
+
 ########
 # SLOWLY INSERTED DATA BLOCK
 #

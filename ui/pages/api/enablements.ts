@@ -16,12 +16,15 @@ import { CASTFeaturesListing } from '@/lib/metadata';
 
 import { conn } from '../../lib/db';
 
-const hasGeoDataQuery = `SELECT COUNT(*) > 0 as on FROM geo_ip_data;`;
+const hasGeoIPDataQuery = `SELECT COUNT(*) > 0 as on FROM geo_ip_data;`;
+const hasGeoLocationDataQuery = `SELECT COUNT(*) > 0 as on FROM geo_location_data;`;
 const hasFeodoDataQuery = `SELECT COUNT(*) > 0 as on FROM feodo_banlist;`;
 
 const handler = async (_req: NextApiRequest, res: TypedAPIResponse<CASTFeaturesListing>) => {
   try {
-    const geoIpEnabled = (await conn.query(hasGeoDataQuery)).rows[0].on;
+    const geoIpEnabled = 
+      (await conn.query(hasGeoIPDataQuery)).rows[0].on 
+      && (await conn.query(hasGeoLocationDataQuery)).rows[0].on;
     const feodoEnabled = (await conn.query(hasFeodoDataQuery)).rows[0].on;
 
     res.status(200).json({

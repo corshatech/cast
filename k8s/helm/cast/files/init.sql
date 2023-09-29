@@ -39,10 +39,11 @@ CREATE TABLE IF NOT EXISTS feodo_banlist (
   malware text
 );
 
--- Schema provided by Maxmind:
+-- Schemas provided by Maxmind: 
 -- https://dev.maxmind.com/geoip/importing-databases/postgresql
+
 CREATE TABLE IF NOT EXISTS geo_ip_data (
-  network cidr not null,
+  network cidr NOT NULL,
   geoname_id int,
   registered_country_geoname_id int,
   represented_country_geoname_id int,
@@ -52,6 +53,24 @@ CREATE TABLE IF NOT EXISTS geo_ip_data (
   latitude numeric,
   longitude numeric,
   accuracy_radius int
+);
+
+CREATE TABLE geo_location_data (
+  geoname_id int NOT NULL,
+  locale_code text NOT NULL,
+  continent_code text NOT NULL,
+  continent_name text NOT NULL,
+  country_iso_code text,
+  country_name text,
+  subdivision_1_iso_code text,
+  subdivision_1_name text,
+  subdivision_2_iso_code text,
+  subdivision_2_name text,
+  city_name text,
+  metro_code int,
+  time_zone text,
+  is_in_european_union bool NOT NULL,
+  PRIMARY KEY (geoname_id, locale_code)
 );
 
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);

@@ -22,6 +22,7 @@ import { summarizeAnalyses } from '@/lib/findings';
 import { EnablementChip } from '@/components/app/EnablementChip/EnablementChip';
 import { TypedFetch } from '@/lib/TypedFetch';
 import { CASTFeaturesListing } from '@/lib/metadata';
+import Link from 'next/link';
 
 const AnalysisGridLoading = () => {
   return (<>
@@ -59,18 +60,30 @@ export default function Dashboard() {
             </div>
             <div className="my-4 flex flex-col items-start">
               { enablemenets && <>
-                <EnablementChip
-                  label='GeoIP Data'
-                  tooltipEnabled='MaxMind GeoIP data has been loaded.'
-                  tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST Wiki for details.'
-                  enabled={enablemenets.geoIpEnabled}
-                />
-                <EnablementChip
-                  label='IP Banlist Data'
-                  tooltipEnabled='FEODOTracker data has been loaded.'
-                  tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST Wiki for details.'
-                  enabled={enablemenets.feodoEnabled}
-                />
+                <Link
+                  rel="noopener noreferrer" 
+                  target="_blank"
+                  href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#maxmind-geolite2-data"
+                >
+                  <EnablementChip
+                    label='GeoIP Data'
+                    tooltipEnabled='MaxMind GeoIP data has been loaded.'
+                    tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST Wiki for details.'
+                    enabled={enablemenets.geoIpEnabled}
+                  />
+                </Link>
+                <Link
+                  rel="noopener noreferrer" 
+                  target="_blank"
+                  href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#feodo-banlist-data"
+                >
+                  <EnablementChip
+                    label='IP Banlist Data'
+                    tooltipEnabled='FEODOTracker data has been loaded.'
+                    tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST Wiki for details.'
+                    enabled={enablemenets.feodoEnabled}
+                  />
+                </Link>
               </>}
             </div>
 

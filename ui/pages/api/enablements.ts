@@ -16,9 +16,9 @@ import { CASTFeaturesListing } from '@/lib/metadata';
 
 import { conn } from '../../lib/db';
 
-const hasGeoIPDataQuery = `SELECT COUNT(*) > 0 as on FROM geo_ip_data;`;
-const hasGeoLocationDataQuery = `SELECT COUNT(*) > 0 as on FROM geo_location_data;`;
-const hasFeodoDataQuery = `SELECT COUNT(*) > 0 as on FROM feodo_banlist;`;
+const hasGeoIPDataQuery = `SELECT COUNT(*) > 0 AS on FROM geo_ip_data;`;
+const hasGeoLocationDataQuery = `SELECT COUNT(*) > 0 AS on FROM geo_location_data;`;
+const hasFeodoDataQuery = `SELECT COUNT(*) > 0 AS on FROM feodo_banlist;`;
 
 const handler = async (_req: NextApiRequest, res: TypedAPIResponse<CASTFeaturesListing>) => {
   try {

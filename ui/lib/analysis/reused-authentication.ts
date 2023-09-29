@@ -18,11 +18,11 @@ select
   srcCount.count,
   authTimespan.min_timestamp,
   authTimespan.max_timestamp,
-  sampleRequest.id as id,
-  sampleRequest.src->>'ip' as src_ip,
-  sampleRequest.src->>'port' as src_port,
-  sampleRequest.dst->>'ip' as dst_ip,
-  sampleRequest.dst->>'port' as dst_port,
+  sampleRequest.id AS id,
+  sampleRequest.src->>'ip' AS src_ip,
+  sampleRequest.src->>'port' AS src_port,
+  sampleRequest.dst->>'ip' AS dst_ip,
+  sampleRequest.dst->>'port' AS dst_port,
   sampleRequest.uri,
   sampleRequest.timestamp
 FROM
@@ -30,7 +30,7 @@ FROM
 -- find all auth headers that have multiple sources
 (
 SELECT
-  data->'request'->'headers'->>'Authorization' as auth
+  data->'request'->'headers'->>'Authorization' AS auth
 FROM traffic
 WHERE
   data->'request'->'headers'->>'Authorization' is not null
@@ -38,37 +38,37 @@ GROUP BY
   auth
 HAVING
   count(distinct data->'src'->'ip') > 1
-) as reused,
+) AS reused,
 
 -- find min and max timestamps for each reused auth header
 LATERAL (
 SELECT
-  min(t.occurred_at) as min_timestamp,
-  max(t.occurred_at) as max_timestamp
-FROM traffic as t
+  min(t.occurred_at) AS min_timestamp,
+  max(t.occurred_at) AS max_timestamp
+FROM traffic AS t
 WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
 GROUP BY reused.auth
-) as authTimespan,
+) AS authTimespan,
 
 -- find the request counts for each source that reused the auth header
 LATERAL (
   SELECT
-    t.data->'src'->'ip' as src_ip,
-    reused.auth as auth,
-    count(*) as count
+    t.data->'src'->'ip' AS src_ip,
+    reused.auth AS auth,
+    count(*) AS count
   FROM traffic AS t
   WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
   GROUP BY t.data->'src'->'ip', reused.auth
-) as srcCount,
+) AS srcCount,
 
 -- find the most recent request made by each source that reused the auth header
 LATERAL (
   SELECT
-  t.id as id,
-  t.data->'src' as src,
-  t.data->'dst' as dst,
-  t.data->'request'->'absoluteURI' as uri,
-  t.occurred_at as timestamp
+  t.id AS id,
+  t.data->'src' AS src,
+  t.data->'dst' AS dst,
+  t.data->'request'->'absoluteURI' AS uri,
+  t.occurred_at AS timestamp
   FROM traffic t
   WHERE
     srcCount.src_ip = t.data->'src'->'ip'
@@ -76,11 +76,11 @@ LATERAL (
     srcCount.auth = t.data->'request'->'headers'->>'Authorization'
   ORDER BY t.occurred_at DESC
   LIMIT 1
-) as sampleRequest
+) AS sampleRequest
 `;
 
-const hasGeoIPDataQuery = `SELECT COUNT(*) > 0 as on FROM geo_ip_data;`;
-const hasGeoLocationDataQuery = `SELECT COUNT(*) > 0 as on FROM geo_location_data;`;
+const hasGeoIPDataQuery = `SELECT COUNT(*) > 0 AS on FROM geo_ip_data;`;
+const hasGeoLocationDataQuery = `SELECT COUNT(*) > 0 AS on FROM geo_location_data;`;
 
 const geoIPQuery = `
 -- Map traffic data in traffic table to Maxmind geographic data using IP
@@ -143,19 +143,19 @@ traffic_distances as
     -- Select distinct with "CASE" to prevent duplicate distances being found
     SELECT 
     DISTINCT 
-    g1.dst as dst,
-    LEAST(g1.src, g2.src) as src1_ip,
-    CASE WHEN g1.src < g2.src THEN g1.id ELSE g2.id END as src1_traffic_id,
-    CASE WHEN g1.src < g2.src THEN g1.src_lat ELSE g2.src_lat END as src1_lat,
-    CASE WHEN g1.src < g2.src THEN g1.src_long ELSE g2.src_long END as src1_long,
-    CASE WHEN g1.src < g2.src THEN g1.country_iso_code ELSE g2.country_iso_code END as src1_country,
-    CASE WHEN g1.src < g2.src THEN g1.error ELSE g2.error END as src1_error,
-    GREATEST(g1.src, g2.src) as src2_ip,
-    CASE WHEN g1.src > g2.src THEN g1.id ELSE g2.id END as src2_traffic_id,
-    CASE WHEN g1.src > g2.src THEN g1.src_lat ELSE g2.src_lat END as src2_lat,
-    CASE WHEN g1.src > g2.src THEN g1.src_long ELSE g2.src_long END as src2_long,
-    CASE WHEN g1.src > g2.src THEN g1.country_iso_code ELSE g2.country_iso_code END as src2_country,
-    CASE WHEN g1.src > g2.src THEN g1.error ELSE g2.error END as src2_error,
+    g1.dst AS dst,
+    LEAST(g1.src, g2.src) AS src1_ip,
+    CASE WHEN g1.src < g2.src THEN g1.id ELSE g2.id END AS src1_traffic_id,
+    CASE WHEN g1.src < g2.src THEN g1.src_lat ELSE g2.src_lat END AS src1_lat,
+    CASE WHEN g1.src < g2.src THEN g1.src_long ELSE g2.src_long END AS src1_long,
+    CASE WHEN g1.src < g2.src THEN g1.country_iso_code ELSE g2.country_iso_code END AS src1_country,
+    CASE WHEN g1.src < g2.src THEN g1.error ELSE g2.error END AS src1_error,
+    GREATEST(g1.src, g2.src) AS src2_ip,
+    CASE WHEN g1.src > g2.src THEN g1.id ELSE g2.id END AS src2_traffic_id,
+    CASE WHEN g1.src > g2.src THEN g1.src_lat ELSE g2.src_lat END AS src2_lat,
+    CASE WHEN g1.src > g2.src THEN g1.src_long ELSE g2.src_long END AS src2_long,
+    CASE WHEN g1.src > g2.src THEN g1.country_iso_code ELSE g2.country_iso_code END AS src2_country,
+    CASE WHEN g1.src > g2.src THEN g1.error ELSE g2.error END AS src2_error,
     st_distancesphere(
       st_point(g1.src_long, g1.src_lat),
       st_point(g2.src_long, g2.src_lat)

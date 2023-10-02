@@ -233,7 +233,7 @@ function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedA
 
   let geoIP: ReusedAuthentication['data']['geoIP'] = undefined;
 
-  if (geoIPRows !== undefined){
+  if (geoIPRows !== undefined && geoIPRows.length > 0){
     let geoLocation: LocationDatum[] = geoIPRows?.flatMap(
       (x) => [{
         id: x.src1_traffic_id,
@@ -262,10 +262,13 @@ function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedA
       )),
     )
 
+    
+    const relevantDistances = geoIPRows?.filter(i => inRequestsTrafficIDs.includes(i.src1_traffic_id) && inRequestsTrafficIDs.includes(i.src2_traffic_id))
     // Find row with the maximum and pull out error in each point to add as final error
     const { src1_error, src2_error, ...maxDistRow }: GeoIPRow = 
-      geoIPRows?.reduce(
-        (i, j) => i.dist > j.dist ? i : j,
+    relevantDistances.reduce(
+      (i, j) => i.dist > j.dist ? i : j,
+      relevantDistances[0] ?? geoIPRows[0],
       )
 
     const maxDist: GeoDist = {

@@ -96,13 +96,17 @@ kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-t
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token4" -H "X-Forwarded-For: 8.8.8.8" -H "X-Real-Ip: 5.5.5.5" "${svc}/headers?q=1"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token5" -H "X-Real-Ip: 6.6.6.6,7.7.7.7" "${svc}/headers?q=1"
 
-# 2 Reused Auth: GeoIP
-# US
-kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token1" -H "X-Forwarded-For: 3.0.0.0" "${svc}/headers?q=1&geo_ip=true"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token2" -H "X-Forwarded-For: 3.0.0.0" "${svc}/headers?q=1&geo_ip=true"
-# AU, FR
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token1" -H "X-Forwarded-For: 1.0.0.0,2.0.0.0" "${svc}/headers?q=1&geo_ip=true"
-kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token2" -H "X-Real-Ip: [1.0.0.0, 2.0.0.0]" "${svc}/headers?q=1&geo_ip=true"
+# 4 Reused Auth: GeoIP
+# White House
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 156.33.241.5" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 156.33.241.5" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token5" -H "X-Forwarded-For: 156.33.241.5" "${svc}/headers?q=1&geo_ip=true"
+# Smithsonian (<100km from White House)
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 160.111.244.160" "${svc}/headers?q=1&geo_ip=true"
+# Empire State Building (>100km <1000km from White House)
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 64.20.162.0" "${svc}/headers?q=1&geo_ip=true"
+# Apple Campus (>1000km from White House)
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token5" -H "X-Forwarded-For: 139.178.128.0" "${svc}/headers?q=1&geo_ip=true"
 
 ########
 # SLOWLY INSERTED DATA BLOCK

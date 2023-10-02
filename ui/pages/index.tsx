@@ -60,7 +60,7 @@ export default function Dashboard() {
             </div>
             <div className="my-4 flex flex-col items-start">
               { enablemenets && <>
-                <Link
+                <a
                   rel="noopener noreferrer" 
                   target="_blank"
                   href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#maxmind-geolite2-data"
@@ -71,8 +71,8 @@ export default function Dashboard() {
                     tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST Wiki for details.'
                     enabled={enablemenets.geoIpEnabled}
                   />
-                </Link>
-                <Link
+                </a>
+                <a
                   rel="noopener noreferrer" 
                   target="_blank"
                   href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#feodo-banlist-data"
@@ -83,7 +83,7 @@ export default function Dashboard() {
                     tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST Wiki for details.'
                     enabled={enablemenets.feodoEnabled}
                   />
-                </Link>
+                </a>
               </>}
             </div>
 

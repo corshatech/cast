@@ -97,16 +97,16 @@ kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-t
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token5" -H "X-Real-Ip: 6.6.6.6,7.7.7.7" "${svc}/headers?q=1"
 
 # 4 Reused Auth: GeoIP
-# White House
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 156.33.241.5" "${svc}/headers?q=1&geo_ip=true"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 156.33.241.5" "${svc}/headers?q=1&geo_ip=true"
-kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token5" -H "X-Forwarded-For: 156.33.241.5" "${svc}/headers?q=1&geo_ip=true"
-# Smithsonian (<100km from White House)
-kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 160.111.244.160" "${svc}/headers?q=1&geo_ip=true"
-# Empire State Building (>100km <1000km from White House)
-kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 64.20.162.0" "${svc}/headers?q=1&geo_ip=true"
-# Apple Campus (>1000km from White House)
-kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token5" -H "X-Forwarded-For: 139.178.128.0" "${svc}/headers?q=1&geo_ip=true"
+# Anchor Point
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 2.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 2.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token5" -H "X-Forwarded-For: 2.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+# <100km from Anchor
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 2.3.7.0" "${svc}/headers?q=1&geo_ip=true"
+# >100km <1000km from Anchor
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 2.4.6.8" "${svc}/headers?q=1&geo_ip=true"
+# >1000km from Anchor
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token5" -H "X-Forwarded-For: 3.3.3.3" "${svc}/headers?q=1&geo_ip=true"
 
 ########
 # SLOWLY INSERTED DATA BLOCK

@@ -9,7 +9,7 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, Finding, GeoDist, LocationDatum, ReusedAuthentication } from '../../lib/findings';
+import { Analysis, Finding, ReusedAuthentication } from '../../lib/findings';
 import { conn } from '../../lib/db';
 
 const reusedAuthQuery = `
@@ -83,90 +83,66 @@ const hasGeoIPDataQuery = `SELECT COUNT(*) > 0 AS on FROM geo_ip_data;`;
 const hasGeoLocationDataQuery = `SELECT COUNT(*) > 0 AS on FROM geo_location_data;`;
 
 const geoIPQuery = `
--- Map traffic data in traffic table to Maxmind geographic data using IP
-
-WITH geo_traffic AS
-	(
-    -- Join matview/geo-ip data with geo-location data
-    SELECT 
+-- Map matview traffic data with given secrets to locations with Maxmind geographic data using IP
+WITH traffic_locations AS (
+	SELECT DISTINCT
+    auth,
+    traffic_id,
+    direction, 
+    ip_addr,
+    latitude,
+    longitude,
+	accuracy_radius AS error,
+    country_iso_code AS country_code
+	FROM matview_traffic_ips 
+	JOIN (
+		SELECT
       id,
-      dst,
-			src,
-			src_lat,
-			src_long,
-			country_iso_code,
-			error
-		FROM
-			(
-        -- Join matview traffic data with maxmind geo-ip data
-        SELECT matview_traffic.traffic_id AS id,
-					matview_traffic.dst AS dst,
-					matview_traffic.src AS src,
-					latitude AS src_lat,
-					longitude AS src_long,
-					geo_ip_data.accuracy_radius AS error,
-					geoname_id
-				FROM geo_ip_data
-				JOIN
-					(
-            -- Join source and destination traffic into same row
-            SELECT m2.traffic_id AS traffic_id,
-							m1.ip_addr::INET AS dst,
-							m2.ip_addr::INET AS src
-						FROM
-							(
-                -- Only get destination entries from traffic matview
-                SELECT *
-								FROM matview_traffic_ips
-								WHERE direction = 'dst' 
-              ) m1
-						JOIN
-              (
-                -- Get source entries from matview that are not local IPs
-                SELECT *
-								FROM matview_traffic_ips
-								WHERE direction = 'src'
-									AND NOT ip_addr::INET <<= '10.0.0.0/8'::INET
-									AND NOT ip_addr::INET <<= '172.16.0.0/12'::INET
-									AND NOT ip_addr::INET <<= '192.168.0.0/16'::INET 
-              ) m2 ON m1.traffic_id = m2.traffic_id
-          ) matview_traffic ON matview_traffic.src <<= geo_ip_data.network
-				WHERE latitude IS NOT NULL
-					AND longitude IS NOT NULL 
-      ) trafficinner
-    JOIN geo_location_data ON trafficinner.geoname_id = geo_location_data.geoname_id
-  ),
+      data->'request'->'headers'->>'Authorization' AS auth
+		FROM traffic 
+		WHERE data->'request'->'headers'->>'Authorization' = ANY($1)
+	) trafficdata ON trafficdata.id = matview_traffic_ips.traffic_id
+	JOIN geo_ip_data ON geo_ip_data.network >>= ip_addr::inet
+	JOIN geo_location_data ON geo_location_data.geoname_id = geo_ip_data.geoname_id
+)
 
-traffic_distances as
-	(
-    -- Self join and find distances between points
-    -- Select distinct with "CASE" to prevent duplicate distances being found
-    SELECT 
-    DISTINCT 
-    g1.dst AS dst,
-    LEAST(g1.src, g2.src) AS src1_ip,
-    CASE WHEN g1.src < g2.src THEN g1.id ELSE g2.id END AS src1_traffic_id,
-    CASE WHEN g1.src < g2.src THEN g1.src_lat ELSE g2.src_lat END AS src1_lat,
-    CASE WHEN g1.src < g2.src THEN g1.src_long ELSE g2.src_long END AS src1_long,
-    CASE WHEN g1.src < g2.src THEN g1.country_iso_code ELSE g2.country_iso_code END AS src1_country,
-    CASE WHEN g1.src < g2.src THEN g1.error ELSE g2.error END AS src1_error,
-    GREATEST(g1.src, g2.src) AS src2_ip,
-    CASE WHEN g1.src > g2.src THEN g1.id ELSE g2.id END AS src2_traffic_id,
-    CASE WHEN g1.src > g2.src THEN g1.src_lat ELSE g2.src_lat END AS src2_lat,
-    CASE WHEN g1.src > g2.src THEN g1.src_long ELSE g2.src_long END AS src2_long,
-    CASE WHEN g1.src > g2.src THEN g1.country_iso_code ELSE g2.country_iso_code END AS src2_country,
-    CASE WHEN g1.src > g2.src THEN g1.error ELSE g2.error END AS src2_error,
-    st_distancesphere(
-      st_point(g1.src_long, g1.src_lat),
-      st_point(g2.src_long, g2.src_lat)
-    ) / 1000 AS dist -- Distance in km
-    FROM geo_traffic g1, geo_traffic g2
-    WHERE g1.src != g2.src
-  )
-SELECT * FROM traffic_distances
-WHERE dist != 0 AND dst = ANY($1)
-ORDER BY dist DESC
-`;
+-- Find the maximum distance and error between the points found above
+SELECT *
+FROM traffic_locations
+FULL JOIN 
+(
+  -- Select relevant information from max distance points
+	SELECT DISTINCT
+		max_distance.dist AS max_dist,
+		all_distances.auth AS max_auth,
+		(all_distances.error1 + all_distances.error2) AS max_error
+	FROM (
+    -- Find max distance from all pairs
+		SELECT
+			MAX(ST_DistanceSphere(
+				ST_POINT(t1.longitude, t1.latitude),
+			  ST_POINT(t2.longitude, t2.latitude)
+			) / 1000) AS dist -- Distance in km) 
+		FROM traffic_locations t1, traffic_locations t2
+		WHERE t1.auth = t2.auth
+		GROUP BY t1.auth
+	) max_distance
+	JOIN (
+    -- Find all distances to pull out relevant information for max points
+		SELECT 
+			t1.auth AS auth,
+			t1.error AS error1,
+			t2.error AS error2,
+			ST_DistanceSphere(
+				ST_POINT(t1.longitude, t1.latitude),
+			  ST_POINT(t2.longitude, t2.latitude)
+			) / 1000 AS dist
+		FROM traffic_locations t1, traffic_locations t2
+		WHERE t1.auth = t2.auth
+	) AS all_distances 
+	ON all_distances.dist = max_distance.dist 
+) locations_with_max_distance ON false
+`
 
 interface ReusedAuthRow {
   auth: string;
@@ -183,20 +159,17 @@ interface ReusedAuthRow {
 }
 
 interface GeoIPRow {
-  dst: string;
-  src1_traffic_id: string;
-  src1_ip: string;
-  src1_lat: string;
-  src1_long: string;
-  src1_country: string;
-  src1_error: number;
-  src2_traffic_id: string;
-  src2_ip: string;
-  src2_lat: string;
-  src2_long: string;
-  src2_country: string;
-  src2_error: number;
-  dist: number;
+  auth: string;
+  traffic_id: string;
+  direction: 'src' | 'dst';
+  ip_addr: string;
+  latitude: number | null;
+  longitude: number | null;
+  error: number | null;
+  country_code: string | null;
+  max_auth?: string | null;
+  max_dist?: number | null;
+  max_error?: number | null;
 }
 
 /** group the rows by their auth header */
@@ -215,6 +188,10 @@ function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedA
     start: reusedAuthRows[0].min_timestamp.toISOString(),
     end: reusedAuthRows[0].max_timestamp.toISOString(),
   };
+
+  // All rows for current finding should have the same secret
+  const correlatedSecret = reusedAuthRows[0].auth
+
   const inRequests: ReusedAuthentication['data']['inRequests'] = reusedAuthRows.map(
     (x) => ({
       id: x.id,
@@ -229,59 +206,39 @@ function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedA
     }),
   );
 
-  const inRequestsTrafficIDs = inRequests.map((x) => x.id);
-
   let geoIP: ReusedAuthentication['data']['geoIP'] = undefined;
 
-  if (geoIPRows !== undefined && geoIPRows.length > 0){
-    let geoLocation: LocationDatum[] = geoIPRows?.flatMap(
-      (x) => [{
-        id: x.src1_traffic_id,
-        dst: x.dst,
-        src: x.src1_ip,
-        lat: x.src1_lat,
-        long: x.src1_long,
-        country: x.src1_country,
-        error: x.src1_error,
-      }, {
-        id: x.src2_traffic_id,
-        dst: x.dst,
-        src: x.src2_ip,
-        lat: x.src2_lat,
-        long: x.src2_long,
-        country: x.src2_country,
-        error: x.src2_error,
-      }],
+  let maxDist = 0;
+  let maxError = 0;
+  const locationRows = 
+    // Find max distance row and remove it
+    // Remove all rows that don't include current secret
+    geoIPRows?.filter(row => {
+      if(row.max_dist && row.max_error && row.max_auth && row.max_auth === correlatedSecret) {
+        maxDist = row.max_dist
+        maxError = row.max_error
+      }
+      return row.max_dist === null && row.max_error == null && row.auth === correlatedSecret
+    })
+
+    // Map all rows to LocationDatum type
+    .map((x) => ({
+        trafficId: x.traffic_id,
+        direction: x.direction,
+        ipAddr: x.ip_addr,
+        latitude: x.latitude,
+        longitude: x.longitude,
+        error: x.error,
+        countryCode: x.country_code,
+      }),
     );
 
-    // Remove duplicate ips (matched with other ips multiple times to check distances)
-    // Remove traffic that is not included in the current reused auth finding
-    geoLocation = geoLocation.filter((value, index, self) => 
-      index === self.findIndex((location) => (
-        location.src === value.src && inRequestsTrafficIDs.includes(location.id)
-      )),
-    )
-
-    
-    const relevantDistances = geoIPRows?.filter(i => inRequestsTrafficIDs.includes(i.src1_traffic_id) && inRequestsTrafficIDs.includes(i.src2_traffic_id))
-    // Find row with the maximum and pull out error in each point to add as final error
-    const { src1_error, src2_error, ...maxDistRow }: GeoIPRow = 
-    relevantDistances.reduce(
-      (i, j) => i.dist > j.dist ? i : j,
-      relevantDistances[0] ?? geoIPRows[0],
-      )
-
-    const maxDist: GeoDist = {
-      ...maxDistRow,
-      error: src1_error + src2_error,
+  if (locationRows !== undefined && locationRows.length > 0){
+    geoIP = {
+      geoLocation: locationRows,
+      maxDist,
+      maxError,
     }
-
-    geoIP = geoLocation.length > 0 ?
-      {
-        geoLocation,
-        maxDist,
-      }
-      : geoIP = undefined
   }
 
   return {
@@ -340,8 +297,8 @@ export async function reusedAuthentication(): Promise<Analysis[]> {
   const geoIPQueryFunction = geoIPEnabled && geoLocationEnabled ? 
     async (reusedAuthRows: ReusedAuthRow[]) => {
       // Get destination IPs to filter requests to check in query
-      const dstIPs = reusedAuthRows.map(i => i.dst_ip);
-      return (await conn.query(geoIPQuery, [dstIPs])).rows;
+      const allSecrets = reusedAuthRows.map(i => i.auth);
+      return (await conn.query(geoIPQuery, [allSecrets])).rows;
     } 
     : undefined;
   return [await runnerPure(reusedAuthQueryFunction, geoIPQueryFunction)];

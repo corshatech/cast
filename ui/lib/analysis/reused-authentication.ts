@@ -159,10 +159,10 @@ interface ReusedAuthRow {
 }
 
 interface GeoIPRow {
-  auth: string;
-  traffic_id: string;
-  direction: 'src' | 'dst';
-  ip_addr: string;
+  auth: string | null;
+  traffic_id: string | null;
+  direction: 'src' | 'dst' | null;
+  ip_addr: string | null;
   latitude: number | null;
   longitude: number | null;
   error: number | null;
@@ -218,14 +218,15 @@ function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedA
         maxDist = row.max_dist
         maxError = row.max_error
       }
-      return row.max_dist === null && row.max_error == null && row.auth === correlatedSecret
+      return row.max_dist === null && row.max_error === null && row.auth === correlatedSecret && row.traffic_id !== null
     })
 
     // Map all rows to LocationDatum type
     .map((x) => ({
-        trafficId: x.traffic_id,
-        direction: x.direction,
-        ipAddr: x.ip_addr,
+        // Once distance rows are removed, these will not be null 
+        trafficId: x.traffic_id ?? '',
+        direction: x.direction ?? 'src',
+        ipAddr: x.ip_addr ?? '',
         latitude: x.latitude,
         longitude: x.longitude,
         error: x.error,

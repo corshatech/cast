@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS feodo_banlist (
   malware text
 );
 
--- Schemas provided by Maxmind: 
+-- Schemas provided by Maxmind:
 -- https://dev.maxmind.com/geoip/importing-databases/postgresql
 
 CREATE TABLE IF NOT EXISTS geo_ip_data (

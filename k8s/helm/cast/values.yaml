@@ -32,6 +32,7 @@ postgresql:
       password_encryption=scram-sha-256
     initdb:
       scriptsConfigMap: cast-db-init
+      scriptsSecret: cast-db-init-secret
     persistence:
       enabled: true
       accessModes:

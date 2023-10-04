@@ -48,6 +48,9 @@ lint-ui:
 lint-go:
 	golangci-lint run --verbose --deadline=5m
 
+validate-helm:
+	helm template k8s/helm/cast
+
 markdown:
 	cd ui && npm ci
 	./ui/node_modules/.bin/doctoc README.md --github --title "## Table of Contents"

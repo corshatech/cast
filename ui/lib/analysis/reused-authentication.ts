@@ -13,18 +13,10 @@ import { Analysis, Finding, ReusedAuthentication } from '../../lib/findings';
 import { conn } from '../../lib/db';
 
 const reusedAuthQuery = `
-select
+SELECT
   reused.auth,
   srcCount.count,
-  authTimespan.min_timestamp,
-  authTimespan.max_timestamp,
-  sampleRequest.id AS id,
-  sampleRequest.src->>'ip' AS src_ip,
-  sampleRequest.src->>'port' AS src_port,
-  sampleRequest.dst->>'ip' AS dst_ip,
-  sampleRequest.dst->>'port' AS dst_port,
-  sampleRequest.uri,
-  sampleRequest.timestamp
+  sampleRequest.uri
 FROM
 
 -- find all auth headers that have multiple sources
@@ -40,25 +32,14 @@ HAVING
   count(distinct data->'src'->'ip') > 1
 ) AS reused,
 
--- find min and max timestamps for each reused auth header
-LATERAL (
-SELECT
-  min(t.occurred_at) AS min_timestamp,
-  max(t.occurred_at) AS max_timestamp
-FROM traffic AS t
-WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
-GROUP BY reused.auth
-) AS authTimespan,
-
 -- find the request counts for each source that reused the auth header
 LATERAL (
   SELECT
-    t.data->'src'->'ip' AS src_ip,
     reused.auth AS auth,
     count(*) AS count
   FROM traffic AS t
   WHERE reused.auth = t.data->'request'->'headers'->>'Authorization'
-  GROUP BY t.data->'src'->'ip', reused.auth
+  GROUP BY reused.auth
 ) AS srcCount,
 
 -- find the most recent request made by each source that reused the auth header
@@ -67,12 +48,9 @@ LATERAL (
   t.id AS id,
   t.data->'src' AS src,
   t.data->'dst' AS dst,
-  t.data->'request'->'absoluteURI' AS uri,
-  t.occurred_at AS timestamp
+  t.data->'request'->'absoluteURI' AS uri
   FROM traffic t
   WHERE
-    srcCount.src_ip = t.data->'src'->'ip'
-  AND
     srcCount.auth = t.data->'request'->'headers'->>'Authorization'
   ORDER BY t.occurred_at DESC
   LIMIT 1
@@ -90,20 +68,26 @@ WITH traffic_locations AS (
     traffic_id,
     direction, 
     ip_addr,
+    uri,
+    port,
     latitude,
     longitude,
-	accuracy_radius AS error,
+    occurred_at,
+	  accuracy_radius AS error,
     country_iso_code AS country_code
 	FROM matview_traffic_ips 
-	JOIN (
+	LEFT JOIN (
 		SELECT
       id,
+      occurred_at,
+      data->'request'->>'absoluteURI' as uri,
+      data->'src'->>'port' as port,
       data->'request'->'headers'->>'Authorization' AS auth
 		FROM traffic 
 		WHERE data->'request'->'headers'->>'Authorization' = ANY($1)
 	) trafficdata ON trafficdata.id = matview_traffic_ips.traffic_id
-	JOIN geo_ip_data ON geo_ip_data.network >>= ip_addr::inet
-	JOIN geo_location_data ON geo_location_data.geoname_id = geo_ip_data.geoname_id
+	LEFT JOIN geo_ip_data ON geo_ip_data.network >>= ip_addr::inet
+	LEFT JOIN geo_location_data ON geo_location_data.geoname_id = geo_ip_data.geoname_id
 )
 
 -- Find the maximum distance and error between the points found above
@@ -147,15 +131,7 @@ FULL JOIN
 interface ReusedAuthRow {
   auth: string;
   count: number;
-  min_timestamp: Date;
-  max_timestamp: Date;
-  id: string;
-  src_ip: string;
-  src_port: string;
-  dst_ip: string;
-  dst_port: string;
   uri: string;
-  timestamp: Date;
 }
 
 interface GeoIPRow {
@@ -163,8 +139,11 @@ interface GeoIPRow {
   traffic_id: string;
   direction: 'src' | 'dst';
   ip_addr: string;
-  latitude: number | null;
-  longitude: number | null;
+  uri: string;
+  port: string;
+  occurred_at: string;
+  latitude: string | null;
+  longitude: string | null;
   error: number | null;
   country_code: string | null;
   max_auth?: string | null;
@@ -184,27 +163,17 @@ function groupByAuthHeader(rows: ReusedAuthRow[]): Record<string, ReusedAuthRow[
 }
 
 function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedAuthRow[], geoIPRows?: GeoIPRow[]): Finding {
-  const occurredAt = {
-    start: reusedAuthRows[0].min_timestamp.toISOString(),
-    end: reusedAuthRows[0].max_timestamp.toISOString(),
-  };
 
   // All rows for current finding should have the same secret
   const correlatedSecret = reusedAuthRows[0].auth
 
   const inRequests: ReusedAuthentication['data']['inRequests'] = reusedAuthRows.map(
     (x) => ({
-      id: x.id,
-      srcIp: x.src_ip,
-      srcPort: x.src_port,
-      proto: 'tcp',
-      destIp: x.dst_ip,
-      destPort: x.dst_port,
       URI: x.uri,
-      at: x.timestamp.toISOString(),
       count: +x.count,
     }),
   );
+
 
   let geoIP: ReusedAuthentication['data']['geoIP'] = undefined;
 
@@ -223,9 +192,12 @@ function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedA
 
     // Map all rows to LocationDatum type
     .map((x) => ({
+        occurredAt: x.occurred_at,
         trafficId: x.traffic_id,
         direction: x.direction,
         ipAddr: x.ip_addr,
+        uri: x.uri,
+        port: x.port,
         latitude: x.latitude,
         longitude: x.longitude,
         error: x.error,
@@ -245,7 +217,7 @@ function rowsToFinding(detectedAt: string, auth: string, reusedAuthRows: ReusedA
     type: 'reused-auth',
     name: 'Broken Authentication: Reused Authorization',
     severity: 'medium',
-    occurredAt,
+    // occurredAt,
     detectedAt,
     data: {
       auth,
@@ -273,6 +245,7 @@ export async function runnerPure(
     rowsToFinding(reportedAt, id, reusedAuthRows, geoIPRows),
   );
 
+
   return {
     id: 'reused-auth',
     title: 'Broken Authentication: Reused Authorization',
@@ -291,9 +264,9 @@ export async function runnerPure(
 }
 
 export async function reusedAuthentication(): Promise<Analysis[]> {
-  const reusedAuthQueryFunction = async () => (await conn.query(reusedAuthQuery, [])).rows;
   const geoIPEnabled = (await conn.query(hasGeoIPDataQuery)).rows[0].on;
   const geoLocationEnabled = (await conn.query(hasGeoLocationDataQuery)).rows[0].on;
+  const reusedAuthQueryFunction = async () => (await conn.query(reusedAuthQuery, [])).rows;
   const geoIPQueryFunction = geoIPEnabled && geoLocationEnabled ? 
     async (reusedAuthRows: ReusedAuthRow[]) => {
       // Get destination IPs to filter requests to check in query

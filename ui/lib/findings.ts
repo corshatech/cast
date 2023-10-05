@@ -100,6 +100,7 @@ export function makeFinding<
 }
 
 export const RequestContext = z.object({
+  id: z.string().optional().describe('The traffic id assigned by the collector'),
   srcIp: z.string().ip().describe('The source IP address'),
   srcPort: z.string().regex(/[0-9]+/).describe('The source port number'),
   proto: z.union([
@@ -117,13 +118,16 @@ export type RequestContext = z.infer<typeof RequestContext>;
 
 export const LocationDatum = z.object({
   trafficId: z.string().describe('The traffic id assigned by the collector'),
+  occurredAt: z.string().datetime().describe('The time the request was completed'),
+  uri: z.string().describe('The resource URI being accessed'),
+  port: z.string().describe('The destination port number'),
   direction: z.union([
     z.literal('src'), 
     z.literal('dst'),
   ]).describe('Whether this traffic item is a source or destination ip'),
   ipAddr: z.string().describe('IP address found in request'),
-  latitude: z.number().nullable().describe('Decimal number with WGS84 latitude'),
-  longitude: z.number().nullable().describe('Decimal number with WGS84 longitude'),
+  latitude: z.string().nullable().describe('Decimal number with WGS84 latitude'),
+  longitude: z.string().nullable().describe('Decimal number with WGS84 longitude'),
   error: z.number().nullable().describe('Number in kilometers of accuracy radius for geo point'),
   countryCode: z.string().nullable().describe('Two character country code (ISO 3166-1)'),
 })
@@ -142,7 +146,7 @@ export const ReusedAuthentication = makeFinding(
   'reused-auth',
   z.object({
     auth: z.string().describe('The identifier for the particular reused authentication'),
-    inRequests: z.array(RequestContext.extend({ count: z.number() })),
+    inRequests: z.array(RequestContext.pick({URI: true, id: true}).extend({ count: z.number()})),
     geoIP: GeoIP.optional(),
   }),
 )

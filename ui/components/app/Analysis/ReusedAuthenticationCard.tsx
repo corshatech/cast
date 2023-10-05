@@ -10,24 +10,24 @@
    limitations under the License. */
 
 import React, { useState } from 'react';
-import LocationOffIcon from '@mui/icons-material/LocationOff';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Tooltip from '@mui/material/Tooltip';
+import {LocationOn, Public, ExpandLess, ExpandMore} from '@mui/icons-material';
+import { 
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 
-import { AnalysisOf, GeoDist, GeoIP, LocationDatum, ReusedAuthentication } from '@/lib/findings';
+import { AnalysisOf, LocationDatum, ReusedAuthentication } from '@/lib/findings';
 
 import { AnalysisCard, CsvExportButton } from './core';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
-import Link from 'next/link';
-import { Box } from '@mui/material';
+import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 // Severity of geoip distance in kilometers
 const CRITICAL_SEVERITY_DISTANCE = 1000;
@@ -36,96 +36,109 @@ const HIGH_SEVERITY_DISTANCE = 100;
 type InRequestRow = {
   id: string;
   'Secret': string;
-  'Src IP': string;
   'URI': string | undefined;
-  'Dest IP': string;
-  'Dest Port': string;
+  'Count': number;
 }
 
 type RequestData = {
   request: InRequestRow;
   geoIP: { 
     geoLocation: LocationDatum[] | undefined;
-    maxDist: GeoDist | undefined;
+    maxDist: number | undefined;
+    maxError: number | undefined;
   } | undefined;
 }
 
-const distanceToTooltipDescription = (dist: number) => (
-  dist > 1000 ? 'Requests found at least 1000km apart (Click to view)' :
-    dist > 100 ? 'Requests found at least 100km apart (Click to view)' :
-      'View location data for requests'
+const distanceToDescription = (dist: number) => (
+  dist > CRITICAL_SEVERITY_DISTANCE ? 'Requests found at least 1000km apart' :
+    'Requests found at least 100km apart'
 )
 
 const distanceToSeverityColor = (dist: number) => 
   dist > CRITICAL_SEVERITY_DISTANCE ? 'error' :
-    dist > HIGH_SEVERITY_DISTANCE ? 'warning' 
-      : 'success';
+    'warning'
 
 const Row = ({row}: {row: RequestData}) => {
   const [open, setOpen] = useState(false);
+  console.log(row)
   return (
     <>
       <TableRow>
-        <TableCell>
-          <div className='flex justify-center'>
-            {row.geoIP?.geoLocation?.length && row.geoIP.maxDist?.dist
-             && row.geoIP.geoLocation.length > 0 ?
-              <Tooltip
-                title={distanceToTooltipDescription(row.geoIP.maxDist.dist)}
-                placement="top"
-              >
-                <IconButton
-                  aria-label="expand row"
-                  size="small"
-                  color={distanceToSeverityColor(row.geoIP.maxDist.dist)}
-                  onClick={() => setOpen(!open)}
-                >
-                  {/* {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} */}
-                    <LocationOnIcon/>
-                    {/* {row.geoIP.maxDist.dist} */}
-                </IconButton>
-              </Tooltip>
-              : 
-              <Tooltip placement="top" title="No location data for this request">
-                <IconButton>
-                    <LocationOffIcon/>
-                </IconButton>
-              </Tooltip>
-            }
-          </div>
-        </TableCell>
         <TableCell>{row.request['Secret']}</TableCell>
-        <TableCell>{row.request['Src IP']}</TableCell>
         <TableCell>{row.request['URI']}</TableCell>
-        <TableCell>{row.request['Dest IP']}</TableCell>
-        <TableCell>{row.request['Dest Port']}</TableCell>
+        <TableCell>{row.request['Count']}</TableCell>
+        <TableCell>
+          <IconButton aria-label="expand row" onClick={() => setOpen(!open)}>
+            {open ? 
+              <ExpandLess/>
+              : <ExpandMore/>
+            }
+          </IconButton>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
+            <div className='flex justify-center text-lg m-4'>
+              {row.geoIP?.geoLocation?.length && row.geoIP.maxDist
+                && row.geoIP.geoLocation.length > 0 ?
+
+                row.geoIP.maxDist >= HIGH_SEVERITY_DISTANCE ?
+                  <>
+                    <LocationOn color={distanceToSeverityColor(row.geoIP.maxDist)}/>
+                    <p>
+                      {distanceToDescription(row.geoIP.maxDist)}
+                    </p>
+                  </>
+                  : <></>
+                : <></>
+              }
+            </div>
             <TableContainer component={Paper}>
               <Table aria-label="collapsible table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Source IP</TableCell>
-                    <TableCell>Latitude (degrees)</TableCell>
-                    <TableCell>Longitude (degrees)</TableCell>
-                    <TableCell>
-                      <Link href="https://www.iso.org/iso-3166-country-codes.html">
-                        ISO Country Code
-                      </Link>
-                    </TableCell>
+                    <TableCell>Traffic ID</TableCell>
+                    <TableCell>Occurred At</TableCell>
+                    <TableCell>Direction</TableCell>
+                    <TableCell>IP Address</TableCell>
+                    <TableCell>URI</TableCell>
+                    <TableCell>Port</TableCell>
+                    <TableCell>Location (Lat, Long in degrees)</TableCell>
                     <TableCell>Error (km)</TableCell>
+                    <TableCell>
+                      <a href="https://www.iso.org/iso-3166-country-codes.html">
+                        ISO Country Code
+                      </a>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.geoIP?.geoLocation?.map(geoIPDatum => (
-                    <TableRow key={geoIPDatum.src}>
-                      <TableCell>{geoIPDatum.src}</TableCell>
-                      <TableCell>{geoIPDatum.lat}</TableCell>
-                      <TableCell>{geoIPDatum.long}</TableCell>
-                      <TableCell>{geoIPDatum.country}</TableCell>
-                      <TableCell>{geoIPDatum.error}</TableCell>
+                    <TableRow key={geoIPDatum.ipAddr}>
+                      <TableCell>
+                        <span className='truncate' title={geoIPDatum.trafficId}>
+                          {geoIPDatum.trafficId}
+                        </span>
+                      </TableCell>
+                      <TableCell><FormattedDate when={geoIPDatum.occurredAt} /></TableCell>
+                      <TableCell>
+                        <Chip 
+                          color={geoIPDatum.direction == 'src' ? 'primary' : 'secondary'}
+                          label={geoIPDatum.direction === 'src' ? 'Source' : 'Destination'}
+                        />
+                      </TableCell>
+                      <TableCell>{geoIPDatum.ipAddr}</TableCell>
+                      <TableCell>{geoIPDatum.uri}</TableCell>
+                      <TableCell>{geoIPDatum.port}</TableCell>
+                      <TableCell>{geoIPDatum.latitude ? (
+                          <>
+                            <Public className='mr-2'/>
+                            {geoIPDatum.latitude + '° ' + geoIPDatum.longitude + '°'}
+                          </>
+                        ): '-'}</TableCell>
+                      <TableCell>{geoIPDatum.error ?? '-'}</TableCell>
+                      <TableCell>{geoIPDatum.countryCode ?? '-'}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -150,14 +163,13 @@ export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>
       request: {
         id: `${f.data.auth}${JSON.stringify(rq)}`,
         'Secret': f.data.auth,
-        'Src IP': rq.srcIp,
         'URI': rq.URI,
-        'Dest IP': rq.destIp,
-        'Dest Port': rq.destPort,
+        'Count': rq.count,
       },
       geoIP: {
-        geoLocation: f.data.geoIP?.geoLocation.filter(i => i.id === rq.id),
+        geoLocation: f.data.geoIP?.geoLocation,
         maxDist: f.data.geoIP?.maxDist,
+        maxError: f.data.geoIP?.maxError,
       },
     }))
   })
@@ -176,17 +188,15 @@ export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>
       <Table stickyHeader aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell/>
             <TableCell>Secret</TableCell>
-            <TableCell>Src IP</TableCell>
             <TableCell>URI</TableCell>
-            <TableCell>Dest IP</TableCell>
-            <TableCell>Dest Port</TableCell>
+            <TableCell>Count</TableCell>
+            <TableCell/>
           </TableRow>
         </TableHead>
         <TableBody className='overflow-scroll'>
           {data.map((data) => (
-            <Row key={data.request.id} row={data} />
+            <Row key={data.request.Secret} row={data} />
           ))}
         </TableBody>
       </Table>

@@ -49,7 +49,7 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "4.9.4",
     "ulid": "^2.3.0",
-    "zod": "^3.21.4",
+    "zod": "^3.22.3",
     "zod-validation-error": "^1.5.0"
   },
   "devDependencies": {

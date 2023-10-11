@@ -22,7 +22,6 @@ import { summarizeAnalyses } from '@/lib/findings';
 import { EnablementChip } from '@/components/app/EnablementChip/EnablementChip';
 import { TypedFetch } from '@/lib/TypedFetch';
 import { CASTFeaturesListing } from '@/lib/metadata';
-import Link from 'next/link';
 
 const AnalysisGridLoading = () => {
   return (<>

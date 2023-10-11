@@ -115,35 +115,32 @@ export const RequestContext = z.object({
 
 export type RequestContext = z.infer<typeof RequestContext>;
 
-export const LocationDatum = z.object({
-  trafficId: z.string().describe('The traffic id assigned by the collector'),
+export const ReusedAuthRequest = z.object({
+  trafficId: z.string().describe('The traffic ID assigned by the collector'),
+  at: z.string().datetime().describe('The time this request occurred'),
   direction: z.union([
     z.literal('src'), 
     z.literal('dst'),
-  ]).describe('Whether this traffic item is a source or destination ip'),
+  ]).describe('Whether this traffic item is a source or destination IP'),
   ipAddr: z.string().describe('IP address found in request'),
-  latitude: z.number().nullable().describe('Decimal number with WGS84 latitude'),
-  longitude: z.number().nullable().describe('Decimal number with WGS84 longitude'),
-  error: z.number().nullable().describe('Number in kilometers of accuracy radius for geo point'),
-  countryCode: z.string().nullable().describe('Two character country code (ISO 3166-1)'),
+  port: z.string().describe('IP address found in request'),
+  latitude: z.string().optional().describe('Decimal number with WGS84 latitude'),
+  longitude: z.string().optional().describe('Decimal number with WGS84 longitude'),
+  error: z.number().optional().describe('Number in kilometers of accuracy radius for geo point'),
+  countryCode: z.string().optional().describe('Two character country code (ISO 3166-1)'),
 })
 
-export type LocationDatum = z.infer<typeof LocationDatum>;
-
-export const GeoIP = z.object({
-  geoLocation: z.array(LocationDatum), 
-  maxDist: z.number().describe('Distance between two farthest found points in kilometers'),
-  maxError: z.number().describe('Combined accuracy radius for points with max distance'),
-})
-
-export type GeoIP = z.infer<typeof GeoIP>;
+export type ReusedAuthRequest = z.infer<typeof ReusedAuthRequest>;
 
 export const ReusedAuthentication = makeFinding(
   'reused-auth',
   z.object({
     auth: z.string().describe('The identifier for the particular reused authentication'),
-    inRequests: z.array(RequestContext.extend({ count: z.number() })),
-    geoIP: GeoIP.optional(),
+    uri: z.string().describe('The resource URI being accessed, if applicable'),
+    count: z.number().describe('Number of times a resource was accessed with this same secret'),
+    maxDist: z.number().optional().describe('Distance between two farthest found points in kilometers'),
+    maxError: z.number().optional().describe('Combined accuracy radius for points with max distance'),
+    requests: z.array(ReusedAuthRequest), 
   }),
 )
 export type ReusedAuthentication = z.infer<typeof ReusedAuthentication>;

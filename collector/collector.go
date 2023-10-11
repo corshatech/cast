@@ -37,7 +37,6 @@ import (
 )
 
 const (
-	// Strings used for accessing values of environment variables.
 	kubesharkHubURLEnv = "KUBESHARK_HUB_URL"
 	postgresHostEnv    = "PGHOST"
 	postgresPortEnv    = "PGPORT"
@@ -47,12 +46,14 @@ const (
 
 	PoolWorkerNoEnv  = "NUM_WORKERS"
 	WorkerBufSizeEnv = "WORKER_BUF_SIZE"
+)
 
-	// Default values for the collector.
+const (
 	retryAttempts        = 3
 	retryDelay           = 3 * time.Second
 	defaultReadDeadline  = 5 * time.Minute
 	defaultWriteDeadline = 45 * time.Second
+
 	defaultWorkerBufSize = 100
 )
 
@@ -131,6 +132,7 @@ func intEnvOrDefault(env string, def int) int {
 }
 
 func main() {
+
 	var err error
 
 	pgHost := requiredEnv(postgresHostEnv)
@@ -142,20 +144,10 @@ func main() {
 	workerBufSize := intEnvOrDefault(WorkerBufSizeEnv, defaultWorkerBufSize)
 	workerNo := intEnvOrDefault(PoolWorkerNoEnv, defaultPoolWorkerNo)
 
-	logger := log.WithField(kubesharkHubURLEnv, kubesharkHubURL)
-
 	websocketURL, err := hubURLToWebsocketURL(kubesharkHubURL)
 	if err != nil {
-		logger.WithError(err).Fatal("could not determine kubeshark websocket URL")
+		log.WithError(err).WithField(kubesharkHubURLEnv, kubesharkHubURL).Fatal("could not determine kubeshark websocket URL")
 	}
-
-	logger = logger.WithFields(log.Fields{
-		postgresHostEnv: pgHost,
-		postgresPortEnv: pgPort,
-		postgresUserEnv: pgUser,
-		postgresPassEnv: pgPass,
-		dbNameEnv:       dbName,
-	})
 
 	var pgConnection *sql.DB
 	var ksConnection *websocket.Conn
@@ -170,14 +162,16 @@ func main() {
 		retry.Attempts(retryAttempts),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			logger.WithError(err).Infof("#%d: Error connecting to postgres database. Retrying in %v", n, retryDelay)
+			log.Infof("Error connecting to postgres database. Retrying in %v", retryDelay)
 		}),
 	)
 	if err != nil {
-		logger.WithError(err).Fatal("Failed to open postgres database connection.")
+		log.WithFields(log.Fields{
+			"postgres host": pgHost,
+			"postgres port": pgPort,
+			"postgres user": pgUser,
+		}).WithError(err).Fatal("Failed to open postgres database connection.")
 	}
-
-	defer pgConnection.Close()
 
 	// wait for postgres database to be ready before continuing
 	err = retry.Do(
@@ -187,7 +181,7 @@ func main() {
 		retry.Attempts(5),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			logger.WithError(err).Infof("#%d: Unable to reach postgres database. Retrying in %v", n, retryDelay)
+			log.Infof("Unable to reach postgres database. Retrying in %v", retryDelay)
 		}),
 	)
 	if err != nil {
@@ -205,7 +199,7 @@ func main() {
 		retry.Attempts(retryAttempts),
 		retry.Delay(retryDelay),
 		retry.OnRetry(func(n uint, err error) {
-			logger.WithError(err).Infof("$%d: Error connecting to kubeshark websocket. Retrying in %v", n, retryDelay)
+			log.Infof("Error connecting to kubeshark websocket. Retrying in %v", retryDelay)
 		}),
 	)
 	if err != nil {
@@ -214,9 +208,9 @@ func main() {
 		log.Info("Established connection to kubeshark database.")
 	}
 
-	defer ksConnection.Close()
-
 	log.Info("Collector is ready to export records.")
+	defer pgConnection.Close()
+	defer ksConnection.Close()
 
 	ctx := context.Background()
 
@@ -321,7 +315,7 @@ func hubURLToWebsocketURL(hubURL string) (string, error) {
 		return "", fmt.Errorf("could not parse Kubeshark Hub URL: %w", err)
 	}
 
-	// Lint disabled because a constant would not mean the same
+	// Lint disabled because it the constant would not mean the same
 	// thing and the two strings are only used here.
 	//
 	// nolint:goconst

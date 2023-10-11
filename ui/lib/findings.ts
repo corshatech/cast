@@ -256,7 +256,7 @@ export function summarizeAnalyses(analyses: Analysis[]): AnalysesSummary {
     if (analysis.id === 'reused-auth') {
       findings +=
         analysis.findings.reduce(
-          (acc, curr) => (acc += curr.data.inRequests.length),
+          (acc, curr) => (acc += curr.data.requests.length),
           0,
         ) - analysis.findings.length;
     }

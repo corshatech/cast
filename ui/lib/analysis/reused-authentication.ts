@@ -70,15 +70,15 @@ WITH traffic_locations AS (
     latitude,
     longitude,
     occurred_at,
-	  accuracy_radius AS error,
+    accuracy_radius AS error,
     country_iso_code AS country_code
 	FROM matview_traffic_ips 
 	LEFT JOIN (
 		SELECT
       id,
       occurred_at,
-      data->'request'->>'absoluteURI' as uri,
-      data->'src'->>'port' as port,
+      data->'request'->>'absoluteURI' AS uri,
+      data->'src'->>'port' AS port,
       data->'request'->'headers'->>'Authorization' AS auth
 		FROM traffic 
 		WHERE data->'request'->'headers'->>'Authorization' = ANY($1)
@@ -101,7 +101,7 @@ max_distances AS (
 )
 
 -- Find error for maxes and join with all traffic data
-select * from traffic_locations
+SELECT * FROM traffic_locations
 FULL JOIN(
 	SELECT DISTINCT 
 		traffic_distances.auth AS max_auth,
@@ -117,8 +117,8 @@ FULL JOIN(
 			) / 1000 AS dist -- Distance in km
 		FROM traffic_locations t1, traffic_locations t2
 	) traffic_distances
-	JOIN max_distances ON traffic_distances.dist = max_distances.dist and max_distances.auth = traffic_distances.auth
-) max_data on false
+	JOIN max_distances ON traffic_distances.dist = max_distances.dist AND max_distances.auth = traffic_distances.auth
+) max_data ON FALSE
 `
 
 interface ReusedAuthRow {

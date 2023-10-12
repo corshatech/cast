@@ -29,24 +29,40 @@ import (
 // this URL must correspond with a public Jenkins instance.
 const jenkinsTLDEnv = "JENKINS_TLD"
 
-type UserData struct {
-	Class string `json:"_class"`
-	Users []struct {
-		LastChange int64 `json:"lastChange"`
-		Project    struct {
-			Class    string `json:"_class"`
-			FullName string `json:"fullName"`
-			URL      string `json:"url"`
-		} `json:"project"`
-		User struct {
-			FullName string `json:"fullName"`
-			ID       string `json:"id"`
-			Property []struct {
-				Class   string `json:"_class"`
-				Address string `json:"address,omitempty"`
-			} `json:"property"`
-		} `json:"user"`
-	} `json:"users"`
+// Project contains information about the last project/repository that a User has contributed to.
+type Project struct {
+	Class    string `json:"_class"`
+	FullName string `json:"fullName"`
+	URL      string `json:"url"`
+}
+
+// UserProperty contains any property information regarding a specific User.
+// New fields must be added here if we want to capture property values for any additional
+// properties going forward.
+type UserProperty struct {
+	Class   string `json:"_class"`
+	Address string `json:"address,omitempty"`
+}
+
+// User contains the metadata and properties of a user account.
+type User struct {
+	FullName   string         `json:"fullName"`
+	ID         string         `json:"id"`
+	Properties []UserProperty `json:"property"`
+}
+
+// UserActivity contains information about each User associated with the Jenkins instance,
+// as well as information about the user's most recent code change.
+type UserActivity struct {
+	LastChange int64   `json:"lastChange"`
+	Project    Project `json:"project"`
+	User       User    `json:"user"`
+}
+
+// Data contains all the information returned from the Jenkins instance regarding its users.
+type Data struct {
+	Class string         `json:"_class"`
+	Users []UserActivity `json:"users"`
 }
 
 func main() {
@@ -82,7 +98,7 @@ func main() {
 	}
 	log.Debugf("response body: %s", resBody)
 
-	var data UserData
+	var data Data
 	if err := json.Unmarshal(resBody, &data); err != nil {
 		log.WithError(err).Fatal("could not unmarshal user data")
 	}

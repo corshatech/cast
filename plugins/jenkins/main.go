@@ -115,7 +115,7 @@ func main() {
 		log.WithError(err).Fatal("could not unmarshal user data")
 	}
 
-	log.Infof("Jenkins user data: %+v", data)
+	log.Debugf("Jenkins user data: %+v", data)
 
 	log.WithField("resultsLength", len(data.Users)).Info("Scan completed. Skipping writing results to CAST DB...")
 	log.Info("Done.")

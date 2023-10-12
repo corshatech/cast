@@ -464,7 +464,7 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
                       aria-rowindex="2"
                       aria-selected="false"
                       class="MuiDataGrid-row"
-                      data-id="test-data-auth{"at":"2023-01-17T13:12:00.000Z","destIp":"1.1.1.1","destPort":"20","proto":"tcp","srcIp":"2.2.2.2","srcPort":"5129","URI":"https://example.com","count":1}"
+                      data-id="test-data-auth{"at":"2023-01-17T13:12:00.000Z","trafficId":"1","direction":"src","ipAddr":"1.1.1.1","port":"20"}"
                       data-rowindex="0"
                       role="row"
                       style="max-height: 52px; min-height: 52px;"
@@ -498,9 +498,9 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
                       >
                         <div
                           class="MuiDataGrid-cellContent"
-                          title="2.2.2.2"
+                          title="1.1.1.1"
                         >
-                          2.2.2.2
+                          1.1.1.1
                         </div>
                       </div>
                       <div
@@ -525,7 +525,7 @@ exports[`ReusedAuthenticationCard renders all passed props 1`] = `
                       aria-rowindex="3"
                       aria-selected="false"
                       class="MuiDataGrid-row MuiDataGrid-row--lastVisible"
-                      data-id="test-data-auth{"at":"2023-01-17T13:12:00.000Z","destIp":"1.1.1.1","destPort":"20","proto":"tcp","srcIp":"1.1.1.1","srcPort":"5129","URI":"https://example.com","count":1}"
+                      data-id="test-data-auth{"at":"2023-01-17T13:12:00.000Z","trafficId":"2","direction":"src","ipAddr":"1.1.1.1","port":"20"}"
                       data-rowindex="1"
                       role="row"
                       style="max-height: 52px; min-height: 52px;"

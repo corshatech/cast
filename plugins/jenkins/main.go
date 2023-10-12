@@ -18,6 +18,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -79,10 +80,12 @@ func main() {
 
 	// See this article for more details on the tree parameter:
 	// https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree
-	requestURL, err := url.JoinPath(tld, "/asynchPeople/api/json?tree=users[lastChange,project[fullName,url],user[id,fullName,absoluteURL,property[_class,address]{,15}]]")
+	requestBaseURL, err := url.JoinPath(tld, "/asynchPeople/api/json")
 	if err != nil {
 		log.WithError(err).Fatal("Failed to build request URL")
 	}
+
+	requestURL := fmt.Sprintf("%s?%s", requestBaseURL, "tree=users[lastChange,project[fullName,url],user[id,fullName,absoluteURL,property[_class,address]{,15}]]")
 
 	log.WithField("requestURL", requestURL).Info("Successfully built URL to fetch Jenkins user data")
 

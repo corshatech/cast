@@ -80,7 +80,7 @@ const RequestsTable = ({row}: {row: RequestData}) => (
             <TableCell><FormattedDate when={request.at} /></TableCell>
             <TableCell>
               <Chip 
-                color={request.direction == 'src' ? 'primary' : 'secondary'}
+                color={request.direction === 'src' ? 'primary' : 'secondary'}
                 label={request.direction === 'src' ? 'Source' : 'Destination'}
               />
             </TableCell>
@@ -90,7 +90,7 @@ const RequestsTable = ({row}: {row: RequestData}) => (
             <TableCell>{request.latitude ? (
                 <>
                   <Public className='mr-2'/>
-                  {request.latitude + '° ' + request.longitude + '°'}
+                  {`${request.latitude}° ${request.longitude}°`}
                 </>
               ): '-'}</TableCell>
             <TableCell>{request.error ?? '-'}</TableCell>
@@ -111,7 +111,7 @@ const Row = ({row}: {row: RequestData}) => {
         <TableCell>{row['URI']}</TableCell>
         <TableCell>{row['Count']}</TableCell>
         <TableCell>
-          <IconButton aria-label="expand row" onClick={() => setOpen(!open)}>
+          <IconButton aria-label="expand row" onClick={() => setOpen((isOpen) => !isOpen)}>
             {open ? 
               <ExpandLess/>
               : <ExpandMore/>

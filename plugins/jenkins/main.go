@@ -59,7 +59,7 @@ func main() {
 	// https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree
 	requestURL := fmt.Sprintf("%s/asynchPeople/api/json?tree=users[lastChange,project[fullName,url],user[id,fullName,absoluteURL,property[_class,address]{,15}]]", tld)
 
-	log.WithField("requestURL", requestURL).Info("here is the request URL")
+	log.WithField("requestURL", requestURL).Info("Successfully built URL to fetch Jenkins user data")
 
 	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
 	if err != nil {
@@ -76,19 +76,17 @@ func main() {
 	}
 	defer res.Body.Close()
 
-	log.Info("got response!")
-	log.Infof("got status code: %d", res.StatusCode)
-
 	resBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.WithError(err).Fatal("could not read response body")
 	}
-	log.Infof("response body: %s", resBody)
+	log.Debugf("response body: %s", resBody)
 
 	var data UserData
 	if err := json.Unmarshal(resBody, &data); err != nil {
-		log.WithError(err).Fatal("could not read response body")
+		log.WithError(err).Fatal("could not unmarshal user data")
 	}
+
 	log.Infof("Jenkins user data: %+v", data)
 
 	log.WithField("resultsLength", len(data.Users)).Info("Scan completed. Skipping writing results to CAST DB...")

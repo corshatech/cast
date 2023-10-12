@@ -11,6 +11,23 @@
 
 import type { NextApiResponse } from 'next';
 
+import { z } from 'zod';
+
 export { default as logger } from './logger';
 
+/**
+ * Glues the given API response type with a permitted `{ error: string }`
+ * type. This allows API responses to be typesafe, but also permitting all
+ * responses to send the given error shape as well.
+ *
+ * Consolidating this behavior in TypedAPIResponse allows us to change the
+ * given error type (or alter CAST api response types) globally, typesafe-ly,
+ * as long as all CAST routes use this type as the response type.
+ */
 export type TypedAPIResponse<T> = NextApiResponse<T | { error: string }>;
+
+export const GeneralOperationResponse = z.union([
+   z.object({success: z.literal(true)}),
+   z.object({success: z.literal(false).optional(), error: z.string()}),
+]);
+export type GeneralOperationResponse = z.infer<typeof GeneralOperationResponse>;

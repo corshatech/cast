@@ -31,17 +31,19 @@ CREATE TABLE IF NOT EXISTS plugins_findings (
 );
 
 CREATE TABLE IF NOT EXISTS feodo_banlist (
-  ip_address text PRIMARY KEY NOT NULL,
+  id decimal PRIMARY KEY,
+  ip_address text NOT NULL,
   country text,
   first_seen timestamp,
   last_online timestamp,
   malware text
 );
 
--- Schema provided by Maxmind:
+-- Schemas provided by Maxmind:
 -- https://dev.maxmind.com/geoip/importing-databases/postgresql
+
 CREATE TABLE IF NOT EXISTS geo_ip_data (
-  network cidr not null,
+  network cidr NOT NULL,
   geoname_id int,
   registered_country_geoname_id int,
   represented_country_geoname_id int,
@@ -53,7 +55,52 @@ CREATE TABLE IF NOT EXISTS geo_ip_data (
   accuracy_radius int
 );
 
+CREATE TABLE geo_location_data (
+  geoname_id int NOT NULL,
+  locale_code text NOT NULL,
+  continent_code text NOT NULL,
+  continent_name text NOT NULL,
+  country_iso_code text,
+  country_name text,
+  subdivision_1_iso_code text,
+  subdivision_1_name text,
+  subdivision_2_iso_code text,
+  subdivision_2_name text,
+  city_name text,
+  metro_code int,
+  time_zone text,
+  is_in_european_union bool NOT NULL,
+  PRIMARY KEY (geoname_id, locale_code)
+);
+
 CREATE INDEX IF NOT EXISTS idx_traffic_data ON traffic USING gin (data);
 CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'));
 CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'), (data->'src'));
 CREATE INDEX IF NOT EXISTS idx_geo_ip_data_network ON geo_ip_data USING gist (network inet_ops);
+
+CREATE MATERIALIZED VIEW matview_traffic_ips AS
+    SELECT
+        id AS traffic_id,
+        'src' AS direction,
+        data->'src'->>'ip' AS ip_addr
+    FROM traffic
+    UNION
+    SELECT
+        id AS traffic_id,
+        'dst' AS direction,
+        data->'dst'->>'ip' AS ip_addr
+    FROM traffic
+    UNION
+    (SELECT
+        id AS traffic_id,
+        'src' AS direction,
+        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Forwarded-For', ',')), '"[] ') AS ip_addr
+    FROM traffic
+    WHERE data->'request'->'headers'->>'X-Forwarded-For' IS NOT NULL)
+    UNION
+    (SELECT
+        id AS traffic_id,
+        'src' AS direction,
+        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Real-Ip', ',')), '"[] ') AS ip_addr
+    FROM traffic
+    WHERE data->'request'->'headers'->>'X-Real-Ip' IS NOT NULL);

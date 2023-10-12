@@ -16,18 +16,24 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
-// For now, since authentication has not been implemented for hitting the Jenkins instance,
-// this URL must correspond with a public Jenkins instance.
-const jenkinsTLDEnv = "JENKINS_TLD"
+const (
+	// For now, since authentication has not been implemented for hitting the Jenkins instance,
+	// this URL must correspond with a public Jenkins instance.
+	jenkinsTLDEnv = "JENKINS_TLD"
+
+	requestTimeout = 2 * time.Minute
+)
 
 // Project contains information about the last project/repository that a User has contributed to.
 type Project struct {
@@ -80,7 +86,10 @@ func main() {
 
 	log.WithField("requestURL", requestURL).Info("Successfully built URL to fetch Jenkins user data")
 
-	req, err := http.NewRequest(http.MethodGet, requestURL, nil)
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, requestURL, nil)
 	if err != nil {
 		log.WithError(err).Fatal("Failed to create HTTP request")
 	}

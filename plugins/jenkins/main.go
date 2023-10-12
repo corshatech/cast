@@ -55,6 +55,8 @@ func main() {
 		log.Fatalf("Required environment variable %s is not set!", jenkinsTLDEnv)
 	}
 
+	// See this article for more details on the tree parameter:
+	// https://www.cloudbees.com/blog/taming-jenkins-json-api-depth-and-tree
 	requestURL := fmt.Sprintf("%s/asynchPeople/api/json?tree=users[lastChange,project[fullName,url],user[id,fullName,absoluteURL,property[_class,address]{,15}]]", tld)
 
 	log.WithField("requestURL", requestURL).Info("here is the request URL")

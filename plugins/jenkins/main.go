@@ -94,7 +94,7 @@ func main() {
 		log.WithError(err).Fatal("Failed to create HTTP request")
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
 
 	// TODO: Set up authentication on the request to hit a non-public Jenkins instance
 

@@ -12,6 +12,10 @@
 import { z } from 'zod';
 import { logger } from './internal';
 
+// Severity of geoip distance in kilometers
+export const CRITICAL_SEVERITY_DISTANCE = 1000;
+export const HIGH_SEVERITY_DISTANCE = 100;
+
 /** A human-readable string which accepts Markdown */
 export type MDString = string;
 
@@ -100,7 +104,6 @@ export function makeFinding<
 }
 
 export const RequestContext = z.object({
-  id: z.string().optional().describe('The traffic id assigned by the collector'),
   srcIp: z.string().ip().describe('The source IP address'),
   srcPort: z.string().regex(/[0-9]+/).describe('The source port number'),
   proto: z.union([

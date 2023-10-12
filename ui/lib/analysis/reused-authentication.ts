@@ -11,7 +11,7 @@
 
 import { Analysis, Finding, IFinding } from '../../lib/findings';
 import { conn } from '../../lib/db';
-import { CRITICAL_SEVERITY_DISTANCE, HIGH_SEVERITY_DISTANCE } from '@/components/app/Analysis/ReusedAuthenticationCard';
+import { CRITICAL_SEVERITY_DISTANCE, HIGH_SEVERITY_DISTANCE } from '@/lib/findings';
 
 const reusedAuthQuery = `
 SELECT

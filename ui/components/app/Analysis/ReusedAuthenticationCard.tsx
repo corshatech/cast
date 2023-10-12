@@ -22,16 +22,18 @@ import {
   Paper,
 } from '@mui/material';
 
-import { AnalysisOf, ReusedAuthRequest, ReusedAuthentication } from '@/lib/findings';
+import { 
+  AnalysisOf, 
+  CRITICAL_SEVERITY_DISTANCE,
+  HIGH_SEVERITY_DISTANCE, 
+  ReusedAuthRequest, 
+  ReusedAuthentication, 
+} from '@/lib/findings';
 
 import { AnalysisCard, CsvExportButton } from './core';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
-
-// Severity of geoip distance in kilometers
-export const CRITICAL_SEVERITY_DISTANCE = 1000;
-export const HIGH_SEVERITY_DISTANCE = 100;
 
 type InRequestRow = {
   id: string;

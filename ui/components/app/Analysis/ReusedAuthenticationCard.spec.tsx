@@ -30,24 +30,21 @@ describe('ReusedAuthenticationCard', () => {
         severity: 'high',
         data: {
           auth: 'test-data-auth',
-          inRequests: [{
+          uri: 'https://example.com',
+          count: 1,
+          requests: [{
             at: reportedAt,
-            destIp: '1.1.1.1',
-            destPort: '20',
-            proto: 'tcp',
-            srcIp: '2.2.2.2',
-            srcPort: '5129',
-            URI: 'https://example.com',
-            count: 1,
-          }, {
+            trafficId: '1',
+            direction: 'src',
+            ipAddr: '1.1.1.1',
+            port: '20',
+          }, 
+          {
             at: reportedAt,
-            destIp: '1.1.1.1',
-            destPort: '20',
-            proto: 'tcp',
-            srcIp: '1.1.1.1',
-            srcPort: '5129',
-            URI: 'https://example.com',
-            count: 1,
+            trafficId: '2',
+            direction: 'src',
+            ipAddr: '1.1.1.1',
+            port: '20',
           }],
         },
       }]}

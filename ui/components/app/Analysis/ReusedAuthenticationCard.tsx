@@ -33,13 +33,14 @@ export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>
   ...otherProps
 }) => {
   const data = (findings ?? []).flatMap((f) => (
-    f.data.inRequests.map((rq) => ({
+    /* This will be updated with CAST-209: https://github.com/corshatech/cast/pull/111 */
+    f.data.requests.map((rq) => ({
       id: `${f.data.auth}${JSON.stringify(rq)}`,
       'Secret': f.data.auth,
-      'Src IP': rq.srcIp,
-      'URI': rq.URI,
-      'Dest IP': rq.destIp,
-      'Dest Port': rq.destPort,
+      'Src IP': rq.ipAddr,
+      'URI': f.data.uri,
+      'Dest IP': rq.ipAddr,
+      'Dest Port': rq.port,
     }))
   ))
   return <AnalysisCard

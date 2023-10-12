@@ -10,24 +10,19 @@ const analysis1: Analysis = {
     {
       type: 'reused-auth',
       name: 'Broken Authentication: Reused Authorization',
-      occurredAt: {
-        start: '2023-01-01T13:12:01.000Z',
-        end: '2023-01-01T13:12:05.000Z',
-      },
       detectedAt: '2023-01-17T13:12:00.000Z',
       severity: 'high',
       data: {
         auth: 'auth-header-1',
-        inRequests: [
+        count: 1,
+        uri: '/uri-1',
+        requests: [
           {
-            srcIp: '192.168.2.0',
-            srcPort: '8080',
-            proto: 'tcp',
-            destIp: '192.168.2.100',
-            destPort: '8080',
-            URI: '/uri-1',
             at: '2023-01-01T13:12:01.000Z',
-            count: 1,
+            trafficId: '1',
+            ipAddr: '192.168.2.0',
+            direction: 'src',
+            port: '8080',
           },
         ],
       },
@@ -35,24 +30,19 @@ const analysis1: Analysis = {
     {
       type: 'reused-auth',
       name: 'Broken Authentication: Reused Authorization',
-      occurredAt: {
-        start: '2023-01-01T13:12:02.000Z',
-        end: '2023-01-01T13:12:07.000Z',
-      },
       detectedAt: '2023-01-17T13:12:00.000Z',
       severity: 'high',
       data: {
         auth: 'auth-header-1',
-        inRequests: [
+        count: 1,
+        uri: '/uri-1',
+        requests: [
           {
-            srcIp: '192.168.3.0',
-            srcPort: '8080',
-            proto: 'tcp',
-            destIp: '192.168.2.100',
-            destPort: '8080',
-            URI: '/uri-1',
             at: '2023-01-01T13:12:01.000Z',
-            count: 1,
+            trafficId: '2',
+            ipAddr: '192.168.3.0',
+            direction: 'src',
+            port: '8080',
           },
         ],
       },
@@ -60,7 +50,7 @@ const analysis1: Analysis = {
   ],
 };
 
-const runner1 = (): Promise<Analysis> => Promise.resolve(analysis1);
+const runner1 = (): Promise<Analysis[]> => Promise.resolve([analysis1]);
 
 const analysis2: Analysis = {
   id: 'reused-auth',
@@ -72,24 +62,19 @@ const analysis2: Analysis = {
     {
       type: 'reused-auth',
       name: 'Broken Authentication: Reused Authorization',
-      occurredAt: {
-        start: '2023-01-01T13:12:01.000Z',
-        end: '2023-01-01T13:12:05.000Z',
-      },
       detectedAt: '2023-01-17T13:12:00.000Z',
       severity: 'high',
       data: {
         auth: 'auth-header-1',
-        inRequests: [
+        count: 1,
+        uri: '/uri-1',
+        requests: [
           {
-            srcIp: '192.168.2.0',
-            srcPort: '8080',
-            proto: 'tcp',
-            destIp: '192.168.2.100',
-            destPort: '8080',
-            URI: '/uri-1',
             at: '2023-01-01T13:12:01.000Z',
-            count: 1,
+            trafficId: '3',
+            ipAddr: '192.168.2.0',
+            direction: 'src',
+            port: '8080',
           },
         ],
       },
@@ -106,7 +91,7 @@ const passedAnalysis: Analysis = {
   findings: [],
 };
 
-const runner2 = (): Promise<Analysis> => Promise.resolve(analysis2);
+const runner2 = (): Promise<Analysis[]> => Promise.resolve([analysis2]);
 
 test('runAllFindings runs all findings', async () => {
   const results = await runAllAnalyses([runner1, runner2]);

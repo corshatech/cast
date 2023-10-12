@@ -96,6 +96,22 @@ kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-t
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token4" -H "X-Forwarded-For: 8.8.8.8" -H "X-Real-Ip: 5.5.5.5" "${svc}/headers?q=1"
 kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer cool-token5" -H "X-Real-Ip: 6.6.6.6,7.7.7.7" "${svc}/headers?q=1"
 
+# 4 Reused Auth: GeoIP
+# Anchor Point
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token1" -H "X-Forwarded-For: 2.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token2" -H "X-Forwarded-For: 2.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 2.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 2.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+# <100km from Anchor
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token1" -H "X-Forwarded-For: 2.3.7.0" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 2.3.7.0" "${svc}/headers?q=1&geo_ip=true"
+# >100km <1000km from Anchor
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token2" -H "X-Forwarded-For: 2.4.6.8" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 2.4.6.8" "${svc}/headers?q=1&geo_ip=true"
+# >1000km from Anchor
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 3.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 3.3.3.3" "${svc}/headers?q=1&geo_ip=true"
+
 ########
 # SLOWLY INSERTED DATA BLOCK
 #

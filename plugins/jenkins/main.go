@@ -99,7 +99,7 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
-	// TODO: Set up authentication on the request to hit a non-public Jenkins instance
+	// TODO(STR-5415): Set up authentication on the request to hit a non-public Jenkins instance
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

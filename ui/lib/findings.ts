@@ -12,6 +12,10 @@
 import { z } from 'zod';
 import { logger } from './internal';
 
+// Severity of geoip distance in kilometers
+export const CRITICAL_SEVERITY_DISTANCE = 1000;
+export const HIGH_SEVERITY_DISTANCE = 100;
+
 /** A human-readable string which accepts Markdown */
 export type MDString = string;
 

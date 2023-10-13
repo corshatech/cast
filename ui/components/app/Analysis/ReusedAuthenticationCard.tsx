@@ -9,40 +9,155 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import React from 'react';
-import {
-  DataGrid,
-  GridColDef,
-} from '@mui/x-data-grid';
+import React, { useState } from 'react';
+import { LocationOn, Public, ExpandLess, ExpandMore } from '@mui/icons-material';
+import { 
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 
-import { AnalysisOf, ReusedAuthentication } from '@/lib/findings';
+import { 
+  AnalysisOf, 
+  CRITICAL_SEVERITY_DISTANCE,
+  HIGH_SEVERITY_DISTANCE, 
+  ReusedAuthRequest, 
+  ReusedAuthentication, 
+} from '@/lib/findings';
 
 import { AnalysisCard, CsvExportButton } from './core';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import { FormattedDate } from '@/components/atoms/FormattedDate';
 
-const columns: GridColDef[] = [
-  { field: 'Secret', headerName: 'Secret', width: 400 },
-  { field: 'Src IP', headerName: 'Src IP' },
-  { field: 'URI', headerName: 'URI', width: 400 },
-  { field: 'Dest IP', headerName: 'Dest IP' },
-  { field: 'Dest Port', headerName: 'Dest Port' },
-];
+type InRequestRow = {
+  id: string;
+  'Secret': string;
+  'URI': string | undefined;
+  'Count': number;
+  maxDist: number | undefined;
+  maxError: number | undefined;
+}
+
+type RequestData = InRequestRow & { requests: ReusedAuthRequest[] };
+
+const distanceToDescription = (dist: number) => (
+  dist > CRITICAL_SEVERITY_DISTANCE ? 'Requests found at least 1000km apart' :
+    'Requests found at least 100km apart'
+)
+
+const distanceToSeverityColor = (dist: number) => 
+  dist > CRITICAL_SEVERITY_DISTANCE ? 'error' :
+    'warning'
+
+const RequestsTable = ({row}: {row: RequestData}) => (
+  <TableContainer sx={{border: 1, borderColor: '#e5e7eb', borderRadius: '4px'}} component={Paper}>
+    <Table sx={{padding: 4}} aria-label="collapsible table">
+      <TableHead>
+        <TableRow>
+          <TableCell>Traffic ID</TableCell>
+          <TableCell>Occurred At</TableCell>
+          <TableCell>Direction</TableCell>
+          <TableCell>IP Address</TableCell>
+          <TableCell>URI</TableCell>
+          <TableCell>Port</TableCell>
+          <TableCell>Location (Lat, Long in degrees)</TableCell>
+          <TableCell>Error (km)</TableCell>
+          <TableCell>ISO Country Code</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {row.requests.map(request => (
+          <TableRow key={request.trafficId + request.ipAddr}>
+            <TableCell title={request.trafficId}>
+              {request.trafficId}
+            </TableCell>
+            <TableCell><FormattedDate when={request.at} /></TableCell>
+            <TableCell>
+              <Chip 
+                color={request.direction === 'src' ? 'primary' : 'secondary'}
+                label={request.direction === 'src' ? 'Source' : 'Destination'}
+              />
+            </TableCell>
+            <TableCell>{request.ipAddr}</TableCell>
+            <TableCell>{row.URI}</TableCell>
+            <TableCell>{request.port}</TableCell>
+            <TableCell>{request.latitude ? (
+                <>
+                  <Public className='mr-2'/>
+                  {`${request.latitude}° ${request.longitude}°`}
+                </>
+              ): '-'}</TableCell>
+            <TableCell>{request.error ?? '-'}</TableCell>
+            <TableCell>{request.countryCode ?? '-'}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
+)
+
+const Row = ({row}: {row: RequestData}) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <TableRow>
+        <TableCell>{row['Secret']}</TableCell>
+        <TableCell>{row['URI']}</TableCell>
+        <TableCell>{row['Count']}</TableCell>
+        <TableCell>
+          <IconButton aria-label="expand row" onClick={() => setOpen((isOpen) => !isOpen)}>
+            {open ? 
+              <ExpandLess/>
+              : <ExpandMore/>
+            }
+          </IconButton>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell sx={{ padding: 0 }} colSpan={9}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <div className='p-4'>
+              {row.maxDist && row.maxDist >= HIGH_SEVERITY_DISTANCE &&
+                <>
+                  <p className='flex items-center justify-center text-lg mb-4'>
+                    <LocationOn color={distanceToSeverityColor(row.maxDist)}/>
+                    {distanceToDescription(row.maxDist)}
+                  </p>
+                </>
+              }
+              <RequestsTable row={row}/>
+            </div>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+    
+  )
+}
 
 export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>> = ({
   findings,
   reportedAt,
   ...otherProps
 }) => {
-  const data = (findings ?? []).flatMap((f) => (
-    /* This will be updated with CAST-209: https://github.com/corshatech/cast/pull/111 */
-    f.data.requests.map((rq) => ({
-      id: `${f.data.auth}${JSON.stringify(rq)}`,
+  const data: RequestData[] = (findings ?? []).flatMap((f) => {
+    return ({
+      id: `${f.data.auth}${JSON.stringify(f.data.requests)}`,
       'Secret': f.data.auth,
-      'Src IP': rq.ipAddr,
       'URI': f.data.uri,
-      'Dest IP': rq.ipAddr,
-      'Dest Port': rq.port,
-    }))
-  ))
+      'Count': f.data.count,
+      maxDist: f.data.maxDist,
+      maxError: f.data.maxError,
+      requests: f.data.requests,
+    })
+  })
+  
   return <AnalysisCard
     reportedAt={reportedAt}
     exportButton={<CsvExportButton
@@ -53,13 +168,22 @@ export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>
     {...otherProps}
     noResults={data.length === 0}
   >
-    <div style={{height: '400px', width: '100%'}}>
-    <DataGrid
-      rows={data}
-      columns={columns}
-      pageSize={10}
-      rowsPerPageOptions={[10]}
-    />
-    </div>
+    <TableContainer sx={{ maxHeight: 400, border: 1, borderColor: '#e5e7eb', borderRadius: '4px' }}>
+      <Table stickyHeader aria-label="collapsible table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Secret</TableCell>
+            <TableCell>URI</TableCell>
+            <TableCell>Count</TableCell>
+            <TableCell/>
+          </TableRow>
+        </TableHead>
+        <TableBody className='overflow-scroll'>
+          {data.map((data) => (
+            <Row key={data.Secret} row={data} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   </AnalysisCard>
 }

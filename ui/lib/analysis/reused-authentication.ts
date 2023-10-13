@@ -9,13 +9,14 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, Finding, ReusedAuthentication } from '../../lib/findings';
+import { Analysis, Finding, IFinding } from '../../lib/findings';
 import { conn } from '../../lib/db';
+import { CRITICAL_SEVERITY_DISTANCE, HIGH_SEVERITY_DISTANCE } from '@/lib/findings';
 
 const reusedAuthQuery = `
 SELECT
   reused.auth,
-  srcCount.count,
+  srcCount.count::integer,
   sampleRequest.uri
 FROM
 
@@ -176,10 +177,17 @@ function rowsToFinding(detectedAt: string, reusedAuthRow: ReusedAuthRow, request
     }]
   })
 
+  const severity: IFinding['severity'] = 
+    maxDist && maxDist >= HIGH_SEVERITY_DISTANCE ?
+      maxDist >= CRITICAL_SEVERITY_DISTANCE ?
+        'critical'
+      : 'high'
+    : 'medium';
+
   return {
     type: 'reused-auth',
     name: 'Broken Authentication: Reused Authorization',
-    severity: 'medium',
+    severity,
     detectedAt,
     data: {
       auth,
@@ -220,7 +228,12 @@ export async function runnerPure(
       'evidence of stolen credentials. Make use of short-lived, per-device ' + 
       'credentials and ensure they are not shared across sessions, ' +
       'workloads, or devices.',
-    severity: 'medium',
+    severity: 
+      findings.some(finding => finding.severity === 'high') ?
+        findings.some(finding => finding.severity === 'critical') ?
+          'critical'
+        : 'high'
+      : 'medium',
     reportedAt,
     findings,
     weaknessLink: 'https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/',

@@ -85,7 +85,7 @@ test('runner works', async () => {
         type: 'reused-auth',
         name: 'Broken Authentication: Reused Authorization',
         detectedAt: '2023-01-17T13:12:00.000Z',
-        severity: 'medium',
+        severity: 'critical',
         data: {
           count: 2,
           maxDist: 16705.07713397242,
@@ -152,7 +152,7 @@ test('runner works', async () => {
         },
         detectedAt: '2023-01-17T13:12:00.000Z',
         name: 'Broken Authentication: Reused Authorization',
-        severity: 'medium',
+        severity: 'critical',
         type: 'reused-auth',
       },
     ],

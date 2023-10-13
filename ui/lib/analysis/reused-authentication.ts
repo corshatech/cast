@@ -187,7 +187,7 @@ function rowsToFinding(detectedAt: string, reusedAuthRow: ReusedAuthRow, request
   return {
     type: 'reused-auth',
     name: 'Broken Authentication: Reused Authorization',
-    severity: severity,
+    severity,
     detectedAt,
     data: {
       auth,

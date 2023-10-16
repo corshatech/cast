@@ -11,29 +11,38 @@ to [enable
 Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
 support within Docker Desktop.
 
-Our development tooling assumes that you have downloaded the [Kubeshark 
-helm chart](https://corshatech.github.io/cast/kubeshark-41.6.tgz) and that the 
-[Kubeshark binary](https://docs.kubeshark.co/en/install) is installed and 
-in your PATH.
+### Prerequisites
 
-You will need to add the Bitnami Helm repo in order to deploy cast
-using Skaffold
+To work with the dev environment, you will need all of these files and tools:
+1. Docker + Kubernetes.
+    > **Note**
+    > We assume you will be working using Docker Desktop, with the preinstalled Docker Desktop + Kubernetes support. [You can install Docker from here](https://www.docker.com/products/docker-desktop/) and enable the Kubernetes integration directly within Docker Desktop. Other setups which create a Docker-compatible local environment plus K8s may work, but we only officially test development workflows on Docker Desktop.
+2. Helm
+    > We assume that Helm 3 is installed and available as `helm`. You can install Helm by [following Helm's install instructions](https://helm.sh/docs/intro/install/).
+2. Skaffold
+    > Skaffold is used for automating a development-mode deployment of CAST's components, and for working with CAST's Helm charts locally. [You can install Skaffold from here](https://skaffold.dev).
+3. Kubeshark (v 41.6)
+    > At the time of writing we support Kubeshark at exactly version 41.6. While the CAST CLI tool will download and manage a user's Kubeshark for itself, our development scripts using Skaffold assume Kubeshark is installed system-wide. Please download and install [the appropriate Kubeshark CLI tool from here](https://github.com/kubeshark/kubeshark/releases/tag/41.6) and make sure that when you do `kubeshark version` at the command line, it is exactly 41.6.
+4. Kubeshark's Helm Chart for 41.6
+    > At the time of writing, our development deployment script requires you to download the Kubeshark 41.6 Helm Chart as a .tgz file. [Please download this exact copy of the Helm chart](https://github.com/corshatech/cast/raw/gh-pages/kubeshark-41.6.tgz). The file can be placed anywhere on your system; you will need read access to it from scripts. Make a note of where you saved it, you will need the chart's full path to start the dev environment.
+5. The Bitnami helm repo
+    > The script we've written which injects test data into the CAST system assumes the Bitnami Helm repo is preconfigured, and called `bitnami`. You can set this up with the following command, which only needs to be run once:
+    > ```bash
+    > helm repo add bitnami https://charts.bitnami.com/bitnami
+    > ```
 
-```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
-```
+### Deploying CAST for local development
 
 The local Skaffold deployment starts Kubeshark, CAST, creates a
 `./ui/.env.local` file, and runs `scripts/generate-pipeline-data.sh`
 to insert test data.
 
-If you have run the Skaffold deployment before, the [Cleanup](#cleanup)
-steps will ensure any remaining resources from previous deployments
-have been removed before you redeploy.
+> **Warning**
+> If you have run the Skaffold deployment before, YOU MUST RUN THE [CLEANUP](#cleanup) STEPS to ensure any remaining resources from previous deployments have been removed before you redeploy.
 
 Typically, when you are working on CAST, you will want to run the
 application in headless mode. This skips the build and deployment of
-the front-end which can time considerable time.
+the front-end which can take considerable time.
 
 `skaffold dev` will redeploy the application whenever changes are
 detected. You can then use `npm run dev` to iterate on the front-end
@@ -42,13 +51,13 @@ without redeployment.
 To deploy CAST locally in headless mode run the following command:
 
 ```bash
-KUBESHARK_HELM_CHART_PATH="/path/to/helm/chart" skaffold dev --platform=linux/amd64 --profile headless --port-forward --kube-context docker-desktop
+KUBESHARK_HELM_CHART_PATH="/path/to/helm/chart" skaffold dev --profile headless --port-forward
 ```
 
 Once you see the log message "Starting export of records.", the
 back-end of CAST is running.
 
-> :memo:
+> **Note**
 >
 > If another service is listening on 5432, Skaffold will listen
 > on another port, typically 5433.
@@ -61,6 +70,16 @@ back-end of CAST is running.
 >
 > Make note of this port, you will need to update `./ui/.env.local`
 > with this port if it is not 5432
+
+> **Warning**
+> There is a known issue where if you use multiple files in your
+> `KUBECONFIG` environment variable the dev deployment will not work.
+> To work around this known issue, please temporarily set your
+> `KUBECONFIG` to just the one file containing the config for
+> docker-desktop, as in: `export KUBECONFIG="${HOME}/.kube/config.yml"`
+
+> **Warning**
+> There is a known issue where the `--context` command-line flag for explicitly setting the Kube Context to use does not function properly with our setup. **Please ensure that your _current_ kube context** is set to docker-desktop before running the deployment scripts, otherwise unexpected behavior may result.
 
 > **Warning**
 >

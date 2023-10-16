@@ -76,7 +76,7 @@ back-end of CAST is running.
 > `KUBECONFIG` environment variable the dev deployment will not work.
 > To work around this known issue, please temporarily set your
 > `KUBECONFIG` to just the one file containing the config for
-> docker-desktop, as in: `export KUBECONFIG="${HOME}/.kube/config.yml"`
+> docker-desktop, as in: `export KUBECONFIG="${HOME}/.kube/config"`
 
 > **Warning**
 > There is a known issue where the `--context` command-line flag for explicitly setting the Kube Context to use does not function properly with our setup. **Please ensure that your _current_ kube context** is set to docker-desktop before running the deployment scripts, otherwise unexpected behavior may result.

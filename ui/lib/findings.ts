@@ -123,7 +123,7 @@ export const ReusedAuthRequest = z.object({
   trafficId: z.string().describe('The traffic ID assigned by the collector'),
   at: z.string().datetime().describe('The time this request occurred'),
   direction: z.union([
-    z.literal('src'), 
+    z.literal('src'),
     z.literal('dst'),
   ]).describe('Whether this traffic item is a source or destination IP'),
   ipAddr: z.string().describe('IP address found in request'),
@@ -144,7 +144,7 @@ export const ReusedAuthentication = makeFinding(
     count: z.number().describe('Number of times a resource was accessed with this same secret'),
     maxDist: z.number().optional().describe('Distance between two farthest found points in kilometers'),
     maxError: z.number().optional().describe('Combined accuracy radius for points with max distance'),
-    requests: z.array(ReusedAuthRequest), 
+    requests: z.array(ReusedAuthRequest),
   }),
 )
 export type ReusedAuthentication = z.infer<typeof ReusedAuthentication>;
@@ -187,7 +187,19 @@ export const RequestTooSlow = makeFinding(
   }),
 );
 
-export type RequestTooSlow = z.infer<typeof RequestTooSlow>
+export type RequestTooSlow = z.infer<typeof RequestTooSlow>;
+
+export const IpBanlist = makeFinding(
+  'ip-banlist',
+  z.object({
+    specificAddress: z.string().ip(),
+    country: z.string().optional(),
+    malware: z.string().optional(),
+    inRequest: RequestContext,
+  }),
+);
+
+export type IpBanlist = z.infer<typeof IpBanlist>;
 
 export type Finding =
   | ReusedAuthentication

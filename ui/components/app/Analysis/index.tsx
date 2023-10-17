@@ -17,6 +17,7 @@ import {
   PasswordInURL,
   UseOfBasicAuth,
   RequestTooSlow,
+  IpBanlist,
 } from '@/lib/findings';
 import { KubesecFinding, KubesecResourcesFinding } from '@/lib/analysis/kubesec-types';
 import { logger } from '@/lib/internal';
@@ -27,6 +28,7 @@ import { ReusedAuthenticationCard } from './ReusedAuthenticationCard';
 import { UseOfBasicAuthCard } from './UseOfBasicAuthCard';
 import { RequestTooSlowCard } from './RequestTooSlowCard';
 import { KubesecCard } from './KubesecCard';
+import { IpBanlistCard } from './IpBanlistCard';
 
 export { AnalysisCardLoading } from './core';
 
@@ -60,6 +62,10 @@ export const AnalysisCard: React.FC<Analysis> = (analysis) => {
       case 'cast-kubesec-resources': {
         const data = AnalysisOf(KubesecResourcesFinding).parse(analysis);
         return <KubesecCard {...data} />
+      }
+      case 'ip-banlist': {
+        const data = AnalysisOf(IpBanlist).parse(analysis);
+        return <IpBanlistCard {...data}/>
       }
     }
   } catch (error) {

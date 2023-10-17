@@ -57,7 +57,7 @@
        reportedAt={reportedAt}
        exportButton={<CsvExportButton
          data={data}
-         filename={`${reportedAt}-KubesecFindings.csv`}
+         filename={`${reportedAt}-IP-BanlistFindings.csv`}
        />}
        {...otherProps}
        noResults={data.length === 0}

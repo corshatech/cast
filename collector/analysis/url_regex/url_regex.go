@@ -108,9 +108,9 @@ func init() {
 	}
 
 	RegexDb["ServerSideRequestForgery"] = CastRegexpDbEntry{
-		regex:         regexp.MustCompile("(url=.*)|(file=.*)"),
+		regex:         regexp.MustCompile(`(url=.*)|(file=.*)`),
 		Title:         "Server Side Request Forgery",
-		Severity:      "medium",
+		Severity:      "none",
 		Description:   "Requests in which the URL has been modified to potentially connect and retrieve data from internal unprotected services that were not previously exposed.",
 		WeaknessLink:  "https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/",
 		WeaknessTitle: "(OWASP) API7:2023 Server Side Request Forgery",
@@ -118,7 +118,7 @@ func init() {
 	}
 
 	RegexDb["SQLInjection"] = CastRegexpDbEntry{
-		regex:         regexp.MustCompile("((;|%3B)(\\s|%20)*--|(\"|%22)(\\s|%20)*[Oo][Rr](\\s|%20|\\+)*(\"|%22){2}(%3D|=)(\"|%22))"),
+		regex:         regexp.MustCompile(`((;|%3B)(\s|%20)*--|("|%22)(\s|%20)*[Oo][Rr](\s|%20|\+)*("|%22){2}(%3D|=)("|%22))`),
 		Title:         "SQL Injection",
 		Severity:      "medium",
 		Description:   "Any input that is eventually sent to a backend service with a SQL query may not be properly sanitized and can be accessed by crafting a response that will allow the attacker to execute any query.",
@@ -128,7 +128,7 @@ func init() {
 	}
 
 	RegexDb["Log4Shell"] = CastRegexpDbEntry{
-		regex:         regexp.MustCompile("\\$\\{"),
+		regex:         regexp.MustCompile(`\$\{`),
 		Title:         "Log4Shell",
 		Severity:      "medium",
 		Description:   "A vulnerability in a commonly used Java logging library, Log4J, allows for remote code execution with calls to JNDI servers.",

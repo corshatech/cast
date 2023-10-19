@@ -54,6 +54,7 @@ async function handlePost(
     const error = 'A value of true is required for the "refresh" query parameter.';
     logger.error(error);
     res.status(500).send({error});
+    return;
   }
 
   try {

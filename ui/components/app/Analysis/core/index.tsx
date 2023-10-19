@@ -84,7 +84,7 @@ const NoResults: React.FC<AnalysisProps> = ({
     setExpanded(!expanded);
   };
 
-  return <Card className='max-w-prose -my-3'>
+  return <Card className='max-w-prose'>
     <CardContent className='flex items-center'>
       <Typography
         variant='h2'

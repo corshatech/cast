@@ -112,6 +112,20 @@ kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token3" -H "X-Forwarded-For: 3.3.3.3" "${svc}/headers?q=1&geo_ip=true"
 kubectl exec -n curl2 curl -i -- curl -s -w "\n" -H "Authorization: Bearer geoip-token4" -H "X-Forwarded-For: 3.3.3.3" "${svc}/headers?q=1&geo_ip=true"
 
+# 1 ServerSideRequestForgery Regex
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" "${svc}/headers?upload_url=localhost:3000"
+
+# 2 SQLInjection Regex
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" "${svc}/headers?user=%22%20OR%20%22%22%3D%22"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" "${svc}/headers?user=%3B%20--"
+
+# 1 Log4Shell Regex
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" "${svc}/headers?q=\$\{jndi:http:%2F%2Fgoogle.com\}"
+
+# 2 XSS Regex
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" "${svc}/headers?var1=Math.random()&var2=test"
+kubectl exec -n curl2 curl -i -- curl -s -w "\n" "${svc}/headers?callback=%22%3E%3C%2Fscript%3E%3Cscript%3Ealert(%22executing%20js%22)%3B%22"
+
 ########
 # SLOWLY INSERTED DATA BLOCK
 #

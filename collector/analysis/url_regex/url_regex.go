@@ -106,6 +106,46 @@ func init() {
 		WeaknessTitle: "(OWASP) Information Exposure through Query Strings in URL",
 		Sensitive:     true,
 	}
+
+	RegexDb["ServerSideRequestForgery"] = CastRegexpDbEntry{
+		regex:         regexp.MustCompile(`(url=.*)|(file=.*)`),
+		Title:         "Server Side Request Forgery",
+		Severity:      "none",
+		Description:   "Requests in which the URL has been modified to potentially connect and retrieve data from internal unprotected services that were not previously exposed.",
+		WeaknessLink:  "https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/",
+		WeaknessTitle: "(OWASP) API7:2023 Server Side Request Forgery",
+		Sensitive:     false,
+	}
+
+	RegexDb["SQLInjection"] = CastRegexpDbEntry{
+		regex:         regexp.MustCompile(`((;|%3B)(\s|%20)*--|("|%22)(\s|%20)*[Oo][Rr](\s|%20|\+)*("|%22){2}(%3D|=)("|%22))`),
+		Title:         "SQL Injection",
+		Severity:      "medium",
+		Description:   "Any input that is eventually sent to a backend service with a SQL query may not be properly sanitized and can be accessed by crafting a response that will allow the attacker to execute any query.",
+		WeaknessLink:  "https://owasp.org/Top10/A03_2021-Injection/",
+		WeaknessTitle: "(OWASP) A03:2021 – Injection",
+		Sensitive:     false,
+	}
+
+	RegexDb["Log4Shell"] = CastRegexpDbEntry{
+		regex:         regexp.MustCompile(`\$\{`),
+		Title:         "Log4Shell",
+		Severity:      "medium",
+		Description:   "A vulnerability in a commonly used Java logging library, Log4J, allows for remote code execution with calls to JNDI servers.",
+		WeaknessLink:  "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
+		WeaknessTitle: "CVE-2021-44228",
+		Sensitive:     false,
+	}
+
+	RegexDb["XSS"] = CastRegexpDbEntry{
+		regex:         regexp.MustCompile("(?:(?:(?:\"|%22|'|\\]|%5D|\\}|%7D|\\\\|%5C|\\d|(?:NaN|Infinity|true|false|null|undefined|Symbol|Math)|\\`|%60|\\-|\\+|%2B)(?:\\.|;|%3B))+[)]*(?:;|%3B)?((?:\\s|-|~|!|{}|%7B%7D|\\|\\||%7C%7C|\\+|%2B)*.*(?:.*=.*)))|(?:(=|%3D)[^\n]*(<|%3C)[^\n]+(>|%3E))"),
+		Title:         "Cross-site Scripting",
+		Severity:      "medium",
+		Description:   "A Cross-Site Scripting attack occurs when malicious code is sent to a user from a seemingly trusted source. This code can access session details as well as rewrite parts of the page being accessed.",
+		WeaknessLink:  "https://owasp.org/www-community/attacks/xss/",
+		WeaknessTitle: "(OWASP) Cross Site Scripting (XSS)",
+		Sensitive:     false,
+	}
 }
 
 /**

@@ -17,14 +17,14 @@ type Props = {
 };
 
 export const Chip: React.FC<Props> = ({ className, children }) => (
-  <div
+  <span
     className={cn(
       'px-2 bg-blue-400 rounded-full inline',
       className,
     )}
   >
     {children}
-  </div>
+  </span>
 );
 
 

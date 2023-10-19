@@ -36,11 +36,11 @@ export default function Dashboard() {
 
   /******************************
    * TODO: REMOVE ME
-   * 
+   *
    * Remove refresh, this should be implemented as a scheduled job
-   ******************************/ 
+   ******************************/
   useSWR(
-    '/api/matview-refresh?refresh=true', 
+    '/api/matview-refresh?refresh=true',
     (url) => fetch(url, { method: 'POST' }),
     { refreshInterval: 1000 * 60 * 5 /* Every 5 minutes (ms) */ },
   )
@@ -56,7 +56,7 @@ export default function Dashboard() {
     ? `${summary.faults} Faults (${summary.findings} Findings)`
     : `No problems detected yet. Live scanning will continue in the background.`;
 
-    
+
     const analysesBySeverity: Record<Severity, Analysis[]> = analyses.reduce<
       Record<Severity, Analysis[]>
     >(
@@ -80,7 +80,7 @@ export default function Dashboard() {
     // analyses with no findings. Sort to have 'none' severity analyses first:
     analysesBySeverity['none'].sort((a) => a.findings.length > 0 ? 0 : 1)
 
-  const numNoFindings = 
+  const numNoFindings =
     analysesBySeverity.none.reduce(
       (prev, curr) => curr.findings.length === 0 ? prev + 1 : 0,
       0,
@@ -126,23 +126,23 @@ export default function Dashboard() {
             <Tabs defaultValue="critical">
               <TabsList className='w-full h-14 overflow-x-scroll grid grid-flow-col items-stretch justify-stretch'>
                 <TabsTrigger disabled={analyses.length === 0} value="critical">
-                  Critical 
+                  Critical
                   {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.critical)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="high">
-                  High 
+                  High
                   {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.high)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="medium">
-                  Medium 
+                  Medium
                   {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.medium)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="low">
-                  Low 
+                  Low
                   {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.low)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="none">
-                  None 
+                  None
                   {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.none)}</Chip>}
                   <Chip className='ml-2 bg-green-300'>{formatNumber(numNoFindings)}</Chip>
                 </TabsTrigger>
@@ -167,7 +167,7 @@ export default function Dashboard() {
                     <div className="flex flex-col gap-2 items-start">
                       { enablements && <>
                         <a
-                          rel="noopener noreferrer" 
+                          rel="noopener noreferrer"
                           target="_blank"
                           href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#maxmind-geolite2-data"
                         >
@@ -179,7 +179,7 @@ export default function Dashboard() {
                           />
                         </a>
                         <a
-                          rel="noopener noreferrer" 
+                          rel="noopener noreferrer"
                           target="_blank"
                           href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#feodo-banlist-data"
                         >

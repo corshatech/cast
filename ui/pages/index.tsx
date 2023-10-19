@@ -131,19 +131,19 @@ export default function Dashboard() {
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="high">
                   High
-                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.high)}</Chip>}
+                  {summary && summary.severityCounts.high > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.high)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="medium">
                   Medium
-                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.medium)}</Chip>}
+                  {summary && summary.severityCounts.medium > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.medium)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="low">
                   Low
-                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.low)}</Chip>}
+                  {summary && summary.severityCounts.low > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.low)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="none">
                   None
-                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.none)}</Chip>}
+                  {summary && summary.severityCounts.none > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.none)}</Chip>}
                   <Chip className='ml-2 bg-green-300'>{formatNumber(numNoFindings)}</Chip>
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="status">Status</TabsTrigger>

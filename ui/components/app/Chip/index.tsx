@@ -11,11 +11,12 @@
 
 import { cn } from '@/lib/utils';
 
-type ChipProps = {
+type Props = {
+  children?: React.ReactNode;
   className?: string;
 };
 
-export const Chip: React.FC<React.PropsWithChildren<ChipProps>> = ({ className, children }) => (
+export const Chip: React.FC<Props> = ({ className, children }) => (
   <div
     className={cn(
       'px-2 bg-blue-400 rounded-full inline',

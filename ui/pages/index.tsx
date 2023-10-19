@@ -24,6 +24,12 @@ import { CASTFeaturesListing } from '@/lib/metadata';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Chip } from '@/components/app/Chip';
 
+const formatNumber = (findings: number) =>
+  Intl.NumberFormat('en', {
+    notation: 'compact',
+    maximumFractionDigits: 2,
+  }).format(findings)
+
 export default function Dashboard() {
   const { data: analysesResponse, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
   const { data: enablements } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
@@ -74,38 +80,11 @@ export default function Dashboard() {
     // analyses with no findings. Sort to have 'none' severity analyses first:
     analysesBySeverity['none'].sort((a) => a.findings.length > 0 ? 0 : 1)
 
-
-  const findingsChip = (severity: Severity) => {
-    // Find number of analyses with no findings in grouped analyses if severity is none
-    const numNoFindings = 
-      severity === 'none' ? 
-        analysesBySeverity.none.reduce(
-          (prev, curr) => curr.findings.length === 0 ? prev + 1 : 0,
-          0,
-        )
-      : -1
-
-    return (
-      <>
-        {summary && summary.severityCounts[severity] > 0 &&
-          <Chip className='ml-2'>
-            {Intl.NumberFormat('en', {
-              notation: 'compact',
-              maximumFractionDigits: 2,
-            }).format(summary.severityCounts[severity])}
-          </Chip>
-        }
-        {numNoFindings > 0 && 
-          <Chip className='ml-2 bg-green-300'>
-            {Intl.NumberFormat('en', {
-              notation: 'compact',
-              maximumFractionDigits: 2,
-            }).format(numNoFindings)}
-          </Chip>
-        }
-      </>
+  const numNoFindings = 
+    analysesBySeverity.none.reduce(
+      (prev, curr) => curr.findings.length === 0 ? prev + 1 : 0,
+      0,
     )
-  }
 
   return (
     <>
@@ -144,67 +123,82 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {isLoading && analyses.length === 0 && !error ? (
-              <div className="absolute w-full h-full z-50 bg-slate-400/10 animate-pulse"/>
-            ) : (
-              <Tabs defaultValue="critical">
-                <TabsList className='w-full h-14 overflow-x-scroll grid grid-flow-col justify-stretch'>
-                  <TabsTrigger className='h-full' value="critical">Critical {findingsChip('critical')}</TabsTrigger>
-                  <TabsTrigger className='h-full' value="high">High {findingsChip('high')}</TabsTrigger>
-                  <TabsTrigger className='h-full' value="medium">Medium {findingsChip('medium')}</TabsTrigger>
-                  <TabsTrigger className='h-full' value="low">Low {findingsChip('low')}</TabsTrigger>
-                  <TabsTrigger className='h-full' value="none">None {findingsChip('none')}</TabsTrigger>
-                  <TabsTrigger className='h-full' value="status">Status</TabsTrigger>
-                  <TabsTrigger className='h-full' value="settings">Settings</TabsTrigger>
-                </TabsList>
-                {Object.entries(analysesBySeverity).map((analysesForSeverity) => (
-                  <TabsContent key={analysesForSeverity[0]} value={analysesForSeverity[0]}>
-                    {analysesForSeverity[1].length === 0 ? (
-                      <p>No results in this category</p>
-                    ) : (
+            <Tabs defaultValue="critical">
+              <TabsList className='w-full h-14 overflow-x-scroll grid grid-flow-col items-stretch justify-stretch'>
+                <TabsTrigger disabled={analyses.length === 0} value="critical">
+                  Critical 
+                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.critical)}</Chip>}
+                </TabsTrigger>
+                <TabsTrigger disabled={analyses.length === 0} value="high">
+                  High 
+                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.high)}</Chip>}
+                </TabsTrigger>
+                <TabsTrigger disabled={analyses.length === 0} value="medium">
+                  Medium 
+                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.medium)}</Chip>}
+                </TabsTrigger>
+                <TabsTrigger disabled={analyses.length === 0} value="low">
+                  Low 
+                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.low)}</Chip>}
+                </TabsTrigger>
+                <TabsTrigger disabled={analyses.length === 0} value="none">
+                  None 
+                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.none)}</Chip>}
+                  <Chip className='ml-2 bg-green-300'>{formatNumber(numNoFindings)}</Chip>
+                </TabsTrigger>
+                <TabsTrigger disabled={analyses.length === 0} value="status">Status</TabsTrigger>
+                <TabsTrigger disabled={analyses.length === 0} value="settings">Settings</TabsTrigger>
+              </TabsList>
+              {isLoading && analyses.length === 0 && !error ? (
+                <div className="absolute w-full h-full z-50 bg-slate-400/10 animate-pulse"/>
+              ) : (
+                <>
+                  {Object.entries(analysesBySeverity).map(([analysisId, analyses]) => (
+                    <TabsContent key={analysisId} value={analysisId}>
                       <div className='flex flex-col gap-4'>
-                        {analysesForSeverity[1].map((analysis) => (
+                        {analyses.length === 0 && <p>No results in this category</p>}
+                        {analyses.map((analysis) => (
                           <AnalysisCard key={analysis.id} {...analysis}/>
                         ))}
                       </div>
-                    )}
+                    </TabsContent>
+                  ))}
+                  <TabsContent value='status'>
+                    <div className="flex flex-col gap-2 items-start">
+                      { enablements && <>
+                        <a
+                          rel="noopener noreferrer" 
+                          target="_blank"
+                          href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#maxmind-geolite2-data"
+                        >
+                          <EnablementChip
+                            label='GeoIP Data'
+                            tooltipEnabled='MaxMind GeoIP data has been loaded.'
+                            tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST Wiki for details.'
+                            enabled={enablements.geoIpEnabled}
+                          />
+                        </a>
+                        <a
+                          rel="noopener noreferrer" 
+                          target="_blank"
+                          href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#feodo-banlist-data"
+                        >
+                          <EnablementChip
+                            label='IP Banlist Data'
+                            tooltipEnabled='FEODOTracker data has been loaded.'
+                            tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST Wiki for details.'
+                            enabled={enablements.feodoEnabled}
+                          />
+                        </a>
+                      </>}
+                    </div>
                   </TabsContent>
-                ))}
-                <TabsContent value='status'>
-                  <div className="flex flex-col gap-2 items-start">
-                    { enablements && <>
-                      <a
-                        rel="noopener noreferrer" 
-                        target="_blank"
-                        href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#maxmind-geolite2-data"
-                      >
-                        <EnablementChip
-                          label='GeoIP Data'
-                          tooltipEnabled='MaxMind GeoIP data has been loaded.'
-                          tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST Wiki for details.'
-                          enabled={enablements.geoIpEnabled}
-                        />
-                      </a>
-                      <a
-                        rel="noopener noreferrer" 
-                        target="_blank"
-                        href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#feodo-banlist-data"
-                      >
-                        <EnablementChip
-                          label='IP Banlist Data'
-                          tooltipEnabled='FEODOTracker data has been loaded.'
-                          tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST Wiki for details.'
-                          enabled={enablements.feodoEnabled}
-                        />
-                      </a>
-                    </>}
-                  </div>
-                </TabsContent>
-                <TabsContent value='settings'>
-                  <p>This page is under construction</p>
-                </TabsContent>
-              </Tabs>
-            )}
+                  <TabsContent value='settings'>
+                    <p>This page is under construction</p>
+                  </TabsContent>
+                </>
+              )}
+            </Tabs>
           </div>
         </main>
       </Layout>

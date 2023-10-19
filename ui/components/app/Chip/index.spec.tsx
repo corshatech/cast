@@ -9,20 +9,21 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import React from 'react';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { render } from '@testing-library/react';
 
-import { theme } from '@/components/app/theme';
+import { Chip } from '.';
 
-export interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export const Layout = ({ children }: LayoutProps) => {
-  return (<ThemeProvider theme={theme}>
-    <CssBaseline/>
-    <div className="m-0 flex flex-col items-start w-screen">
-      {children}
-    </div>
-  </ThemeProvider>);
-};
+describe('Chip', () => {
+  it('renders all passed props', () => {
+    const { asFragment } = render(<Chip className="bg-white">Test Label</Chip>);
+    expect(asFragment()).toMatchInlineSnapshot(`
+      <DocumentFragment>
+        <span
+          class="px-2 rounded-full inline bg-white"
+        >
+          Test Label
+        </span>
+      </DocumentFragment>
+    `);
+  });
+});

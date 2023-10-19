@@ -9,20 +9,22 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import React from 'react';
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { cn } from '@/lib/utils';
 
-import { theme } from '@/components/app/theme';
-
-export interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export const Layout = ({ children }: LayoutProps) => {
-  return (<ThemeProvider theme={theme}>
-    <CssBaseline/>
-    <div className="m-0 flex flex-col items-start w-screen">
-      {children}
-    </div>
-  </ThemeProvider>);
+type Props = {
+  children?: React.ReactNode;
+  className?: string;
 };
+
+export const Chip: React.FC<Props> = ({ className, children }) => (
+  <span
+    className={cn(
+      'px-2 bg-blue-400 rounded-full inline',
+      className,
+    )}
+  >
+    {children}
+  </span>
+);
+
+

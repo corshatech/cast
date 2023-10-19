@@ -18,11 +18,11 @@ describe('Chip', () => {
     const { asFragment } = render(<Chip className="bg-white">Test Label</Chip>);
     expect(asFragment()).toMatchInlineSnapshot(`
       <DocumentFragment>
-        <div
+        <span
           class="px-2 rounded-full inline bg-white"
         >
           Test Label
-        </div>
+        </span>
       </DocumentFragment>
     `);
   });

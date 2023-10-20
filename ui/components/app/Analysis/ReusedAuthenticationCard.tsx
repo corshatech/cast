@@ -11,7 +11,7 @@
 
 import React, { useState } from 'react';
 import { LocationOn, Public, ExpandLess, ExpandMore } from '@mui/icons-material';
-import { 
+import {
   Chip,
   Table,
   TableBody,
@@ -20,14 +20,15 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Alert,
 } from '@mui/material';
 
-import { 
-  AnalysisOf, 
+import {
+  AnalysisOf,
   CRITICAL_SEVERITY_DISTANCE,
-  HIGH_SEVERITY_DISTANCE, 
-  ReusedAuthRequest, 
-  ReusedAuthentication, 
+  HIGH_SEVERITY_DISTANCE,
+  ReusedAuthRequest,
+  ReusedAuthentication,
 } from '@/lib/findings';
 
 import { AnalysisCard, CsvExportButton } from './core';
@@ -44,6 +45,12 @@ type InRequestRow = {
   maxError: number | undefined;
 }
 
+const countDistinctRequests = (requests: ReusedAuthRequest[]) => {
+  const container = new Set();
+  requests.forEach(({trafficId}) => container.add(trafficId));
+  return container.size;
+}
+
 type RequestData = InRequestRow & { requests: ReusedAuthRequest[] };
 
 const distanceToDescription = (dist: number) => (
@@ -51,7 +58,7 @@ const distanceToDescription = (dist: number) => (
     'Requests found at least 100km apart'
 )
 
-const distanceToSeverityColor = (dist: number) => 
+const distanceToSeverityColor = (dist: number) =>
   dist > CRITICAL_SEVERITY_DISTANCE ? 'error' :
     'warning'
 
@@ -72,6 +79,16 @@ const RequestsTable = ({row}: {row: RequestData}) => (
         </TableRow>
       </TableHead>
       <TableBody>
+        {/* If the number of unique trafficIds doesn't match the count, display an error */}
+        {countDistinctRequests(row.requests) !== row.Count &&
+          <TableRow>
+            <TableCell colSpan={9}>
+              <Alert severity="error">
+                There was an error fetching recent Request data. Some entries may be missing.
+              </Alert>
+            </TableCell>
+          </TableRow>
+        }
         {row.requests.map(request => (
           <TableRow key={request.trafficId + request.ipAddr}>
             <TableCell title={request.trafficId}>
@@ -79,7 +96,7 @@ const RequestsTable = ({row}: {row: RequestData}) => (
             </TableCell>
             <TableCell><FormattedDate when={request.at} /></TableCell>
             <TableCell>
-              <Chip 
+              <Chip
                 color={request.direction === 'src' ? 'primary' : 'secondary'}
                 label={request.direction === 'src' ? 'Source' : 'Destination'}
               />
@@ -112,7 +129,7 @@ const Row = ({row}: {row: RequestData}) => {
         <TableCell>{row['Count']}</TableCell>
         <TableCell>
           <IconButton aria-label="expand row" onClick={() => setOpen((isOpen) => !isOpen)}>
-            {open ? 
+            {open ?
               <ExpandLess/>
               : <ExpandMore/>
             }
@@ -137,7 +154,6 @@ const Row = ({row}: {row: RequestData}) => {
         </TableCell>
       </TableRow>
     </>
-    
   )
 }
 
@@ -157,7 +173,6 @@ export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>
       requests: f.data.requests,
     })
   })
-  
   return <AnalysisCard
     reportedAt={reportedAt}
     exportButton={<CsvExportButton

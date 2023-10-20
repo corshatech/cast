@@ -92,14 +92,14 @@ export default function Dashboard() {
         <title>Summary</title>
       </Head>
       <Layout>
-        <Header />
-        <main className="w-screen">
+        <Header big />
+        <main className="w-full">
           {error && (
             <Alert severity="error">
               An Error Occurred loading analysis: {error.toString()}
             </Alert>
           )}
-          <div className="max-w-screen 2xl:max-4K:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 my-4">
+          <div className="max-w-full 2xl:max-4K:max-w-10xl w-full mx-auto px-4 sm:px-6 lg:px-8 my-4">
             <div className="my-12">
               <Typography variant="h1" className='md:text-5xl xl:text-7xl'>
                 Ongoing Results
@@ -124,18 +124,18 @@ export default function Dashboard() {
             </div>
 
             <Tabs defaultValue="critical">
-              <TabsList className='w-full h-14 overflow-x-scroll grid grid-flow-col items-stretch justify-stretch'>
+              <TabsList className='w-full h-14 overflow-x-auto gap-4 [&>*]:flex-1 mb-8 items-stretch justify-stretch text-corsha-brand-blue'>
                 <TabsTrigger disabled={analyses.length === 0} value="critical">
                   Critical
-                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.critical)}</Chip>}
+                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2 bg-red-700'>{formatNumber(summary.severityCounts.critical)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="high">
                   High
-                  {summary && summary.severityCounts.high > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.high)}</Chip>}
+                  {summary && summary.severityCounts.high > 0 && <Chip className='ml-2 bg-red-700'>{formatNumber(summary.severityCounts.high)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="medium">
                   Medium
-                  {summary && summary.severityCounts.medium > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.medium)}</Chip>}
+                  {summary && summary.severityCounts.medium > 0 && <Chip className='ml-2 bg-orange-600'>{formatNumber(summary.severityCounts.medium)}</Chip>}
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="low">
                   Low
@@ -144,15 +144,15 @@ export default function Dashboard() {
                 <TabsTrigger disabled={analyses.length === 0} value="none">
                   None
                   {summary && summary.severityCounts.none > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.none)}</Chip>}
-                  <Chip className='ml-2 bg-green-300'>{formatNumber(numNoFindings)}</Chip>
+                  <Chip className='ml-2 bg-corsha-brand-green text-slate-900/80'>{formatNumber(numNoFindings)}</Chip>
                 </TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="status">Status</TabsTrigger>
                 <TabsTrigger disabled={analyses.length === 0} value="settings">Settings</TabsTrigger>
               </TabsList>
               {isLoading && analyses.length === 0 && !error ? (
-                <div className="absolute w-full h-full z-50 bg-slate-400/10 animate-pulse"/>
+                <div className="absolute inset-0 z-50 bg-slate-400/30 animate-pulse"/>
               ) : (
-                <>
+                <div className="min-h-screen max-w-full">
                   {Object.entries(analysesBySeverity).map(([analysisId, analyses]) => (
                     <TabsContent key={analysisId} value={analysisId}>
                       <div className='flex flex-col gap-4'>
@@ -196,7 +196,7 @@ export default function Dashboard() {
                   <TabsContent value='settings'>
                     <p>This page is under construction</p>
                   </TabsContent>
-                </>
+                </div>
               )}
             </Tabs>
           </div>

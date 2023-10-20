@@ -21,7 +21,7 @@ export interface LayoutProps {
 export const Layout = ({ children }: LayoutProps) => {
   return (<ThemeProvider theme={theme}>
     <CssBaseline/>
-    <div className="m-0 flex flex-col items-start w-screen">
+    <div className="m-0 flex flex-col items-start w-full">
       {children}
     </div>
   </ThemeProvider>);

@@ -19,7 +19,7 @@ type Props = {
 export const Chip: React.FC<Props> = ({ className, children }) => (
   <span
     className={cn(
-      'px-2 bg-blue-400 rounded-full inline',
+      'px-2 bg-corsha-brand-mid-blue text-white font-semibold rounded-full inline',
       className,
     )}
   >

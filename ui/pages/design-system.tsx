@@ -29,8 +29,8 @@ export const DesignSystem = () => {
       </Head>
       <Layout>
         <Header />
-        <main className="bg-gray-50 w-screen">
-          <div className="max-w-screen mx-auto px-4 sm:px-6 lg:px-8">
+        <main className="bg-gray-50 w-full">
+          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
             <TypographySection />
             <ButtonSection />
             <ColorSection />

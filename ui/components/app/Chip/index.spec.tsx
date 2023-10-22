@@ -19,7 +19,7 @@ describe('Chip', () => {
     expect(asFragment()).toMatchInlineSnapshot(`
       <DocumentFragment>
         <span
-          class="px-2 rounded-full inline bg-white"
+          class="px-2 text-white font-semibold rounded-full inline bg-white"
         >
           Test Label
         </span>

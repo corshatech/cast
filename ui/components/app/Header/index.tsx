@@ -9,16 +9,32 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
+import { cx } from 'class-variance-authority';
+import Image from 'next/image';
 import Link from 'next/link';
+import Logo from './CAST-logo.svg';
 
-export const Header = () => {
+type Props = {
+  big?: boolean;
+}
+
+export const Header: React.FC<Props> = ({big}) => {
   return (
-    <header className="h-[72px] bg-corsha-brand-blue flex w-screen m-0 justify-start items-center border-b-2 border-b-green-700">
-      <nav className="flex flex-1 max-w-screen 2xl:max-4K:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 items-center">
+    <header className={cx(
+      'h-[72px] bg-white flex w-full m-0 justify-start items-center',
+      big && 'h-40',
+    )}>
+      <nav className="flex flex-1 max-w-full 2xl:max-4K:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 justify-center items-center">
         <ul>
           <li>
             <Link href="/" className="text-white">
-              CAST
+              <Image
+                src={Logo}
+                className={cx(
+                  'h-[60px] w-fit',
+                  big && 'h-20',
+                )}
+               alt="CAST by Corsha Logo"></Image>
             </Link>
           </li>
         </ul>

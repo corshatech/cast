@@ -1,7 +1,7 @@
 {
   "extends": ["next/core-web-vitals"],
   "rules": {
-    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true, "avoidEscape": true }],
     "comma-dangle": [
       "error",
       {

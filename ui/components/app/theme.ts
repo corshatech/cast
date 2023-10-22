@@ -2,21 +2,22 @@ import { createTheme } from '@mui/material';
 
 export const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
-      main: '#0a2e3b',
-    },
-    secondary: {
       main: '#77c043',
       dark: '#99b67c',
     },
+    secondary: {
+      main: '#0a2e3b',
+    },
     background: {
-      paper: '#F9F9F9',
+      paper: 'rgb(22,55,69)',
     },
     text: {
-      primary: 'rgb(0,41,51)',
-      disabled: 'rgba(0,41,51,0.6)',
-      secondary: 'rgba(0,41,51,0.38)',
+      primary: '#FFF',
+      disabled: 'rgba(255,255,255,0.73)',
+      secondary: 'rgba(255,255,255,0.64)',
     },
+    divider: '#C4EEEE',
   },
 });

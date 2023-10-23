@@ -160,7 +160,7 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
         aria-labelledby="title"
         sx={{
           /* TODO: Dirty hacks */
-          '& .MuiDataGrid-root': {
+          '& .MuiDataGrid-root, & .MuiTableContainer-root': {
             borderRadius: '0',
             border: 'none',
             borderTop: '1px solid !important',
@@ -171,6 +171,9 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
           },
           '& .MuiDataGrid-columnSeparator': {
             color: 'rgba(255,255,255,.26) !important',
+          },
+          '& .MuiTableCell-head': {
+            background: 'hsl(196 71% 12%)',
           },
         }}
         className='shadow-md'

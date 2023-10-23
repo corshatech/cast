@@ -41,7 +41,7 @@ const formatNumber = (findings: number) =>
 
 export default function Dashboard() {
   const { data: analysesResponse, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
-  const { data: enablements } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
+  const { data: enablements, error: error2 } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
 
   /******************************
    * TODO: REMOVE ME
@@ -61,6 +61,8 @@ export default function Dashboard() {
     summarizeAnalyses(analysesResponse.analyses);
   const analyses = analysesResponse?.analyses ?? [];
 
+  const mError = error ?? error2 ?? undefined;
+
   const summaryTitle = summary?.faults
     ? `${summary.faults} Issues (${summary.findings} individual infractions)`
     : `No problems detected yet. Live scanning will continue in the background.`;
@@ -72,9 +74,9 @@ export default function Dashboard() {
       </Head>
       <Layout>
         <Header big />
-        {error && (
+        {mError && (
           <Alert severity="error" className='w-full'>
-            An Error Occurred loading analysis: {error.toString()}
+            An Error Occurred loading analysis: {mError.toString()}
           </Alert>
         )}
         <div className="grid grid-cols-[24rem_1fr] grid-flow-row w-full">

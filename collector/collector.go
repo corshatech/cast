@@ -32,6 +32,8 @@ import (
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/go-co-op/gocron"
+
 	"github.com/corshatech/cast/collector/analysis/pass_in_url"
 	"github.com/corshatech/cast/collector/analysis/url_regex"
 )
@@ -212,6 +214,18 @@ func main() {
 	defer pgConnection.Close()
 	defer ksConnection.Close()
 
+	// Schedule a refresh of the materialized view every 5 minutes
+	s := gocron.NewScheduler(time.UTC)
+	_, err = s.Every(5).Minutes().Do(refreshMatview, pgConnection)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to create materialized view refresh cron job.")
+	} else {
+		log.Info("Created materialized view refresh job.")
+	}
+
+	s.StartAsync()
+	defer s.Stop()
+
 	ctx := context.Background()
 
 	// trap Ctrl+C and call cancel on the context
@@ -322,4 +336,22 @@ func hubURLToWebsocketURL(hubURL string) (string, error) {
 	url.Scheme = "ws"
 	url.Path = "ws"
 	return url.String(), nil
+}
+
+func refreshMatview(pgConnection *sql.DB) {
+	err := retry.Do(
+		func() error {
+			_, err := pgConnection.Exec("REFRESH MATERIALIZED VIEW matview_traffic_ips")
+			return err
+		},
+		retry.Attempts(retryAttempts),
+		retry.Delay(retryDelay),
+		retry.OnRetry(func(n uint, err error) {
+			log.WithError(err).Infof("Error executing query on postgres database. Retrying in %v", retryDelay)
+		}),
+	)
+
+	if err != nil {
+		log.WithError(err).Error("Failed to refresh materialized view.")
+	}
 }

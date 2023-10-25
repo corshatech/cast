@@ -32,7 +32,6 @@ import (
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/corshatech/cast/collector/analysis/pass_in_url"
 	"github.com/corshatech/cast/collector/analysis/url_regex"
 )
 
@@ -108,8 +107,6 @@ type CASTMetadata struct {
 	DetectedJwts []string `json:",omitempty"`
 	// Empty-array is not permitted in transit; empty value should be omit instead to save data in the backend
 
-	// PassInUrl is the data returned by the pass_in_url analysis
-	PassInUrl       *pass_in_url.PassInUrl `json:",omitempty"`
 	UseOfBasicAuth  bool
 	PatternFindings []url_regex.CastRegexpDbMatch `json:",omitempty"`
 }

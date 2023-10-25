@@ -11,24 +11,27 @@
 
 import { render } from '@testing-library/react';
 
-import { PasswordInURLCard } from './PasswordInURLCard';
+import { RegexPatternCard } from './RegexPatternCard';
 
 const reportedAt = new Date().toISOString();
 
 describe('PasswordInURLCard', () => {
   it('renders all passed props', () => {
-    const { asFragment } = render(<PasswordInURLCard
+    const { asFragment } = render(<RegexPatternCard
       id="pass-in-url"
       title="Test title"
       description="Test description"
       reportedAt={reportedAt}
       severity="high"
       findings={[{
-        type: 'pass-in-url',
+        type: 'XSS' as 'regex-pattern',
         name: 'Test Finding',
         detectedAt: reportedAt,
         severity: 'high',
         data: {
+          weaknessLink: 'https://google.com',
+          weaknessTitle: 'Cross Site Scripting',
+          regexName: 'XSS',
           inRequest: {
             at: reportedAt,
             destIp: '1.1.1.1',

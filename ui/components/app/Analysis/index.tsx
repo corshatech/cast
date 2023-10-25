@@ -14,7 +14,7 @@ import {
   AnalysisOf,
   ExpiredJWT,
   ReusedAuthentication,
-  PasswordInURL,
+  RegexPattern,
   UseOfBasicAuth,
   RequestTooSlow,
   IpBanlist,
@@ -22,7 +22,7 @@ import {
 import { KubesecFinding, KubesecResourcesFinding } from '@/lib/analysis/kubesec-types';
 import { logger } from '@/lib/internal';
 
-import { PasswordInURLCard } from './PasswordInURLCard';
+import { RegexPatternCard } from './RegexPatternCard';
 import { ExpiredJWTCard } from './ExpiredJWTCard';
 import { ReusedAuthenticationCard } from './ReusedAuthenticationCard';
 import { UseOfBasicAuthCard } from './UseOfBasicAuthCard';
@@ -43,9 +43,15 @@ export const AnalysisCard: React.FC<Analysis> = (analysis) => {
         const data = AnalysisOf(ReusedAuthentication).parse(analysis);
         return <ReusedAuthenticationCard {...data} />
       }
-      case 'pass-in-url': {
-        const data = AnalysisOf(PasswordInURL).parse(analysis);
-        return <PasswordInURLCard {...data} />
+      case 'regex-pattern': {
+        const data = AnalysisOf(RegexPattern).parse(analysis);
+        let regexName = data.findings[0].data.regexName;
+        return (
+          <RegexPatternCard
+            {...data}
+            id={regexName}
+          />
+        )
       }
       case 'use-of-basic-auth': {
         const data = AnalysisOf(UseOfBasicAuth).parse(analysis);

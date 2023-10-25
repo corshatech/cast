@@ -16,7 +16,7 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 
-import { AnalysisOf, PasswordInURL } from '@/lib/findings';
+import { AnalysisOf, RegexPattern } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 import { AnalysisCard, CsvExportButton } from './core';
@@ -37,7 +37,8 @@ const columns: GridColDef[] = [
   { field: 'URI', headerName: 'URI', width: 400 },
 ];
 
-export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
+// IDs for RegexPatternCard will be the pattern name, and will not fit within the Analysis names
+export const RegexPatternCard: React.FC<Omit<AnalysisOf<RegexPattern>, 'id'> & {id: string}> = ({
   findings,
   reportedAt,
   ...otherProps
@@ -56,7 +57,7 @@ export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
   }) => ({
     id: `${at}${srcIp}${destIp}${destPort}${URI}${queryParams}`,
     // each param in quotes, joined by commas into a list
-    'Query Param(s)': queryParams.map(s => `"${s}"`).join(', '),
+    'Query Param(s)': (queryParams ?? []).map(s => `"${s}"`).join(', '),
     'Timestamp': at,
     'Src IP': srcIp,
     'URI': URI,
@@ -69,14 +70,18 @@ export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
     exportButton={<CsvExportButton
       stripID
       data={data}
-      filename={`${reportedAt}-PasswordsInURL.csv`}
+      filename={`${reportedAt}-${otherProps.id}.csv`}
     />}
     noResults={data.length === 0}
   >
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid
       rows={data}
-      columns={columns}
+      columns={
+        data.some(i => i['Query Param(s)'].length === 0) ?
+          columns.filter(i => i.field !== 'Query Param(s)')
+          : columns
+      }
       pageSize={10}
       rowsPerPageOptions={[10]}
     />

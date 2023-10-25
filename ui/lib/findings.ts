@@ -67,6 +67,7 @@ export type OccurredAt = z.infer<typeof OccurredAt>;
 export const IFinding = z.object({
   type: z.string().nonempty().describe('Internal type ID for finding kind'),
   name: z.string().nonempty().describe('Human-readable name of finding type'),
+  description: z.string().optional().describe('A description of the finding'),
   occurredAt: OccurredAt.optional().describe(`When the infraction occurred
 
 An RFC3339-format timestamp or range. Optional. If present, represents
@@ -160,15 +161,29 @@ export const ExpiredJWT = makeFinding(
 
 export type ExpiredJWT = z.infer<typeof ExpiredJWT>;
 
-export const PasswordInURL = makeFinding(
-  'pass-in-url',
+export const RegexFinding = z.object({
+  'Id': z.string(),
+  'DetectedAt': z.string(),
+  'Rule': Analysis,
+  'MatchText': z.string(),
+  'AbsoluteUri': z.string(),
+  'QueryParams': z.array(z.string()),
+})
+
+export type RegexFinding = z.infer<typeof RegexFinding>;
+
+export const RegexPattern = makeFinding(
+  'regex-pattern',
   z.object({
-    queryParams: z.array(z.string()).describe('The name of the query parameter suspected of containing a password'),
+    regexName: z.string(),
+    queryParams: z.array(z.string()).nullable().describe('The name of the query parameter suspected of containing a password'),
+    weaknessLink: z.string(),
+    weaknessTitle: z.string(),
     inRequest: RequestContext,
   }),
 );
 
-export type PasswordInURL = z.infer<typeof PasswordInURL>
+export type RegexPattern = z.infer<typeof RegexPattern>
 
 export const UseOfBasicAuth = makeFinding(
   'use-of-basic-auth',
@@ -204,7 +219,7 @@ export type IpBanlist = z.infer<typeof IpBanlist>;
 export type Finding =
   | ReusedAuthentication
   | ExpiredJWT
-  | PasswordInURL
+  | RegexPattern
   | UseOfBasicAuth
   | RequestTooSlow;
 

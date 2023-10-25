@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`IpBanlistCard renders all passed props 1`] = `
+exports[`PasswordInURLCard renders all passed props 1`] = `
 <DocumentFragment>
   <a
-    id="ip-banlist"
+    id="pass-in-url"
   >
     <div
       aria-labelledby="title"
@@ -113,9 +113,9 @@ exports[`IpBanlistCard renders all passed props 1`] = `
           style="height: 400px; width: 100%;"
         >
           <div
-            aria-colcount="5"
+            aria-colcount="6"
             aria-multiselectable="false"
-            aria-rowcount="3"
+            aria-rowcount="2"
             class="MuiDataGrid-root MuiDataGrid-root--densityStandard css-1e2bxag-MuiDataGrid-root"
             role="grid"
           >
@@ -243,12 +243,12 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                     </div>
                     <div
                       aria-colindex="2"
-                      aria-label="Severity"
+                      aria-label="Query Param(s)"
                       aria-sort="none"
                       class="MuiDataGrid-columnHeader MuiDataGrid-columnHeader--sortable"
-                      data-field="Severity"
+                      data-field="Query Param(s)"
                       role="columnheader"
-                      style="height: 56px; width: 100px; min-width: 100px; max-width: 100px;"
+                      style="height: 56px; width: 300px; min-width: 300px; max-width: 300px;"
                       tabindex="-1"
                     >
                       <div
@@ -266,7 +266,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                               class="MuiDataGrid-columnHeaderTitle css-1jbbcbn-MuiDataGrid-columnHeaderTitle"
                               data-mui-internal-clone-element="true"
                             >
-                              Severity
+                              Query Param(s)
                             </div>
                           </div>
                           <div
@@ -345,12 +345,12 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                     </div>
                     <div
                       aria-colindex="3"
-                      aria-label="Matched Address"
+                      aria-label="Src IP"
                       aria-sort="none"
                       class="MuiDataGrid-columnHeader MuiDataGrid-columnHeader--sortable"
-                      data-field="Matched Address"
+                      data-field="Src IP"
                       role="columnheader"
-                      style="height: 56px; width: 150px; min-width: 150px; max-width: 150px;"
+                      style="height: 56px; width: 100px; min-width: 100px; max-width: 100px;"
                       tabindex="-1"
                     >
                       <div
@@ -368,7 +368,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                               class="MuiDataGrid-columnHeaderTitle css-1jbbcbn-MuiDataGrid-columnHeaderTitle"
                               data-mui-internal-clone-element="true"
                             >
-                              Matched Address
+                              Src IP
                             </div>
                           </div>
                           <div
@@ -457,7 +457,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                 >
                   <div
                     class="MuiDataGrid-virtualScrollerContent MuiDataGrid-virtualScrollerContent--overflowed css-1kwdphh-MuiDataGrid-virtualScrollerContent"
-                    style="width: auto; height: 104px; min-height: auto;"
+                    style="width: auto; height: 52px; min-height: auto;"
                   >
                     <div
                       class="MuiDataGrid-virtualScrollerRenderZone css-s1v7zr-MuiDataGrid-virtualScrollerRenderZone"
@@ -466,8 +466,8 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                       <div
                         aria-rowindex="2"
                         aria-selected="false"
-                        class="MuiDataGrid-row"
-                        data-id="{"Timestamp":"","Severity":"medium","Matched Address":"1.1.1.1","Malware":"ILoveYou","Country":"US","URI":"https://example.com"}"
+                        class="MuiDataGrid-row MuiDataGrid-row--lastVisible"
+                        data-id="2023-01-17T13:12:00.000Z2.2.2.21.1.1.120https://example.compassword"
                         data-rowindex="0"
                         role="row"
                         style="max-height: 52px; min-height: 52px;"
@@ -481,22 +481,24 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                           role="cell"
                           style="min-width: 200px; max-width: 200px; min-height: 52px; max-height: 52px;"
                           tabindex="-1"
-                        />
+                        >
+                          2023-01-17T13:12:00.000Z
+                        </div>
                         <div
                           aria-colindex="2"
                           aria-colspan="1"
                           class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
                           data-colindex="1"
-                          data-field="Severity"
+                          data-field="Query Param(s)"
                           role="cell"
-                          style="min-width: 100px; max-width: 100px; min-height: 52px; max-height: 52px;"
+                          style="min-width: 300px; max-width: 300px; min-height: 52px; max-height: 52px;"
                           tabindex="-1"
                         >
                           <div
                             class="MuiDataGrid-cellContent"
-                            title="medium"
+                            title=""password""
                           >
-                            medium
+                            "password"
                           </div>
                         </div>
                         <div
@@ -504,70 +506,16 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                           aria-colspan="1"
                           class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
                           data-colindex="2"
-                          data-field="Matched Address"
-                          role="cell"
-                          style="min-width: 150px; max-width: 150px; min-height: 52px; max-height: 52px;"
-                          tabindex="-1"
-                        >
-                          <div
-                            class="MuiDataGrid-cellContent"
-                            title="1.1.1.1"
-                          >
-                            1.1.1.1
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        aria-rowindex="3"
-                        aria-selected="false"
-                        class="MuiDataGrid-row MuiDataGrid-row--lastVisible"
-                        data-id="{"Timestamp":"","Severity":"high","Matched Address":"2.3.4.5","URI":"https://example.com"}"
-                        data-rowindex="1"
-                        role="row"
-                        style="max-height: 52px; min-height: 52px;"
-                      >
-                        <div
-                          aria-colindex="1"
-                          aria-colspan="1"
-                          class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textLeft"
-                          data-colindex="0"
-                          data-field="Timestamp"
-                          role="cell"
-                          style="min-width: 200px; max-width: 200px; min-height: 52px; max-height: 52px;"
-                          tabindex="-1"
-                        />
-                        <div
-                          aria-colindex="2"
-                          aria-colspan="1"
-                          class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
-                          data-colindex="1"
-                          data-field="Severity"
+                          data-field="Src IP"
                           role="cell"
                           style="min-width: 100px; max-width: 100px; min-height: 52px; max-height: 52px;"
                           tabindex="-1"
                         >
                           <div
                             class="MuiDataGrid-cellContent"
-                            title="high"
+                            title="2.2.2.2"
                           >
-                            high
-                          </div>
-                        </div>
-                        <div
-                          aria-colindex="3"
-                          aria-colspan="1"
-                          class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
-                          data-colindex="2"
-                          data-field="Matched Address"
-                          role="cell"
-                          style="min-width: 150px; max-width: 150px; min-height: 52px; max-height: 52px;"
-                          tabindex="-1"
-                        >
-                          <div
-                            class="MuiDataGrid-cellContent"
-                            title="2.3.4.5"
-                          >
-                            2.3.4.5
+                            2.2.2.2
                           </div>
                         </div>
                       </div>
@@ -607,7 +555,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                     <p
                       class="MuiTablePagination-displayedRows css-levciy-MuiTablePagination-displayedRows"
                     >
-                      1–2 of 2
+                      1–1 of 1
                     </p>
                     <div
                       class="MuiTablePagination-actions"

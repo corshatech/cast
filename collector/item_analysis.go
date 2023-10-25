@@ -32,7 +32,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/corshatech/cast/collector/analysis/pass_in_url"
 	"github.com/corshatech/cast/collector/analysis/url_regex"
 )
 
@@ -308,24 +307,12 @@ func handleTrafficItem(trafficItemJson []byte, trafficItem *TrafficItem) ([]byte
 		metadata.UseOfBasicAuth = strings.HasPrefix(unHashedAuth, "Basic ")
 	}
 
-	// Start: Handle the pass-in-url analysis
-	passInUrl, err := pass_in_url.Detect(absoluteURI)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error in detecting PassInUrl: %w", err)
-	}
-	if passInUrl != nil {
-		log.WithFields(log.Fields{
-			"func":      "handleMessage",
-			"PassInUrl": metadata.PassInUrl,
-		}).Debug("password detected in url")
-		metadata.PassInUrl = passInUrl
-		trafficItemMap["data"].(map[string]interface{})["request"].(map[string]interface{})["absoluteURI"] = metadata.PassInUrl.AbsoluteUri
-	}
-	// End: Handle the pass-in-url analysis
-
 	metadata.DetectedJwts = detectJwts(originalTrafficDataJson)
 
-	metadata.PatternFindings = url_regex.Detect(trafficItem.Data.Request.Url)
+	metadata.PatternFindings, err = url_regex.Detect(absoluteURI, trafficItem.Data.Request.Url)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error in detecting regex findings: %w", err)
+	}
 
 	editedTrafficDataJson, err := json.Marshal(trafficItemMap["data"])
 	if err != nil {

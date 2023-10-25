@@ -85,8 +85,11 @@ export default function Dashboard() {
             {analyses.length > 0 &&
               <ul className='flex flex-col gap-6 mt-6'>
                 {analyses.map((a) => (
-                  <li key={a.id}>
-                    <a href={'#' + a.id} className='hover:underline underline-offset-4'>
+                  <li key={a.id === 'regex-pattern' ? a.findings[0].data.regexName : a.id}>
+                    <a
+                      href={'#' + (a.id === 'regex-pattern' ? a.findings[0].data.regexName : a.id)}
+                      className='hover:underline underline-offset-4'
+                    >
                       <Typography variant="body1">
                         <span
                           role='img'

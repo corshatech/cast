@@ -58,7 +58,7 @@ module.exports = {
         'medium-blue': '#1378FF',
         'light-blue': '#37ADEB',
         grey: '#979797',
-        'corsha-blue-light': '#10445799',
+        'corsha-blue-light': 'rgb(22,49,60)',
         'corsha-green-light': '#77C04399',
         'dark-green-light': '#27682599',
         'red-light': '#C10B0099',

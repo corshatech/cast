@@ -40,7 +40,8 @@ html {
   tab-size: 4; /* 3 */
   font-family: theme('fontFamily.sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"); /* 4 */
   font-feature-settings: theme('fontFamily.sans[1].fontFeatureSettings', normal); /* 5 */
-  color: rgb(0,41,51);
+  background: rgb(10,46,59);
+  scroll-behavior: smooth;
 }
 
 button {
@@ -407,3 +408,7 @@ video {
 
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background: unset;
+}

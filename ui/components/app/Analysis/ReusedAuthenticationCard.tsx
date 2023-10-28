@@ -63,8 +63,8 @@ const distanceToSeverityColor = (dist: number) =>
     'warning'
 
 const RequestsTable = ({row}: {row: RequestData}) => (
-  <TableContainer sx={{border: 1, borderColor: '#e5e7eb', borderRadius: '4px'}} component={Paper}>
-    <Table sx={{padding: 4}} aria-label="collapsible table">
+  <TableContainer component={Paper}>
+    <Table aria-label="collapsible table">
       <TableHead>
         <TableRow>
           <TableCell>Traffic ID</TableCell>
@@ -139,7 +139,7 @@ const Row = ({row}: {row: RequestData}) => {
       <TableRow>
         <TableCell sx={{ padding: 0 }} colSpan={9}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <div className='p-4'>
+            <div className='pt-2 pb-2'>
               {row.maxDist && row.maxDist >= HIGH_SEVERITY_DISTANCE &&
                 <>
                   <p className='flex items-center justify-center text-lg mb-4'>
@@ -183,7 +183,7 @@ export const ReusedAuthenticationCard: React.FC<AnalysisOf<ReusedAuthentication>
     {...otherProps}
     noResults={data.length === 0}
   >
-    <TableContainer sx={{ maxHeight: 400, border: 1, borderColor: '#e5e7eb', borderRadius: '4px' }}>
+    <TableContainer sx={{ maxHeight: 400 }}>
       <Table stickyHeader aria-label="collapsible table">
         <TableHead>
           <TableRow>

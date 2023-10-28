@@ -43,6 +43,7 @@ export type AnalysisProps = {
   | 'weaknessTitle'
   | 'severity'
   | 'title'
+  | 'id'
 >;
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -64,11 +65,11 @@ const Weakness: React.FC<{
   weaknessLink?: string;
   weaknessTitle?: string;
 }> = ({ weaknessLink, weaknessTitle }) =>
-  weaknessLink ? (
-    <Link className="underline truncate block" href={weaknessLink} target="_blank">
-      {weaknessTitle ?? weaknessLink}
-    </Link>
-  ) : null;
+    weaknessLink ? (
+      <Link className="underline truncate block" href={weaknessLink} target="_blank">
+        {weaknessTitle ?? weaknessLink}
+      </Link>
+    ) : null;
 
 const NoResults: React.FC<AnalysisProps> = ({
   description,
@@ -76,6 +77,7 @@ const NoResults: React.FC<AnalysisProps> = ({
   weaknessLink,
   weaknessTitle,
   title,
+  id,
 }) => {
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(false);
@@ -84,43 +86,47 @@ const NoResults: React.FC<AnalysisProps> = ({
     setExpanded(!expanded);
   };
 
-  return <Card className='max-w-prose'>
-    <CardContent className='flex items-center'>
-      <Typography
-        variant='h2'
-        className='font-light grow align-text-bottom'
-        style={{color: theme.palette.success.main}}
-      >
-        <Checkmark/>{' '}
-        {title}
-        {' - OK'}
-      </Typography>
-      <ExpandMore
-        expand={expanded}
-        onClick={handleExpandClick}
-        aria-expanded={expanded}
-        aria-label="show description"
-      >
-        <GridExpandMoreIcon/>
-      </ExpandMore>
-    </CardContent>
-    <Collapse in={expanded} timeout="auto" unmountOnExit>
-      <CardContent sx={{paddingTop: 0}}>
-        <Typography className='max-w-prose mb-4 text-zinc-400' variant='body1'>{description}</Typography>
-        <table className='font-light text-zinc-400 border-separate border-spacing-x-4'>
-          <tbody>
-            <tr>
-              <td>Updated:</td>
-              <td><FormattedDate when={reportedAt}/></td>
-            </tr>
-            <tr>
-              <td colSpan={2}><Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle}/></td>
-            </tr>
-          </tbody>
-        </table>
-      </CardContent>
-    </Collapse>
-  </Card>
+  return (
+    <a id={id}>
+      <Card className='max-w-prose'>
+        <CardContent className='flex items-center'>
+          <Typography
+            variant='h2'
+            className='font-light grow align-text-bottom'
+            style={{ color: theme.palette.success.main }}
+          >
+            <Checkmark />{' '}
+            {title}
+            {' - OK'}
+          </Typography>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show description"
+          >
+            <GridExpandMoreIcon />
+          </ExpandMore>
+        </CardContent>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent sx={{ paddingTop: 0 }}>
+            <Typography className='max-w-prose mb-4 text-zinc-400' variant='body1'>{description}</Typography>
+            <table className='font-light text-zinc-400 border-separate border-spacing-x-4'>
+              <tbody>
+                <tr>
+                  <td>Updated:</td>
+                  <td><FormattedDate when={reportedAt} /></td>
+                </tr>
+                <tr>
+                  <td colSpan={2}><Weakness weaknessLink={weaknessLink} weaknessTitle={weaknessTitle} /></td>
+                </tr>
+              </tbody>
+            </table>
+          </CardContent>
+        </Collapse>
+      </Card>
+    </a>
+  )
 }
 
 export const AnalysisCard: React.FC<AnalysisProps> = ({
@@ -133,6 +139,7 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   noResults,
   children,
   exportButton,
+  id,
 }) =>
   noResults ? (
     <NoResults
@@ -144,43 +151,81 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
         severity,
         title,
         noResults,
+        id,
       }}
     />
   ) : (
-    <Card aria-labelledby="title" className="shadow-md" elevation={2}>
-      <CardContent className="p-0 last:pb-0">
-        <div className="flex flex-wrap items-start px-2 py-4 md:py-6 md:px-8 justify-between">
-          <div className="items-center flex w-full md:mb-0">
-            <Typography className="grow mr-2" variant="h2" aria-label="title">
-              <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
-              {title}
-            </Typography>
-            <div className='shrink-0'>
-              {exportButton}
+    <a id={id}>
+      <Card
+        aria-labelledby="title"
+        sx={{
+          /* TODO: Use of `!important` in CSS override.
+           *
+           * These are written as overrides against the MUITable component's
+           * theme using `!important` which is bad form. Some of the color
+           * issues might be fixable with better use of the Material Theme
+           * component, but it wasn't immediately clear how to do so, especially
+           * for the BorderColor even after stepping through the source code
+           * for the MuiTable.
+           *
+           * These overrides should be removed in the future. Currently on the
+           * roadmap we're expecting to transition away from Material UI
+           * components anyway. It is expected that this hack for the
+           * border and header colors will get removed by the removal of
+           * Material UI during that work.
+           */
+          '& .MuiDataGrid-root, & .MuiTableContainer-root': {
+            borderRadius: '0',
+            border: 'none',
+            borderTop: '1px solid !important',
+            borderColor: 'rgba(255,255,255,.26) !important',
+          },
+          '& .MuiDataGrid-root *': {
+            borderColor: 'inherit !important',
+          },
+          '& .MuiDataGrid-columnSeparator': {
+            color: 'rgba(255,255,255,.26) !important',
+          },
+          '& .MuiTableCell-head': {
+            background: 'hsl(196 71% 12%)',
+          },
+        }}
+        className='shadow-md'
+        elevation={2}
+      >
+        <CardContent className="p-0 last:pb-0">
+          <div className="flex flex-wrap items-start px-2 py-4 md:py-6 md:px-8 justify-between">
+            <div className="items-center flex w-full md:mb-0">
+              <Typography className="grow mr-2" variant="h2" aria-label="title">
+                <SeverityIcon className="mb-[3px] pb-[1px]" severity={severity} />{' '}
+                {title}
+              </Typography>
+              <div className='shrink-0'>
+                {exportButton}
+              </div>
             </div>
-          </div>
 
-          <div className="pl-1 mt-2 flex flex-col md:mt-0 md:flex-row md:flex-wrap md:space-x-6">
-              <div className="flex items-center text-sm text-gray-500">
+            <div className="pl-1 mt-2 flex flex-col md:mt-0 md:flex-row md:flex-wrap md:space-x-6">
+              <div className="flex items-center text-sm text-gray-300">
                 <FontAwesomeIcon
                   icon={faCalendar}
-                  className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-400"
+                  className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-200"
                   aria-hidden="true"
                 />
                 <FormattedDate when={reportedAt} />
               </div>
-              <div className="flex items-center text-sm text-gray-500">
+              <div className="flex items-center text-sm text-gray-300">
                 <SeverityIcon
-                  className="mr-1 h-3 w-3 flex-shrink-0 text-gray-400"
+                  className="mr-1 h-3 w-3 flex-shrink-0 text-gray-200"
                   severity={severity}
                 />
                 {severity}
               </div>
               {weaknessLink && (
-                <div className="flex items-center text-sm text-gray-500">
+                <div className="flex items-center text-sm text-gray-300">
                   <FontAwesomeIcon
                     icon={faChain}
-                    className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-400"
+                    className="mr-1.5 h-3 w-3 flex-shrink-0 text-gray-300"
                     aria-hidden="true"
                   />
                   <div className="w-[320px] lg:w-auto inline-block">
@@ -192,16 +237,18 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
                 </div>
               )}
             </div>
-        </div>
-        <Typography
-          className="max-w-prose pl-2.5 pr-6 md:pl-9 pb-6"
-          variant="body1"
-        >
-          {description}
-        </Typography>
-        {children}
-      </CardContent>
-    </Card>
+          </div>
+          <Typography
+            className="max-w-prose pl-2.5 pr-6 md:pl-9 pb-6"
+            variant="body1"
+          >
+            {description}
+          </Typography>
+          {children}
+        </CardContent>
+      </Card>
+
+    </a>
   );
 
 export const AnalysisCardLoading = () => {

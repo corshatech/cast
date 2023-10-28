@@ -12,17 +12,20 @@
 import { cx } from 'class-variance-authority';
 import Image from 'next/image';
 import Link from 'next/link';
-import Logo from './CAST-logo.svg';
+import Logo from './CAST-logo-dark.svg';
 
 type Props = {
   big?: boolean;
+  className?: string;
 }
 
-export const Header: React.FC<Props> = ({big}) => {
+export const Header: React.FC<Props> = ({big, className}) => {
   return (
     <header className={cx(
-      'h-[72px] bg-white flex w-full m-0 justify-start items-center',
+      'relative h-[72px] bg-corsha-brand-blue flex w-full m-0 justify-start items-center',
+      "border-b border-b-transparent after:content-['_'] after:absolute after:top-full after:h-px after:w-full after:bg-gradient-to-r after:from-transparent after:via-corsha-brand-green after:to-transparent",
       big && 'h-40',
+      className,
     )}>
       <nav className="flex flex-1 max-w-full 2xl:max-4K:max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 justify-center items-center">
         <ul>

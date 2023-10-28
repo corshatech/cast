@@ -10,19 +10,17 @@
    limitations under the License. */
 
 import React from 'react';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-
-import { theme } from '@/components/app/theme';
+import { CssBaseline } from '@mui/material';
 
 export interface LayoutProps {
   children: React.ReactNode;
 }
 
 export const Layout = ({ children }: LayoutProps) => {
-  return (<ThemeProvider theme={theme}>
+  return (<>
     <CssBaseline/>
     <div className="m-0 flex flex-col items-start w-full">
       {children}
     </div>
-  </ThemeProvider>);
+  </>);
 };

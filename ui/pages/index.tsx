@@ -11,6 +11,7 @@
 
 import Head from 'next/head';
 import useSWR from 'swr';
+import { cx } from 'class-variance-authority';
 import { Alert, Typography, useTheme } from '@mui/material';
 
 import type { AnalysesResponse } from '@/pages/api/analyses';
@@ -24,6 +25,14 @@ import { CASTFeaturesListing } from '@/lib/metadata';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Chip } from '@/components/app/Chip';
 
+const severityToColor: Record<Severity, string> = {
+  none: 'border-gray-600 bg-gray-700/25',
+  critical: 'border-red-800 bg-red-500',
+  high: 'border-red-700 bg-red-800/25',
+  low: 'border-orange-600 bg-orange-700/25',
+  medium: 'border-yellow-600 bg-yellow-700/25',
+}
+
 const formatNumber = (findings: number) =>
   Intl.NumberFormat('en', {
     notation: 'compact',
@@ -31,8 +40,8 @@ const formatNumber = (findings: number) =>
   }).format(findings)
 
 export default function Dashboard() {
-  const { data: analysesResponse, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
-  const { data: enablements } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
+  const { data: analysesResponse, isLoading, error: analysesError } = useSWR<AnalysesResponse>('/api/analyses');
+  const { data: enablements, error: enablementsError } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
 
   /******************************
    * TODO: REMOVE ME
@@ -52,155 +61,86 @@ export default function Dashboard() {
     summarizeAnalyses(analysesResponse.analyses);
   const analyses = analysesResponse?.analyses ?? [];
 
+  const mError = analysesError ?? enablementsError ?? undefined;
+
   const summaryTitle = summary?.faults
-    ? `${summary.faults} Faults (${summary.findings} Findings)`
+    ? `${summary.faults} Issues (${summary.findings} individual infractions)`
     : `No problems detected yet. Live scanning will continue in the background.`;
-
-
-    const analysesBySeverity: Record<Severity, Analysis[]> = analyses.reduce<
-      Record<Severity, Analysis[]>
-    >(
-      (prev, curr) => {
-        const severity = curr?.findings?.length > 0 ? curr.severity : 'none';
-        return {
-          ...prev,
-          [severity]: [...prev[severity], curr],
-        };
-      },
-      {
-        none: [],
-        low: [],
-        medium: [],
-        high: [],
-        critical: [],
-      },
-    );
-
-    // The none category contains 'none' severity analyses as well as
-    // analyses with no findings. Sort to have 'none' severity analyses first:
-    analysesBySeverity['none'].sort((a) => a.findings.length > 0 ? 0 : 1)
-
-  const numNoFindings =
-    analysesBySeverity.none.reduce(
-      (prev, curr) => curr.findings.length === 0 ? prev + 1 : 0,
-      0,
-    )
 
   return (
     <>
       <Head>
-        <title>Summary</title>
+        <title>CAST by Corsha</title>
       </Head>
       <Layout>
         <Header big />
-        <main className="w-full">
-          {error && (
-            <Alert severity="error">
-              An Error Occurred loading analysis: {error.toString()}
-            </Alert>
-          )}
-          <div className="max-w-full 2xl:max-4K:max-w-10xl w-full mx-auto px-4 sm:px-6 lg:px-8 my-4">
-            <div className="my-12">
-              <Typography variant="h1" className='md:text-5xl xl:text-7xl'>
-                Ongoing Results
-              </Typography>
-              <div className='flex flex-col md:flex-row space-y-5 md:space-y-0 md:items-center md:space-x-3 md:ml-1 md:pt-6 xl:pt-8'>
-                {summary ? (
-                  <>
-                    <Typography variant="h4" className='md:text-2xl xl:text-3xl'>
-                      {summaryTitle}
-                    </Typography>
-                    <Typography style={{ color: theme.palette.text.secondary }} className='xl:text-xl font-semibold'>
-                      {summary?.scansPassed || 0} passed
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <div className={'h-9 w-60 rounded-lg bg-slate-50 bg-slate-400/10 animate-pulse'} />
-                    <div className={'h-7 w-20 rounded-lg bg-slate-50 bg-slate-400/10 animate-pulse'} />
-                  </>
-                )}
+        {mError && (
+          <Alert severity="error" className='w-full'>
+            An Error Occurred loading analysis: {mError.toString()}
+          </Alert>
+        )}
+        <div className="grid grid-cols-[24rem_1fr] grid-flow-row w-full">
+          <nav className="w-96 px-2 pl-6 pt-12 h-screen sticky top-0 overflow-auto">
+            <Typography variant="h5" className="pl-6">Navigation</Typography>
+            {analyses.length > 0 &&
+              <ul className='flex flex-col gap-6 mt-6'>
+                {analyses.map((a) => (
+                  <li key={a.id}>
+                    <a href={'#' + a.id} className='hover:underline underline-offset-4'>
+                      <Typography variant="body1">
+                        <span
+                          role='img'
+                          aria-label={`Severity ${a.severity}`}
+                          className={cx(
+                            'relative top-[2px] mr-2',
+                            'h-4 w-4 rounded-full',
+                            'inline-block',
+                            a.findings.length <= 0
+                              ? 'border border-corsha-brand-green bg-corsha-brand-green/25'
+                              : 'border ' + severityToColor[a.severity],
+                          )}
+                        />
+                        {a.title}
+                      </Typography>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            }
+          </nav>
+          <main className=''>
+            <div className="mx-auto min-w-min px-4 sm:px-6 lg:px-8 my-4">
+              <div className="my-12">
+                <Typography variant="h1" className='text-5xl'>
+                  Ongoing Results
+                </Typography>
+                <div className='flex flex-row space-y-0 items-center space-x-3 ml-1 pt-6'>
+                  {summary ? (
+                    <>
+                      <Typography variant="h4" className='text-2xl'>
+                        {summaryTitle}
+                      </Typography>
+                      <Typography style={{ color: theme.palette.text.secondary }} className='font-semibold'>
+                        {summary?.scansPassed || 0} passed
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <div className={'h-9 w-60 rounded-lg bg-slate-50 bg-slate-400/10 animate-pulse'} />
+                      <div className={'h-7 w-20 rounded-lg bg-slate-50 bg-slate-400/10 animate-pulse'} />
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-12 mb-12">
+                {analyses && analyses.length > 0 && analyses.map((a) => (
+                  <AnalysisCard {...a} key={a.id}/>
+                ))}
               </div>
             </div>
-
-            <Tabs defaultValue="critical">
-              <TabsList className='w-full h-14 overflow-x-auto gap-4 [&>*]:flex-1 mb-8 items-stretch justify-stretch text-corsha-brand-blue'>
-                <TabsTrigger disabled={analyses.length === 0} value="critical">
-                  Critical
-                  {summary && summary.severityCounts.critical > 0 && <Chip className='ml-2 bg-red-700'>{formatNumber(summary.severityCounts.critical)}</Chip>}
-                </TabsTrigger>
-                <TabsTrigger disabled={analyses.length === 0} value="high">
-                  High
-                  {summary && summary.severityCounts.high > 0 && <Chip className='ml-2 bg-red-700'>{formatNumber(summary.severityCounts.high)}</Chip>}
-                </TabsTrigger>
-                <TabsTrigger disabled={analyses.length === 0} value="medium">
-                  Medium
-                  {summary && summary.severityCounts.medium > 0 && <Chip className='ml-2 bg-orange-600'>{formatNumber(summary.severityCounts.medium)}</Chip>}
-                </TabsTrigger>
-                <TabsTrigger disabled={analyses.length === 0} value="low">
-                  Low
-                  {summary && summary.severityCounts.low > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.low)}</Chip>}
-                </TabsTrigger>
-                <TabsTrigger disabled={analyses.length === 0} value="none">
-                  None
-                  {summary && summary.severityCounts.none > 0 && <Chip className='ml-2'>{formatNumber(summary.severityCounts.none)}</Chip>}
-                  <Chip className='ml-2 bg-corsha-brand-green text-slate-900/80'>{formatNumber(numNoFindings)}</Chip>
-                </TabsTrigger>
-                <TabsTrigger disabled={analyses.length === 0} value="status">Status</TabsTrigger>
-                <TabsTrigger disabled={analyses.length === 0} value="settings">Settings</TabsTrigger>
-              </TabsList>
-              {isLoading && analyses.length === 0 && !error ? (
-                <div className="absolute inset-0 z-50 bg-slate-400/30 animate-pulse"/>
-              ) : (
-                <div className="min-h-screen max-w-full">
-                  {Object.entries(analysesBySeverity).map(([analysisId, analyses]) => (
-                    <TabsContent key={analysisId} value={analysisId}>
-                      <div className='flex flex-col gap-4'>
-                        {analyses.length === 0 && <p>No results in this category</p>}
-                        {analyses.map((analysis) => (
-                          <AnalysisCard key={analysis.id} {...analysis}/>
-                        ))}
-                      </div>
-                    </TabsContent>
-                  ))}
-                  <TabsContent value='status'>
-                    <div className="flex flex-col gap-2 items-start">
-                      { enablements && <>
-                        <a
-                          rel="noopener noreferrer"
-                          target="_blank"
-                          href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#maxmind-geolite2-data"
-                        >
-                          <EnablementChip
-                            label='GeoIP Data'
-                            tooltipEnabled='MaxMind GeoIP data has been loaded.'
-                            tooltipDisabled='No MaxMind GeoIP data has been found. Check the CAST Wiki for details.'
-                            enabled={enablements.geoIpEnabled}
-                          />
-                        </a>
-                        <a
-                          rel="noopener noreferrer"
-                          target="_blank"
-                          href="https://github.com/corshatech/cast/wiki/Activating-Optional-Features#feodo-banlist-data"
-                        >
-                          <EnablementChip
-                            label='IP Banlist Data'
-                            tooltipEnabled='FEODOTracker data has been loaded.'
-                            tooltipDisabled='No FEODOTracker ddata has been found. Check the CAST Wiki for details.'
-                            enabled={enablements.feodoEnabled}
-                          />
-                        </a>
-                      </>}
-                    </div>
-                  </TabsContent>
-                  <TabsContent value='settings'>
-                    <p>This page is under construction</p>
-                  </TabsContent>
-                </div>
-              )}
-            </Tabs>
-          </div>
-        </main>
+          </main>
+        </div>
       </Layout>
     </>
   );

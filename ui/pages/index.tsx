@@ -40,8 +40,8 @@ const formatNumber = (findings: number) =>
   }).format(findings)
 
 export default function Dashboard() {
-  const { data: analysesResponse, isLoading, error } = useSWR<AnalysesResponse>('/api/analyses');
-  const { data: enablements, error: error2 } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
+  const { data: analysesResponse, isLoading, error: analysesError } = useSWR<AnalysesResponse>('/api/analyses');
+  const { data: enablements, error: enablementsError } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
 
   const theme = useTheme();
 
@@ -50,7 +50,7 @@ export default function Dashboard() {
     summarizeAnalyses(analysesResponse.analyses);
   const analyses = analysesResponse?.analyses ?? [];
 
-  const mError = error ?? error2 ?? undefined;
+  const mError = analysesError ?? enablementsError ?? undefined;
 
   const summaryTitle = summary?.faults
     ? `${summary.faults} Issues (${summary.findings} individual infractions)`

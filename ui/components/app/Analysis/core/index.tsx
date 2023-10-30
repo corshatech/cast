@@ -159,7 +159,21 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
       <Card
         aria-labelledby="title"
         sx={{
-          /* TODO: Dirty hacks */
+          /* TODO: Use of `!important` in CSS override.
+           *
+           * These are written as overrides against the MUITable component's
+           * theme using `!important` which is bad form. Some of the color
+           * issues might be fixable with better use of the Material Theme
+           * component, but it wasn't immediately clear how to do so, especially
+           * for the BorderColor even after stepping through the source code
+           * for the MuiTable.
+           *
+           * These overrides should be removed in the future. Currently on the
+           * roadmap we're expecting to transition away from Material UI
+           * components anyway. It is expected that this hack for the
+           * border and header colors will get removed by the removal of
+           * Material UI during that work.
+           */
           '& .MuiDataGrid-root, & .MuiTableContainer-root': {
             borderRadius: '0',
             border: 'none',

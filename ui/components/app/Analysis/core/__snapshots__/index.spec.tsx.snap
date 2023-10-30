@@ -5,7 +5,7 @@ exports[`AnalysisCard Does not render a WeaknessLink when given a title but no L
   <a>
     <div
       aria-labelledby="title"
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-egsr3a-MuiPaper-root-MuiCard-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-1qo3px0-MuiPaper-root-MuiCard-root"
     >
       <div
         class="MuiCardContent-root p-0 last:pb-0 css-46bh2p-MuiCardContent-root"
@@ -93,7 +93,7 @@ exports[`AnalysisCard renders a weaknessLink without title 1`] = `
   <a />
   <div
     aria-labelledby="title"
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-egsr3a-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-1qo3px0-MuiPaper-root-MuiCard-root"
   >
     <a />
     <div
@@ -219,7 +219,7 @@ exports[`AnalysisCard renders all passed props 1`] = `
   <a />
   <div
     aria-labelledby="title"
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-egsr3a-MuiPaper-root-MuiCard-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-1qo3px0-MuiPaper-root-MuiCard-root"
   >
     <a />
     <div

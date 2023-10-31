@@ -29,9 +29,13 @@ import (
 )
 
 const (
-	// For now, since authentication has not been implemented for hitting the Jenkins instance,
-	// this URL must correspond with a public Jenkins instance.
+	// For now, since more advanced authentication has not been implemented for hitting the Jenkins instance,
+	// this URL must correspond with either a public Jenkins instance or a Jenkins instance supporting
+	// basic authentication.
 	jenkinsTLDEnv = "JENKINS_TLD"
+
+	usernameEnv = "JENKINS_USERNAME"
+	passwordEnv = "JENKINS_PASSWORD"
 
 	requestTimeout = 2 * time.Minute
 )
@@ -99,7 +103,7 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
-	// TODO(STR-5415): Set up authentication on the request to hit a non-public Jenkins instance
+	setBasicAuth(req)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -122,4 +126,18 @@ func main() {
 
 	log.WithField("resultsLength", len(data.Users)).Info("Scan completed. Skipping writing results to CAST DB...")
 	log.Info("Done.")
+}
+
+func setBasicAuth(req *http.Request) {
+	username := os.Getenv(usernameEnv)
+	if username == "" {
+		return
+	}
+
+	password := os.Getenv(passwordEnv)
+	if password == "" {
+		return
+	}
+
+	req.SetBasicAuth(username, password)
 }

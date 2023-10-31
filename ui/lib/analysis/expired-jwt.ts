@@ -15,16 +15,26 @@ import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 const query = `
 SELECT
-  jsonb_array_elements((meta->>'DetectedJwts')::jsonb) as jwt,
-  data->'request'->>'absoluteURI' as absolute_uri,
-  data->'protocol'->>'name' as proto,
-  data->'src'->>'ip' as src_ip,
-  data->'src'->>'port' as src_port,
-  data->'dst'->>'ip' as destination_ip,
-  data->'dst'->>'port' as destination_port,
-  data->'timestamp' as timestamp
-  FROM traffic WHERE
-  meta->>'DetectedJwts' is not null;
+jsonb_array_elements((meta->>'DetectedJwts')::jsonb) AS jwt,
+data->'request'->>'absoluteURI' AS absolute_uri,
+data->'protocol'->>'name' AS proto,
+data->'src'->>'ip' AS src_ip,
+data->'src'->>'port' AS src_port,
+location1.country_iso_code AS src_country_code,
+ip1.latitude AS src_lat,
+ip1.longitude AS src_long,
+data->'dst'->>'ip' AS dest_ip,
+data->'dst'->>'port' AS dest_port,
+location2.country_iso_code AS dest_country_code,
+ip2.latitude AS dest_lat,
+ip2.longitude AS dest_long,
+data->'timestamp' AS timestamp
+FROM traffic
+LEFT JOIN geo_ip_data ip1 ON ip1.network >>= (data->'src'->>'ip')::inet
+LEFT JOIN geo_ip_data ip2 ON ip2.network >>= (data->'dst'->>'ip')::inet
+LEFT JOIN geo_location_data location1 ON location1.geoname_id = ip1.geoname_id
+LEFT JOIN geo_location_data location2 ON location2.geoname_id = ip2.geoname_id
+WHERE meta->>'DetectedJwts' IS NOT NULL
 `;
 
 interface Row {
@@ -32,9 +42,15 @@ interface Row {
   absolute_uri: string;
   protocol: string;
   src_ip: string;
+  src_country_code: string | null;
+  src_lat: string | null;
+  src_long: string | null;
   src_port: string;
-  destination_ip: string;
-  destination_port: string;
+  dest_ip: string;
+  dest_country_code: string | null;
+  dest_lat: string | null;
+  dest_long: string | null;
+  dest_port: string;
   timestamp: number;
 }
 
@@ -84,8 +100,11 @@ export async function runnerPure(
           expiredAt: expirationDate,
           inRequest: {
             at,
-            destIp: row.destination_ip,
-            destPort: row.destination_port,
+            destIp: row.dest_ip,
+            destPort: row.dest_port,
+            destCountryCode: row.dest_country_code ?? undefined,
+            destLat: row.dest_lat ?? undefined,
+            destLong: row.dest_long ?? undefined,
             proto:
               row.protocol === 'tcp'
                 ? 'tcp'
@@ -94,6 +113,9 @@ export async function runnerPure(
                 : 'unknown',
             srcIp: row.src_ip,
             srcPort: row.src_port,
+            srcCountryCode: row.src_country_code ?? undefined,
+            srcLat: row.src_lat ?? undefined,
+            srcLong: row.src_long ?? undefined,
             URI: row.absolute_uri,
           },
         },

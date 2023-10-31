@@ -20,6 +20,7 @@ import { AnalysisOf, ExpiredJWT } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 import { AnalysisCard, CsvExportButton } from './core';
+import { IPAddress } from '../IPAddress';
 
 const columns: GridColDef[] = [
   {
@@ -39,9 +40,43 @@ const columns: GridColDef[] = [
     },
     width: 200,
   },
-  { field: 'Src IP', headerName: 'Src IP' },
   { field: 'URI', headerName: 'URI', width: 400 },
-  { field: 'Dest IP', headerName: 'Dest IP' },
+  {
+    field: 'Src IP',
+    headerName: 'Source IP',
+    width: 175,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <>
+          <IPAddress
+            className='mr-2'
+            size={30}
+            isoCode={params.row.srcCountryCode}
+            lat={params.row.srcLat}
+            long={params.row.srcLong}
+            address={params.value ?? '-'}
+          />
+        </>
+      )
+    },
+  },
+  {
+    field: 'Dest IP',
+    headerName: 'Dest IP',
+    width: 175,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <IPAddress
+          className='mr-2'
+          size={30}
+          isoCode={params.row.destCountryCode}
+          lat={params.row.destLat}
+          long={params.row.destLong}
+          address={params.value ?? '-'}
+        />
+      )
+    },
+  },
   { field: 'Dest Port', headerName: 'Dest Port' },
 ];
 
@@ -57,8 +92,14 @@ export const ExpiredJWTCard: React.FC<AnalysisOf<ExpiredJWT>> = ({
       inRequest: {
         at,
         srcIp,
+        srcCountryCode,
+        srcLat,
+        srcLong,
         URI,
         destIp,
+        destCountryCode,
+        destLat,
+        destLong,
         destPort,
       },
     },
@@ -68,8 +109,14 @@ export const ExpiredJWTCard: React.FC<AnalysisOf<ExpiredJWT>> = ({
     'JWT': jwt,
     'Expired At': expiredAt,
     'Src IP': srcIp,
+    srcCountryCode,
+    srcLat,
+    srcLong,
     'URI': URI,
     'Dest IP': destIp,
+    destLat,
+    destLong,
+    destCountryCode,
     'Dest Port': destPort,
   }))
   return <AnalysisCard

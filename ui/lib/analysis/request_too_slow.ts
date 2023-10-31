@@ -16,15 +16,40 @@ const ELAPSED_MEDIUM_SEVERITY_THRESHOLD = 60; // Minimum time (s) to generate me
 const ELAPSED_HIGH_SEVERITY_THRESHOLD = 180; // Minimum time (s) to generate high severity finding
 
 const query = `
-select elapsed_time, src_ip, src_port, dst_ip, dst_port, protocol, timestamp, absolute_uri, method, version, mimeType, connection_header, accept_header
-from 
+select
+  elapsed_time,
+  src_ip,
+  src_country_code,
+  src_lat,
+  src_long,
+  src_port,
+  dest_ip,
+  dest_country_code,
+  dest_lat,
+  dest_long,
+  dest_port,
+  protocol,
+  timestamp,
+  absolute_uri,
+  method,
+  version,
+  mimeType,
+  connection_header,
+  accept_header
+from
   (
-    select 
+    select
       cast (data->>'elapsedTime' as real)/1000 as elapsed_time,
       data->'src'->>'ip' as src_ip,
       data->'src'->>'port' as src_port,
-      data->'dst'->>'ip' as dst_ip,
-      data->'dst'->>'port' as dst_port,
+      location1.country_iso_code AS src_country_code,
+      ip1.latitude AS src_lat,
+      ip1.longitude AS src_long,
+      data->'dst'->>'ip' as dest_ip,
+      data->'dst'->>'port' as dest_port,
+      location2.country_iso_code AS dest_country_code,
+      ip2.latitude AS dest_lat,
+      ip2.longitude AS dest_long,
       data->'protocol'->>'name' as protocol,
       data->'request'->>'absoluteURI' as absolute_uri,
       occurred_at as timestamp,
@@ -34,22 +59,32 @@ from
       data->'request'->'headers'->>'Connection' as connection_header,
       data->'request'->'headers'->>'Accept' as accept_header
       from traffic
+      LEFT JOIN geo_ip_data ip1 ON ip1.network >>= (data->'src'->>'ip')::inet
+      LEFT JOIN geo_ip_data ip2 ON ip2.network >>= (data->'dst'->>'ip')::inet
+      LEFT JOIN geo_location_data location1 ON location1.geoname_id = ip1.geoname_id
+      LEFT JOIN geo_location_data location2 ON location2.geoname_id = ip2.geoname_id
   ) as trafficinner
-where 
-  elapsed_time > ${ELAPSED_MEDIUM_SEVERITY_THRESHOLD} 
-  and method != 'CONNECT' 
-  and coalesce(connection_header, '') != 'Upgrade' 
-  and version = 'HTTP/1.1' 
-  and mimeType != 'text/event-stream' 
+where
+  elapsed_time > ${ELAPSED_MEDIUM_SEVERITY_THRESHOLD}
+  and method != 'CONNECT'
+  and coalesce(connection_header, '') != 'Upgrade'
+  and version = 'HTTP/1.1'
+  and mimeType != 'text/event-stream'
   and not accept_header ~ 'text/event-stream'
 `;
 
 interface Row {
   elapsed_time: number;
   src_ip: string;
+  src_country_code: string | null;
+  src_lat: string;
+  src_long: string;
   src_port: string;
-  dst_ip: string;
-  dst_port: string;
+  dest_ip: string;
+  dest_country_code: string | null;
+  dest_lat: string;
+  dest_long: string;
+  dest_port: string;
   protocol: string;
   absolute_uri: string;
   timestamp: number;
@@ -65,7 +100,6 @@ export async function runnerPure(
   const rows = await query();
   const detectedAt = new Date().toISOString();
   const maxTime = (rows ?? []).reduce((prev, curr) => Math.max(prev, curr.elapsed_time), 0);
-  
   // Initially sort by request time descending
   rows.sort((r1, r2) => r2.elapsed_time - r1.elapsed_time)
 
@@ -82,16 +116,22 @@ export async function runnerPure(
         elapsedTime: row.elapsed_time,
         inRequest: {
           at: new Date(row.timestamp).toISOString(),
-          destIp: row.dst_ip,
-          destPort: row.dst_port,
           proto:
-            row.protocol === 'tcp'
-              ? 'tcp'
-              : row.protocol === 'udp'
-              ? 'udp'
-              : 'unknown',
+          row.protocol === 'tcp'
+          ? 'tcp'
+          : row.protocol === 'udp'
+          ? 'udp'
+          : 'unknown',
           srcIp: row.src_ip,
+          srcCountryCode: row.src_country_code ?? undefined,
+          srcLat: row.src_lat ?? undefined,
+          srcLong: row.src_long ?? undefined,
           srcPort: row.src_port,
+          destIp: row.dest_ip,
+          destCountryCode: row.dest_country_code ?? undefined,
+          destLat: row.dest_lat ?? undefined,
+          destLong: row.dest_long ?? undefined,
+          destPort: row.dest_port,
           URI: row.absolute_uri,
         },
       },
@@ -104,7 +144,7 @@ export async function runnerPure(
     title: 'Request Too Slow',
     description:
       'A request was detected that was in-flight for longer than one minute. ' +
-      'An API can be vulnerable to DoS and resource exhaustion attacks, ' + 
+      'An API can be vulnerable to DoS and resource exhaustion attacks, ' +
       'which can use up the allocated resources and potentially cause outages. ' +
       'Ensure that you have implemented resource limits as well as timeouts for ' +
       'requests to your APIs.',

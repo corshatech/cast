@@ -19,12 +19,21 @@ SELECT
   data->'protocol'->>'name' as proto,
   data->'src'->>'ip' as src_ip,
   data->'src'->>'port' as src_port,
-  data->'dst'->>'ip' as destination_ip,
-  data->'dst'->>'port' as destination_port,
-
+  location1.country_iso_code AS src_country_code,
+  ip1.latitude AS src_lat,
+  ip1.longitude AS src_long,
+  data->'dst'->>'ip' as dest_ip,
+  data->'dst'->>'port' as dest_port,
+  location2.country_iso_code AS dest_country_code,
+  ip2.latitude AS dest_lat,
+  ip2.longitude AS dest_long,
   data->'timestamp' as timestamp
-  FROM traffic WHERE
-  meta->>'UseOfBasicAuth' = 'true';
+FROM traffic
+LEFT JOIN geo_ip_data ip1 ON ip1.network >>= (data->'src'->>'ip')::inet
+LEFT JOIN geo_ip_data ip2 ON ip2.network >>= (data->'dst'->>'ip')::inet
+LEFT JOIN geo_location_data location1 ON location1.geoname_id = ip1.geoname_id
+LEFT JOIN geo_location_data location2 ON location2.geoname_id = ip2.geoname_id
+WHERE meta->>'UseOfBasicAuth' = 'true'
 `;
 
 interface Row {
@@ -32,9 +41,15 @@ interface Row {
     absolute_uri: string;
     protocol: string;
     src_ip: string;
+    src_country_code: string | null;
+    src_lat: string;
+    src_long: string;
     src_port: string;
-    destination_ip: string;
-    destination_port: string;
+    dest_ip: string;
+    dest_country_code: string | null;
+    dest_lat: string;
+    dest_long: string;
+    dest_port: string;
     timestamp: number;
   }
 
@@ -58,11 +73,17 @@ export async function runnerPure(query: () => Promise<Row[]>): Promise<Analysis>
     data: {
         inRequest: {
             at: (new Date(row.timestamp)).toISOString(),
-            destIp: row.destination_ip,
-            destPort: row.destination_port,
             proto: (row.protocol === 'tcp') ? 'tcp' : (row.protocol === 'udp') ? 'udp' : 'unknown',
             srcIp: row.src_ip,
+            srcCountryCode: row.src_country_code ?? undefined,
+            srcLat: row.src_lat ?? undefined,
+            srcLong: row.src_long ?? undefined,
             srcPort: row.src_port,
+            destIp: row.dest_ip,
+            destCountryCode: row.dest_country_code ?? undefined,
+            destLat: row.dest_lat ?? undefined,
+            destLong: row.dest_long ?? undefined,
+            destPort: row.dest_port,
             URI: row.absolute_uri,
         },
       },

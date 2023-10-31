@@ -20,6 +20,7 @@ import { AnalysisOf, RequestTooSlow } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 import { AnalysisCard, CsvExportButton } from './core';
+import { IPAddress } from '../IPAddress';
 
 const columns: GridColDef[] = [
   {
@@ -37,10 +38,42 @@ const columns: GridColDef[] = [
     headerName: 'Elapsed Time (s)',
     width: 175,
   },
-  { field: 'Src IP', headerName: 'Src IP' },
+  {
+    field: 'Src IP',
+    headerName: 'Source IP',
+    width: 175,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <IPAddress
+          className='mr-2'
+          size={30}
+          isoCode={params.row.srcCountryCode}
+          lat={params.row.srcLat}
+          long={params.row.srcLong}
+          address={params.value ?? '-'}
+        />
+      )
+    },
+  },
   { field: 'Src Port', headerName: 'Src Port' },
   { field: 'URI', headerName: 'URI', width: 400 },
-  { field: 'Dest IP', headerName: 'Dest IP' },
+  {
+    field: 'Dest IP',
+    headerName: 'Dest IP',
+    width: 175,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <IPAddress
+            className='mr-2'
+            size={30}
+            isoCode={params.row.destCountryCode}
+            lat={params.row.destLat}
+            long={params.row.destLong}
+            address={params.value ?? '-'}
+        />
+      )
+    },
+  },
   { field: 'Dest Port', headerName: 'Dest Port' },
 ];
 
@@ -56,9 +89,15 @@ export const RequestTooSlowCard: React.FC<AnalysisOf<RequestTooSlow>> = ({
       inRequest: {
         at,
         srcIp,
+        srcCountryCode,
+        srcLat,
+        srcLong,
         srcPort,
         URI,
         destIp,
+        destCountryCode,
+        destLat,
+        destLong,
         destPort,
       },
     },
@@ -69,8 +108,14 @@ export const RequestTooSlowCard: React.FC<AnalysisOf<RequestTooSlow>> = ({
     'Severity': severity,
     URI,
     'Src IP': srcIp,
+    srcCountryCode,
+    srcLat,
+    srcLong,
     'Src Port': srcPort,
     'Dest IP': destIp,
+    destCountryCode,
+    destLat,
+    destLong,
     'Dest Port': destPort,
   }))
   return <AnalysisCard

@@ -15,6 +15,7 @@
    import { AnalysisOf, IpBanlist } from '@/lib/findings';
 
    import { AnalysisCard, CsvExportButton } from './core';
+   import { IPAddress } from '../IPAddress';
 
    const columns: GridColDef[] = [
      {
@@ -29,6 +30,40 @@
      { field: 'Matched Address', headerName: 'Matched Address', width: 150 },
      { field: 'Malware', headerName: 'Malware', width: 200 },
      { field: 'URI', headerName: 'URI', width: 400 },
+     {
+      field: 'Src IP',
+      headerName: 'Source IP',
+      width: 175,
+      renderCell(params: GridRenderCellParams<string>) {
+        return (
+          <IPAddress
+            className='mr-2'
+            size={30}
+            isoCode={params.row.srcCountryCode}
+            lat={params.row.srcLat}
+            long={params.row.srcLong}
+            address={params.value ?? '-'}
+          />
+        )
+      },
+    },
+    {
+      field: 'Dest IP',
+      headerName: 'Dest IP',
+      width: 175,
+      renderCell(params: GridRenderCellParams<string>) {
+        return (
+          <IPAddress
+            className='mr-2'
+            size={30}
+            isoCode={params.row.destCountryCode}
+            lat={params.row.destLat}
+            long={params.row.destLong}
+            address={params.value ?? '-'}
+          />
+        )
+      },
+    },
    ];
 
    export const IpBanlistCard: React.FC<AnalysisOf<IpBanlist>> = ({
@@ -52,6 +87,14 @@
        Malware: malware,
        Country: country,
        URI: inRequest?.URI ?? '',
+       'Src IP': inRequest.srcIp,
+       srcCountryCode: inRequest.srcCountryCode,
+       srcLat: inRequest.srcLat,
+       srcLong: inRequest.srcLong,
+       'Dest IP': inRequest.destIp,
+       destCountryCode: inRequest.destCountryCode,
+       destLat: inRequest.destLat,
+       destLong: inRequest.destLong,
      }));
      return <AnalysisCard
        reportedAt={reportedAt}

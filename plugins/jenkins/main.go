@@ -131,12 +131,12 @@ func main() {
 func setBasicAuth(req *http.Request) {
 	username := os.Getenv(usernameEnv)
 	if username == "" {
-		log.Fatalf("Required environment variable %s is not set!", usernameEnv)
+		return
 	}
 
 	password := os.Getenv(passwordEnv)
 	if password == "" {
-		log.Fatalf("Required environment variable %s is not set!", passwordEnv)
+		return
 	}
 
 	req.SetBasicAuth(username, password)

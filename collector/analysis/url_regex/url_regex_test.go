@@ -16,7 +16,6 @@ limitations under the License.
 package url_regex_test
 
 import (
-	"sort"
 	"testing"
 	"time"
 
@@ -63,22 +62,20 @@ func TestUrlRegex(t *testing.T) {
 			Name:  "matches PIU on a URL with a password in it",
 			Input: "http://example.com/some/path?query=4&password=blah",
 			ExpectOut: []url_regex.CastRegexpDbMatch{{
-				Rule:        &passInUrlRule,
-				Id:          "PassInUrl",
-				MatchText:   "",
-				DetectedAt:  fakeNow,
-				QueryParams: []string{"password"},
+				Rule:       &passInUrlRule,
+				Id:         "PassInUrl",
+				MatchText:  "",
+				DetectedAt: fakeNow,
 			}},
 		},
 		{
 			Name:  "PIU matches multiple",
 			Input: "http://example.com?password=xyzzy&pass=xyzzy&foo=bar",
 			ExpectOut: []url_regex.CastRegexpDbMatch{{
-				Rule:        &passInUrlRule,
-				Id:          "PassInUrl",
-				MatchText:   "",
-				QueryParams: []string{"pass", "password"},
-				DetectedAt:  fakeNow,
+				Rule:       &passInUrlRule,
+				Id:         "PassInUrl",
+				MatchText:  "",
+				DetectedAt: fakeNow,
 			}},
 		},
 		{
@@ -134,8 +131,6 @@ func TestUrlRegex(t *testing.T) {
 				assert.Len(t, result, 0)
 			} else {
 				// All examples currently have 1 finding
-				sort.Strings(result[0].QueryParams)
-				assert.Equal(t, scenario.ExpectOut[0].QueryParams, result[0].QueryParams)
 				assert.Equal(t, scenario.ExpectOut[0].MatchText, result[0].MatchText)
 				assert.Equal(t, scenario.ExpectOut[0].Rule, result[0].Rule)
 				assert.Equal(t, scenario.ExpectOut[0].Id, result[0].Id)

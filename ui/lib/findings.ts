@@ -164,10 +164,17 @@ export type ExpiredJWT = z.infer<typeof ExpiredJWT>;
 export const RegexFinding = z.object({
   'Id': z.string(),
   'DetectedAt': z.string(),
-  'Rule': Analysis,
+  'Rule': Analysis.pick({
+    title: true,
+    severity: true,
+    description: true,
+    weaknessLink: true,
+    weaknessTitle: true,
+  }).extend({
+    sensitive: z.boolean(),
+  }),
   'MatchText': z.string(),
   'AbsoluteUri': z.string(),
-  'QueryParams': z.array(z.string()),
 })
 
 export type RegexFinding = z.infer<typeof RegexFinding>;
@@ -175,8 +182,6 @@ export type RegexFinding = z.infer<typeof RegexFinding>;
 export const RegexPattern = makeFinding(
   'regex-pattern',
   z.object({
-    regexName: z.string(),
-    queryParams: z.array(z.string()).nullable().describe('The name of the query parameter suspected of containing a password'),
     weaknessLink: z.string(),
     weaknessTitle: z.string(),
     inRequest: RequestContext,

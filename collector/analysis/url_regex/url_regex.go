@@ -19,10 +19,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
-	"strings"
 	"time"
-
-	"github.com/emirpasic/gods/sets/hashset"
 )
 
 type CastRegexpDbEntry struct {
@@ -95,25 +92,9 @@ type CastRegexpDbMatch struct {
 	DetectedAt time.Time
 	// AbsoluteUri is the AbsoluteUri without a query string
 	AbsoluteUri string
-	// QueryParams are the query keys that look like passwords
-	QueryParams []string
 }
 
 var RegexDb CastRegexpDatabase
-
-// keys are the query string keys to match on.
-// NOTE: these must be lower-case
-var keys = hashset.New(
-	"password",
-	"pass",
-	"pwd",
-	"auth",
-	"apikey",
-	"api-key",
-	"session",
-	"sessionkey",
-	"session-key",
-)
 
 func init() {
 	RegexDb = make(map[string]CastRegexpDbEntry)
@@ -191,18 +172,6 @@ func DetectTime(absoluteUri string, requestUrl string, now time.Time) ([]CastReg
 		return nil, fmt.Errorf("error parsing absoluteUri: %w", err)
 	}
 
-	query, err := url.ParseQuery(uri.RawQuery)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing absoluteUri query: %w", err)
-	}
-
-	var matches []string
-	for k := range query {
-		if keys.Contains(strings.ToLower(k)) {
-			matches = append(matches, k)
-		}
-	}
-
 	r := make([]CastRegexpDbMatch, 0, len(RegexDb))
 
 	for key := range RegexDb {
@@ -221,7 +190,6 @@ func DetectTime(absoluteUri string, requestUrl string, now time.Time) ([]CastReg
 				MatchText:   matchString,
 				DetectedAt:  now,
 				AbsoluteUri: uri.String(),
-				QueryParams: matches,
 			})
 		}
 	}

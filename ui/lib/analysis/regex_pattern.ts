@@ -9,7 +9,7 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, Finding, RegexFinding, RegexPattern } from 'lib/findings';
+import { Analysis, AnalysisOf, Finding, RegexFinding, RegexPattern } from 'lib/findings';
 import { conn } from '../../lib/db';
 import { z } from 'zod';
 
@@ -24,24 +24,14 @@ export type AnalysisResponse = {
 
 const query = `
 SELECT
-	src_ip,
-	src_port,
-	dst_ip,
-	dst_port,
-  timestamp,
-  finding
-FROM (
-  SELECT
-	data->'src'->>'ip' AS src_ip,
+  data->'src'->>'ip' AS src_ip,
   data->'src'->>'port' AS src_port,
   data->'dst'->>'ip' AS dst_ip,
   data->'dst'->>'port' AS dst_port,
-  occurred_at as timestamp,
-	jsonb_array_elements(meta->'PatternFindings') AS finding
-  FROM traffic
-) trafficinner (src_ip, src_port, dst_ip, dst_port, timestamp, finding)
-WHERE finding->>'Id' = $1
-ORDER BY timestamp DESC
+  occurred_at AS timestamp,
+  meta->'PatternFindings' AS findings
+FROM traffic
+WHERE meta ? 'PatternFindings'
 `;
 
 const Row = z.object({
@@ -49,38 +39,36 @@ const Row = z.object({
   src_port: z.string(),
   dst_ip: z.string(),
   dst_port: z.string(),
-  timestamp: z.number().int(),
-  finding: RegexFinding,
-})
+  timestamp: z.date(),
+  findings: z.array(RegexFinding),
+});
 
 export type Row = z.infer<typeof Row>;
 
-function rowToFinding(detectedAt: string, row: Row, regexName: string): Finding {
+function rowToFinding(detectedAt: string, row: Row): RegexPattern[] {
   const at = new Date(row.timestamp).toISOString();
   const occurredAt = { at };
-  return {
+  return row.findings.map((finding) => ({
     type: 'regex-pattern',
-    name: row.finding.Rule.title,
-    severity: row.finding.Rule.severity,
-    description: row.finding.Rule.description,
+    name: finding.Rule.title,
+    severity: finding.Rule.severity,
+    description: finding.Rule.description,
     occurredAt,
     detectedAt,
     data: {
-      regexName,
-      queryParams: row.finding.QueryParams,
-      weaknessLink: row.finding.Rule.weaknessLink ?? '',
-      weaknessTitle: row.finding.Rule.weaknessTitle ?? '',
+      weaknessLink: finding.Rule.weaknessLink ?? '',
+      weaknessTitle: finding.Rule.weaknessTitle ?? '',
       inRequest: {
         srcIp: row.src_ip,
         srcPort: row.src_port,
         proto: 'tcp',
         destIp: row.dst_ip,
         destPort: row.dst_port,
-        URI: row.finding.AbsoluteUri,
+        URI: finding.AbsoluteUri,
         at,
       },
     },
-  };
+  }));
 }
 
 export type QueryFunction = () => Promise<Row[]>;
@@ -89,28 +77,32 @@ export type QueryFunction = () => Promise<Row[]>;
  *
  * This function allows for dependency injection during unit testing
  */
-export async function runnerPure(query: QueryFunction, regexName: string): Promise<Analysis> {
-  const rows = await query();
+export async function runnerPure(query: QueryFunction): Promise<Analysis[]> {
+  const rows = z.array(Row).parse(await query());
   const reportedAt = new Date().toISOString();
-  const findings = rows.map(row => rowToFinding(reportedAt, row, regexName));
+  const findings = rows.flatMap(row => rowToFinding(reportedAt, row));
 
-  // Get first finding, all findings will be the same type and contain a description
-  const finding = findings[0] as RegexPattern;
-  finding.description = finding.description ?? '';
 
-  return {
-    id: 'regex-pattern',
-    title: finding.name,
-    description: finding.description,
-    reportedAt,
-    weaknessLink: finding.data.weaknessLink,
-    weaknessTitle: finding.data.weaknessTitle,
-    severity: finding.severity,
-    findings,
-  };
+  let groupedAnalyses = new Map<string, AnalysisOf<RegexPattern>>();
+  findings.forEach((finding) => {
+    let analysis = groupedAnalyses.get(finding.name) ?? {
+        id: 'regex-pattern',
+        title: finding.name,
+        description: finding.description ?? '',
+        reportedAt,
+        weaknessLink: finding.data.weaknessLink,
+        weaknessTitle: finding.data.weaknessTitle,
+        severity: finding.severity,
+        findings: [],
+      };
+    analysis.findings.push(finding);
+    groupedAnalyses.set(finding.name, analysis)
+  })
+
+  return [...groupedAnalyses.values()];
 }
 
-export async function regexPattern(regexName: string): Promise<Analysis[]> {
-  const queryFunction = async () => (await conn.query(query, [regexName])).rows;
-  return [await runnerPure(queryFunction, regexName)];
+export async function regexPattern(): Promise<Analysis[]> {
+  const queryFunction = async () => (await conn.query(query, [])).rows;
+  return await runnerPure(queryFunction);
 }

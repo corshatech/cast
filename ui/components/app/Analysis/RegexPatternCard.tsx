@@ -30,7 +30,6 @@ const columns: GridColDef[] = [
     },
     width: 200,
   },
-  { field: 'Query Param(s)', headerName: 'Query Param(s)', width: 300 },
   { field: 'Src IP', headerName: 'Src IP' },
   { field: 'Dest IP', headerName: 'Dest IP' },
   { field: 'Dest Port', headerName: 'Dest Port' },
@@ -45,7 +44,6 @@ export const RegexPatternCard: React.FC<Omit<AnalysisOf<RegexPattern>, 'id'> & {
 }) => {
   const data = (findings ?? []).map(({
     data: {
-      queryParams,
       inRequest: {
         at,
         srcIp,
@@ -55,9 +53,8 @@ export const RegexPatternCard: React.FC<Omit<AnalysisOf<RegexPattern>, 'id'> & {
       },
     },
   }) => ({
-    id: `${at}${srcIp}${destIp}${destPort}${URI}${queryParams}`,
+    id: `${at}${srcIp}${destIp}${destPort}${URI}`,
     // each param in quotes, joined by commas into a list
-    'Query Param(s)': (queryParams ?? []).map(s => `"${s}"`).join(', '),
     'Timestamp': at,
     'Src IP': srcIp,
     'URI': URI,
@@ -77,11 +74,7 @@ export const RegexPatternCard: React.FC<Omit<AnalysisOf<RegexPattern>, 'id'> & {
     <div style={{height: '400px', width: '100%'}}>
     <DataGrid
       rows={data}
-      columns={
-        data.some(i => i['Query Param(s)'].length === 0) ?
-          columns.filter(i => i.field !== 'Query Param(s)')
-          : columns
-      }
+      columns={columns}
       pageSize={10}
       rowsPerPageOptions={[10]}
     />

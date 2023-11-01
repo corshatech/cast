@@ -45,11 +45,11 @@ export const AnalysisCard: React.FC<Analysis> = (analysis) => {
       }
       case 'regex-pattern': {
         const data = AnalysisOf(RegexPattern).parse(analysis);
-        let regexName = data.findings[0].data.regexName;
+        let id = 'regex-pattern-' + encodeURIComponent(data.findings[0].name);
         return (
           <RegexPatternCard
             {...data}
-            id={regexName}
+            id={id}
           />
         )
       }

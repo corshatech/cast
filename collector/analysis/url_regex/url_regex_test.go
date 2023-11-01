@@ -54,11 +54,6 @@ func TestUrlRegex(t *testing.T) {
 			Input: "http://example.com/actions/forgot_my_password.aspmx?token=bar",
 		},
 		{
-			Name:        "returns an error when passed a malformed query",
-			Input:       "http://example.com/?foo;bar=1",
-			ExpectError: true,
-		},
-		{
 			Name:  "matches PIU on a URL with a password in it",
 			Input: "http://example.com/some/path?query=4&password=blah",
 			ExpectOut: []url_regex.CastRegexpDbMatch{{

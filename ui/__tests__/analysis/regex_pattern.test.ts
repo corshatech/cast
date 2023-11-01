@@ -19,7 +19,7 @@ test('runner works', async () => {
         src_port: '57944',
         dst_ip: '10.1.0.96',
         dst_port: '8181',
-        finding: {
+        findings: [{
           Id: 'test',
           DetectedAt: '2023-01-18T13:12:01.000Z',
           Rule:  {
@@ -30,13 +30,12 @@ test('runner works', async () => {
             weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
             weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
             severity: 'high' as Finding['severity'],
-            findings: [],
+            sensitive: true,
           },
           MatchText: '',
           AbsoluteUri: 'http://example.com/url-1',
-          QueryParams: ['password', 'pass'],
-        },
-        timestamp: 1674047521000,
+        }],
+        timestamp: new Date('2023-01-18T13:12:01.000Z'),
         uri: 'http://example.com/url-1',
         query_params: ['password', 'pass'],
       },
@@ -45,7 +44,7 @@ test('runner works', async () => {
         src_port: '57944',
         dst_ip: '10.1.0.96',
         dst_port: '8181',
-        finding: {
+        findings: [{
           Id: 'test2',
           DetectedAt: '2023-01-18T13:12:01.000Z',
           Rule:  {
@@ -56,19 +55,18 @@ test('runner works', async () => {
             weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
             weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
             severity: 'high' as Finding['severity'],
-            findings: [],
+            sensitive: true,
           },
           MatchText: '',
           AbsoluteUri: 'http://example.com/url-2',
-          QueryParams: ['passwd'],
-        },
-        timestamp: 1674047522000,
+        }],
+        timestamp: new Date('2023-01-18T13:12:02.000Z'),
         uri: 'http://example.com/url-2',
       },
     ]);
 
-  const results = await runnerPure(query, 'PassInUrl');
-  expect(results).toStrictEqual({
+  const results = await runnerPure(query);
+  expect(results).toStrictEqual([{
     id: 'regex-pattern',
     title: 'Broken Authentication: Password in Query String',
     description: 'A password or credential was detected in a URL as a query parameter. Using secure transport like HTTPS does not resolve the issue, because the URL may become logged or leak to third parties through e.g. the Referrer header. Do not include credentials in any part of a URL.',
@@ -84,7 +82,6 @@ test('runner works', async () => {
         detectedAt: '2023-01-17T13:12:00.000Z',
         severity: 'high',
         data: {
-          queryParams: ['password', 'pass'],
           inRequest: {
             srcIp: '192.2.0.1',
             srcPort: '57944',
@@ -94,7 +91,6 @@ test('runner works', async () => {
             URI: 'http://example.com/url-1',
             at: '2023-01-18T13:12:01.000Z',
           },
-          regexName: 'PassInUrl',
           weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
           weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
         },
@@ -107,7 +103,6 @@ test('runner works', async () => {
         detectedAt: '2023-01-17T13:12:00.000Z',
         severity: 'high',
         data: {
-          queryParams: ['passwd'],
           inRequest: {
             srcIp: '192.2.0.2',
             srcPort: '57944',
@@ -117,12 +112,11 @@ test('runner works', async () => {
             URI: 'http://example.com/url-2',
             at: '2023-01-18T13:12:02.000Z',
           },
-          regexName: 'PassInUrl',
           weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
           weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
         },
         description: 'A password or credential was detected in a URL as a query parameter. Using secure transport like HTTPS does not resolve the issue, because the URL may become logged or leak to third parties through e.g. the Referrer header. Do not include credentials in any part of a URL.',
       },
     ],
-  });
+  }]);
 });

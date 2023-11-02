@@ -23,25 +23,22 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/oauth2"
 )
 
 const (
-	// For now, since more advanced authentication has not been implemented for hitting the Jenkins instance,
-	// this URL must correspond with either a public Jenkins instance or a Jenkins instance supporting
-	// basic authentication.
-	jenkinsTLDEnv = "JENKINS_TLD"
+	// Environment variable holding the top level domain corresponding with the Jenkins instance.
+	tldEnv = "JENKINS_TLD"
 
 	// Environment variables holding the username and password for basic authentication.
 	usernameEnv = "JENKINS_USERNAME"
 	passwordEnv = "JENKINS_PASSWORD"
 
-	// Environment variables holding the client ID and client secret for oauth 2.
-	clientIDEnv     = "JENKINS_CLIENT_ID"
-	clientSecretEnv = "JENKINS_CLIENT_SECRET"
+	// Environment variable holding the session ID cookie for a user already authenticated with Jenkins.
+	sessionIDEnv = "JENKINS_SESSION_ID"
 
 	requestTimeout = 2 * time.Minute
 )
@@ -83,9 +80,9 @@ type Data struct {
 }
 
 func main() {
-	tld := os.Getenv(jenkinsTLDEnv)
+	tld := os.Getenv(tldEnv)
 	if tld == "" {
-		log.Fatalf("Required environment variable %s is not set!", jenkinsTLDEnv)
+		log.Fatalf("Required environment variable %s is not set!", tldEnv)
 	}
 
 	// See this article for more details on the tree parameter:
@@ -109,8 +106,10 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
+	// Authenticate with Jenkins. Try basic auth first, then fall back to using the session ID cookie.
+	// If the environment variables needed for authentication are all missing, skip it entirely.
 	if !setBasicAuth(req) {
-		setOauth(ctx, req)
+		setSessionIDCookie(req)
 	}
 
 	log.Debugf("request: %+v", req)
@@ -154,47 +153,23 @@ func setBasicAuth(req *http.Request) bool {
 	return true
 }
 
-func setOauth(ctx context.Context, req *http.Request) {
-	clientID := os.Getenv(clientIDEnv)
-	if clientID == "" {
+func setSessionIDCookie(req *http.Request) {
+	cookie := os.Getenv(sessionIDEnv)
+	if cookie == "" {
 		return
 	}
 
-	clientSecret := os.Getenv(clientSecretEnv)
-	if clientSecret == "" {
-		return
+	parts := strings.Split(cookie, "=")
+	if len(parts) != 2 {
+		log.WithField(sessionIDEnv, cookie).Fatal("Jenkins Session ID cookie is not valid; both parts, before and after the equal sign, are required")
 	}
 
-	oauthCfg := &oauth2.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		Scopes:       []string{"user"},
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://github.com/login/oauth/authorize",
-			TokenURL: "https://github.com/login/oauth/access_token",
-		},
-	}
+	cookieName, cookieValue := parts[0], parts[1]
 
-	// Direct the user to GitHub's sign in / consent page to grant the specified scopes.
-	authCodeURL := oauthCfg.AuthCodeURL("cast-state", oauth2.AccessTypeOffline)
+	req.AddCookie(&http.Cookie{
+		Name:  cookieName,
+		Value: cookieValue,
+	})
 
-	log.Info(fmt.Sprintf("ACTION REQUIRED! Visit this URL for the GitHub auth dialog: %v", authCodeURL))
-
-	// Use the temporary auth code from GitHub to perform the handshake exchanging the code for an access token.
-	var code string
-	if _, err := fmt.Scan(&code); err != nil {
-		log.Fatal(err)
-	}
-
-	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
-	defer cancel()
-
-	tok, err := oauthCfg.Exchange(ctx, code)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Use the access token to set the auth header on the request.
-	tok.SetAuthHeader(req)
-	log.Info("OAuth has been set up for the request!")
+	log.Info("Session ID cookie has been set up for the request!")
 }

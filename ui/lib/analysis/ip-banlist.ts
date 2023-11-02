@@ -28,7 +28,7 @@ DISTINCT ON (traffic.id) traffic_id,
   traffic.data->'dst'->>'ip' as destination_ip,
   traffic.data->'dst'->>'port' as destination_port,
   traffic.data->'timestamp' as timestamp
-FROM matview_traffic_ips as view
+FROM traffic_ips as view
 INNER JOIN feodo_banlist as banlist ON view.ip_addr = banlist.ip_address
 INNER JOIN traffic ON view.traffic_id = traffic.id
 ORDER BY traffic.id, view.ip_addr DESC NULLS LAST

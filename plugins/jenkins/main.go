@@ -26,6 +26,7 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/oauth2"
 )
 
 const (
@@ -34,8 +35,13 @@ const (
 	// basic authentication.
 	jenkinsTLDEnv = "JENKINS_TLD"
 
+	// Environment variables holding the username and password for basic authentication.
 	usernameEnv = "JENKINS_USERNAME"
 	passwordEnv = "JENKINS_PASSWORD"
+
+	// Environment variables holding the client ID and client secret for oauth 2.
+	clientIDEnv     = "JENKINS_CLIENT_ID"
+	clientSecretEnv = "JENKINS_CLIENT_SECRET"
 
 	requestTimeout = 2 * time.Minute
 )
@@ -103,7 +109,11 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
-	setBasicAuth(req)
+	if !setBasicAuth(req) {
+		setOauth(ctx, req)
+	}
+
+	log.Debugf("request: %+v", req)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -128,16 +138,63 @@ func main() {
 	log.Info("Done.")
 }
 
-func setBasicAuth(req *http.Request) {
+func setBasicAuth(req *http.Request) bool {
 	username := os.Getenv(usernameEnv)
 	if username == "" {
-		return
+		return false
 	}
 
 	password := os.Getenv(passwordEnv)
 	if password == "" {
-		return
+		return false
 	}
 
 	req.SetBasicAuth(username, password)
+	log.Info("Basic auth has been set up for the request!")
+	return true
+}
+
+func setOauth(ctx context.Context, req *http.Request) {
+	clientID := os.Getenv(clientIDEnv)
+	if clientID == "" {
+		return
+	}
+
+	clientSecret := os.Getenv(clientSecretEnv)
+	if clientSecret == "" {
+		return
+	}
+
+	oauthCfg := &oauth2.Config{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		Scopes:       []string{"user"},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://github.com/login/oauth/authorize",
+			TokenURL: "https://github.com/login/oauth/access_token",
+		},
+	}
+
+	// Direct the user to GitHub's sign in / consent page to grant the specified scopes.
+	authCodeURL := oauthCfg.AuthCodeURL("cast-state", oauth2.AccessTypeOffline)
+
+	log.Info(fmt.Sprintf("ACTION REQUIRED! Visit this URL for the GitHub auth dialog: %v", authCodeURL))
+
+	// Use the temporary auth code from GitHub to perform the handshake exchanging the code for an access token.
+	var code string
+	if _, err := fmt.Scan(&code); err != nil {
+		log.Fatal(err)
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	tok, err := oauthCfg.Exchange(ctx, code)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Use the access token to set the auth header on the request.
+	tok.SetAuthHeader(req)
+	log.Info("OAuth has been set up for the request!")
 }

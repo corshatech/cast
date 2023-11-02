@@ -13,12 +13,12 @@ import Flags from 'country-flag-icons/react/3x2';
 import Image from 'next/image';
 
 export type Props = {
-    isoCode: string;
+    isoCode?: string;
     size?: number;
     className?: string;
 }
 
-export const CountryFlag: React.FC<Props> = ({isoCode, size = 30, className}) => {
+export const CountryFlag: React.FC<Props> = ({isoCode = 'N/A', size = 30, className}) => {
     if (!(isoCode in Flags)) {
         return (
             <div
@@ -27,6 +27,7 @@ export const CountryFlag: React.FC<Props> = ({isoCode, size = 30, className}) =>
                     width: `${size}px`,
                     height: `${size*2/3}px`,
                     position: 'relative',
+                    display: 'inline',
                 }}
             >
                 <Image

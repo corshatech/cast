@@ -40,9 +40,9 @@ const columns: GridColDef[] = [
         <IPAddress
           className='mr-2'
           size={30}
-          isoCode={params.row.srcCountryCode}
-          lat={params.row.srcLat}
-          long={params.row.srcLong}
+          isoCode={params.row['Src Country Code']}
+          lat={params.row['Src Latitude']}
+          long={params.row['Src Longitude']}
           address={params.value ?? '-'}
         />
       )
@@ -58,9 +58,9 @@ const columns: GridColDef[] = [
         <IPAddress
             className='mr-2'
             size={30}
-            isoCode={params.row.destCountryCode}
-            lat={params.row.destLat}
-            long={params.row.destLong}
+            isoCode={params.row['Dest Country Code']}
+            lat={params.row['Dest Latitude']}
+            long={params.row['Dest Longitude']}
             address={params.value ?? '-'}
         />
       )
@@ -94,14 +94,14 @@ export const UseOfBasicAuthCard: React.FC<AnalysisOf<UseOfBasicAuth>> = ({
     id: `${at}${srcIp}${URI}${destPort}`,
     'Timestamp': at,
     'Src IP': srcIp,
-    srcCountryCode,
-    srcLat,
-    srcLong,
+    'Src Country Code': srcCountryCode,
+    'Src Latitude': srcLat,
+    'Src Longitude': srcLong,
     'URI': URI,
     'Dest IP': destIp,
-    destCountryCode,
-    destLat,
-    destLong,
+    'Dest Country Code': destCountryCode,
+    'Dest Latitude': destLat,
+    'Dest Longitude': destLong,
     'Dest Port': destPort,
   }))
   return <AnalysisCard

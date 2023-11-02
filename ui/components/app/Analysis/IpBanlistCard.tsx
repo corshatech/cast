@@ -39,9 +39,9 @@
           <IPAddress
             className='mr-2'
             size={30}
-            isoCode={params.row.srcCountryCode}
-            lat={params.row.srcLat}
-            long={params.row.srcLong}
+            isoCode={params.row['Src Country Code']}
+            lat={params.row['Src Latitude']}
+            long={params.row['Src Longitude']}
             address={params.value ?? '-'}
           />
         )
@@ -56,9 +56,9 @@
           <IPAddress
             className='mr-2'
             size={30}
-            isoCode={params.row.destCountryCode}
-            lat={params.row.destLat}
-            long={params.row.destLong}
+            isoCode={params.row['Dest Country Code']}
+            lat={params.row['Dest Latitude']}
+            long={params.row['Dest Longitude']}
             address={params.value ?? '-'}
           />
         )
@@ -88,13 +88,13 @@
        Country: country,
        URI: inRequest?.URI ?? '',
        'Src IP': inRequest.srcIp,
-       srcCountryCode: inRequest.srcCountryCode,
-       srcLat: inRequest.srcLat,
-       srcLong: inRequest.srcLong,
+       'Src Country Code': inRequest.srcCountryCode,
+       'Src Latitude': inRequest.srcLat,
+       'Src Longitude': inRequest.srcLong,
        'Dest IP': inRequest.destIp,
-       destCountryCode: inRequest.destCountryCode,
-       destLat: inRequest.destLat,
-       destLong: inRequest.destLong,
+       'Dest Country Code': inRequest.destCountryCode,
+       'Dest Latitude': inRequest.destLat,
+       'Dest Longitude': inRequest.destLong,
      }));
      return <AnalysisCard
        reportedAt={reportedAt}

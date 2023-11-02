@@ -15,7 +15,6 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/exp v0.0.0-20230304125523-9ff063c70017
-	golang.org/x/oauth2 v0.7.0
 	helm.sh/helm/v3 v3.11.3
 	k8s.io/api v0.26.5
 	k8s.io/apimachinery v0.26.5
@@ -120,6 +119,7 @@ require (
 	go.starlark.net v0.0.0-20221020143700-22309ac47eac // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/oauth2 v0.7.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
 	golang.org/x/text v0.13.0 // indirect

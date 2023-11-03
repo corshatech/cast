@@ -52,9 +52,11 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
-	if err = prepareAuth(req); err != nil {
+	auth, err := prepareAuth()
+	if err != nil {
 		log.WithError(err).Fatal("Failed to prepare authentication for the HTTP request")
 	}
+	auth.Apply(req)
 
 	log.Debugf("request: %+v", req)
 

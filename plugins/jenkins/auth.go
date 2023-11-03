@@ -33,28 +33,59 @@ const (
 	sessionIDEnv = "JENKINS_SESSION_ID"
 )
 
-// prepareAuth prepares the request to authenticate with Jenkins if possible.
-// Basic auth is used if all required values are provided. If not, set the session ID cookie
-// if the required value is provided. If not, skip authentication entirely.
+type AuthStrategy interface {
+	Apply(req *http.Request)
+}
+
+type basicAuth struct {
+	username, password string
+}
+
+func (a *basicAuth) Apply(req *http.Request) {
+	req.SetBasicAuth(a.username, a.password)
+	log.Info("Basic auth has been set up for the request!")
+}
+
+type sessionIDAuth struct {
+	cookieName, cookieValue string
+}
+
+func (a sessionIDAuth) Apply(req *http.Request) {
+	req.AddCookie(&http.Cookie{
+		Name:  a.cookieName,
+		Value: a.cookieValue,
+	})
+
+	log.Info("Session ID cookie has been set up for the request!")
+}
+
+// prepareAuth prepares the authentication strategy for any requests made to Jenkins.
+// Basic auth is used if all required values are provided. If not, the session ID cookie
+// is used if the required value is provided. If not, skip authentication entirely.
 // NOTE: There is a distinction between missing values and invalid values; missing is
-// acceptable whereas invalid will cause the program to fail.
-func prepareAuth(req *http.Request) error {
+// acceptable whereas invalid will result in an error.
+func prepareAuth() (AuthStrategy, error) {
 	username, password := basicCredentials()
 	if username != "" && password != "" {
-		setBasicAuth(req, username, password)
-		return nil
+		return &basicAuth{
+			username: username,
+			password: password,
+		}, nil
 	}
 
 	cookieName, cookieValue, err := sessionIDCookie()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if cookieName != "" && cookieValue != "" {
-		setSessionIDCookie(req, cookieName, cookieValue)
+		return &sessionIDAuth{
+			cookieName:  cookieName,
+			cookieValue: cookieValue,
+		}, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
 func basicCredentials() (string, string) {
@@ -66,11 +97,6 @@ func basicCredentials() (string, string) {
 	}
 
 	return username, password
-}
-
-func setBasicAuth(req *http.Request, username, password string) {
-	req.SetBasicAuth(username, password)
-	log.Info("Basic auth has been set up for the request!")
 }
 
 func sessionIDCookie() (string, string, error) {
@@ -88,13 +114,4 @@ func sessionIDCookie() (string, string, error) {
 
 	cookieName, cookieValue := parts[0], parts[1]
 	return cookieName, cookieValue, nil
-}
-
-func setSessionIDCookie(req *http.Request, cookieName, cookieValue string) {
-	req.AddCookie(&http.Cookie{
-		Name:  cookieName,
-		Value: cookieValue,
-	})
-
-	log.Info("Session ID cookie has been set up for the request!")
 }

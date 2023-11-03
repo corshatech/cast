@@ -42,6 +42,11 @@ func main() {
 		log.WithError(err).Fatal("Failed to prepare URL for HTTP request")
 	}
 
+	conn, err := NewConnection(requestURL)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to initialize connection with Jenkins")
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
 
@@ -52,11 +57,7 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
-	auth, err := prepareAuth()
-	if err != nil {
-		log.WithError(err).Fatal("Failed to prepare authentication for the HTTP request")
-	}
-	auth.Apply(req)
+	conn.Authenticate(req)
 
 	log.Debugf("request: %+v", req)
 

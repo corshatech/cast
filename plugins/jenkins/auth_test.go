@@ -150,6 +150,59 @@ func TestValidSessionIDCookie(t *testing.T) {
 	}
 }
 
+func TestInvalidSessionIDCookie(t *testing.T) {
+	for _, test := range []struct {
+		description string
+		cookie      string
+	}{
+		{
+			description: "too many equal signs in cookie",
+			cookie:      "sessionID==session-id-123",
+		},
+		{
+			description: "cookie value missing",
+			cookie:      "sessionID=",
+		},
+		{
+			description: "cookie name missing",
+			cookie:      "=session-id-123",
+		},
+		{
+			description: "no equals sign in cookie at all",
+			cookie:      "what-even-is-cookie",
+		},
+	} {
+		t.Run(test.description, func(t *testing.T) {
+			if err := os.Setenv(sessionIDEnv, test.cookie); err != nil {
+				t.Fatalf("Failed to set env var %q to %q: %v", sessionIDEnv, test.cookie, err)
+			}
+			defer os.Clearenv() // ensure no test state is left behind
+
+			name, value, err := sessionIDCookie()
+			if err == nil {
+				t.Errorf("Expected parsing session ID cookie to fail, but got success; cookieName=%q, cookieValue=%q", name, value)
+			}
+		})
+	}
+}
+
+func TestPrepareAuthWithInvalidSessionIDCookieReturnsError(t *testing.T) {
+	testCookie := "===not a valid cookie==== :("
+
+	if err := os.Setenv(sessionIDEnv, testCookie); err != nil {
+		t.Fatalf("Failed to set env var %q to %q: %v", sessionIDEnv, testCookie, err)
+	}
+	defer os.Clearenv() // ensure no test state is left behind
+
+	strat, err := prepareAuth()
+	if err == nil {
+		t.Error("Expected parsing session ID cookie to fail, but got success")
+	}
+	if strat != nil {
+		t.Errorf("Expected nil auth strategy, but got something else: %+v", strat)
+	}
+}
+
 func TestPrepareAuthWithValidSessionIDCookieReturnsSessionCookieAuthStrategy(t *testing.T) {
 	testCookieName := "mySessionID"
 	testCookieValue := "very-secret-session-id"

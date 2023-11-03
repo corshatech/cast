@@ -34,10 +34,9 @@ func TestUrlRegex(t *testing.T) {
 	xssRule := url_regex.RegexDb["XSS"]
 
 	type urlRegexTestcase struct {
-		Name        string
-		Input       string
-		ExpectOut   []url_regex.CastRegexpDbMatch
-		ExpectError bool
+		Name      string
+		Input     string
+		ExpectOut []url_regex.CastRegexpDbMatch
 	}
 
 	for _, scenario := range []urlRegexTestcase{
@@ -115,12 +114,7 @@ func TestUrlRegex(t *testing.T) {
 		},
 	} {
 		t.Run("Detect "+scenario.Name, func(t *testing.T) {
-			result, err := url_regex.DetectTime(scenario.Input, scenario.Input, fakeNow)
-			if scenario.ExpectError {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-			}
+			result := url_regex.DetectTime(scenario.Input, fakeNow)
 
 			if scenario.ExpectOut == nil {
 				assert.Len(t, result, 0)

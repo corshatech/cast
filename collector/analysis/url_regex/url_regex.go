@@ -16,8 +16,6 @@ limitations under the License.
 package url_regex
 
 import (
-	"fmt"
-	"net/url"
 	"regexp"
 	"time"
 )
@@ -156,8 +154,8 @@ func init() {
  * Detect is the same function as DetectTime, but uses time.now() as the default
  * DetectedAt value for all detections that matched.
  */
-func Detect(absoluteUri string, url string) ([]CastRegexpDbMatch, error) {
-	return DetectTime(absoluteUri, url, time.Now())
+func Detect(url string) []CastRegexpDbMatch {
+	return DetectTime(url, time.Now())
 }
 
 /**
@@ -165,12 +163,7 @@ func Detect(absoluteUri string, url string) ([]CastRegexpDbMatch, error) {
  * URLs, returning a slice of matches against rules. An empty or nil list
  * indicates no findings were generated.
  */
-func DetectTime(absoluteUri string, requestUrl string, now time.Time) ([]CastRegexpDbMatch, error) {
-
-	uri, err := url.Parse(absoluteUri)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing absoluteUri: %w", err)
-	}
+func DetectTime(requestUrl string, now time.Time) []CastRegexpDbMatch {
 
 	r := make([]CastRegexpDbMatch, 0, len(RegexDb))
 
@@ -185,14 +178,13 @@ func DetectTime(absoluteUri string, requestUrl string, now time.Time) ([]CastReg
 			}
 
 			r = append(r, CastRegexpDbMatch{
-				Rule:        &rule,
-				Id:          key,
-				MatchText:   matchString,
-				DetectedAt:  now,
-				AbsoluteUri: uri.String(),
+				Rule:       &rule,
+				Id:         key,
+				MatchText:  matchString,
+				DetectedAt: now,
 			})
 		}
 	}
 
-	return r, nil
+	return r
 }

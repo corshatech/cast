@@ -309,10 +309,7 @@ func handleTrafficItem(trafficItemJson []byte, trafficItem *TrafficItem) ([]byte
 
 	metadata.DetectedJwts = detectJwts(originalTrafficDataJson)
 
-	metadata.PatternFindings, err = url_regex.Detect(absoluteURI, trafficItem.Data.Request.Url)
-	if err != nil {
-		return nil, nil, fmt.Errorf("error in detecting regex findings: %w", err)
-	}
+	metadata.PatternFindings = url_regex.Detect(trafficItem.Data.Request.Url)
 
 	editedTrafficDataJson, err := json.Marshal(trafficItemMap["data"])
 	if err != nil {

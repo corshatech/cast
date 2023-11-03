@@ -9,18 +9,9 @@
    See the License for the specific language governing permissions and
    limitations under the License. */
 
-import { Analysis, AnalysisOf, Finding, RegexFinding, RegexPattern } from 'lib/findings';
+import { Analysis, AnalysisOf, RegexFinding, RegexPattern } from 'lib/findings';
 import { conn } from '../../lib/db';
 import { z } from 'zod';
-
-export type AuthenticationUseRecord = {
-  absoluteUri: string;
-  srcIp: string;
-};
-
-export type AnalysisResponse = {
-  groups: Record<string, AuthenticationUseRecord[]>;
-};
 
 const query = `
 SELECT
@@ -28,6 +19,7 @@ SELECT
   data->'src'->>'port' AS src_port,
   data->'dst'->>'ip' AS dst_ip,
   data->'dst'->>'port' AS dst_port,
+  data->'request'->'absoluteURI' AS uri,
   occurred_at AS timestamp,
   meta->'PatternFindings' AS findings
 FROM traffic
@@ -39,6 +31,7 @@ const Row = z.object({
   src_port: z.string(),
   dst_ip: z.string(),
   dst_port: z.string(),
+  uri: z.string(),
   timestamp: z.date(),
   findings: z.array(RegexFinding),
 });
@@ -64,7 +57,7 @@ function rowToFinding(detectedAt: string, row: Row): RegexPattern[] {
         proto: 'tcp',
         destIp: row.dst_ip,
         destPort: row.dst_port,
-        URI: finding.AbsoluteUri,
+        URI: row.uri,
         at,
       },
     },

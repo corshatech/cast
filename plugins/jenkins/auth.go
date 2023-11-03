@@ -33,6 +33,8 @@ const (
 	sessionIDEnv = "JENKINS_SESSION_ID"
 )
 
+// AuthStrategy defines the values and logic needed to apply an authentication strategy
+// to an HTTP request.
 type AuthStrategy interface {
 	Apply(req *http.Request)
 }
@@ -46,11 +48,11 @@ func (a *basicAuth) Apply(req *http.Request) {
 	log.Info("Basic auth has been set up for the request!")
 }
 
-type sessionIDAuth struct {
+type sessionCookieAuth struct {
 	cookieName, cookieValue string
 }
 
-func (a sessionIDAuth) Apply(req *http.Request) {
+func (a *sessionCookieAuth) Apply(req *http.Request) {
 	req.AddCookie(&http.Cookie{
 		Name:  a.cookieName,
 		Value: a.cookieValue,
@@ -79,7 +81,7 @@ func prepareAuth() (AuthStrategy, error) {
 	}
 
 	if cookieName != "" && cookieValue != "" {
-		return &sessionIDAuth{
+		return &sessionCookieAuth{
 			cookieName:  cookieName,
 			cookieValue: cookieValue,
 		}, nil

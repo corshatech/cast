@@ -23,19 +23,22 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 )
 
 const (
-	// For now, since more advanced authentication has not been implemented for hitting the Jenkins instance,
-	// this URL must correspond with either a public Jenkins instance or a Jenkins instance supporting
-	// basic authentication.
-	jenkinsTLDEnv = "JENKINS_TLD"
+	// Environment variable holding the top level domain corresponding with the Jenkins instance.
+	tldEnv = "JENKINS_TLD"
 
+	// Environment variables holding the username and password for basic authentication.
 	usernameEnv = "JENKINS_USERNAME"
 	passwordEnv = "JENKINS_PASSWORD"
+
+	// Environment variable holding the session ID cookie for a user already authenticated with Jenkins.
+	sessionIDEnv = "JENKINS_SESSION_ID"
 
 	requestTimeout = 2 * time.Minute
 )
@@ -77,9 +80,9 @@ type Data struct {
 }
 
 func main() {
-	tld := os.Getenv(jenkinsTLDEnv)
+	tld := os.Getenv(tldEnv)
 	if tld == "" {
-		log.Fatalf("Required environment variable %s is not set!", jenkinsTLDEnv)
+		log.Fatalf("Required environment variable %s is not set!", tldEnv)
 	}
 
 	// See this article for more details on the tree parameter:
@@ -103,7 +106,13 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
-	setBasicAuth(req)
+	// Authenticate with Jenkins. Try basic auth first, then fall back to using the session ID cookie.
+	// If the environment variables needed for authentication are all missing, skip it entirely.
+	if !setBasicAuth(req) {
+		setSessionIDCookie(req)
+	}
+
+	log.Debugf("request: %+v", req)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -128,16 +137,39 @@ func main() {
 	log.Info("Done.")
 }
 
-func setBasicAuth(req *http.Request) {
+func setBasicAuth(req *http.Request) bool {
 	username := os.Getenv(usernameEnv)
 	if username == "" {
-		return
+		return false
 	}
 
 	password := os.Getenv(passwordEnv)
 	if password == "" {
-		return
+		return false
 	}
 
 	req.SetBasicAuth(username, password)
+	log.Info("Basic auth has been set up for the request!")
+	return true
+}
+
+func setSessionIDCookie(req *http.Request) {
+	cookie := os.Getenv(sessionIDEnv)
+	if cookie == "" {
+		return
+	}
+
+	parts := strings.Split(cookie, "=")
+	if len(parts) != 2 {
+		log.WithField(sessionIDEnv, cookie).Fatal("Jenkins Session ID cookie is not valid; both parts, before and after the equal sign, are required")
+	}
+
+	cookieName, cookieValue := parts[0], parts[1]
+
+	req.AddCookie(&http.Cookie{
+		Name:  cookieName,
+		Value: cookieValue,
+	})
+
+	log.Info("Session ID cookie has been set up for the request!")
 }

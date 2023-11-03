@@ -18,7 +18,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -70,10 +69,8 @@ func main() {
 
 	req.Header.Set("Accept", "application/json")
 
-	// Authenticate with Jenkins. Try basic auth first, then fall back to using the session ID cookie.
-	// If the environment variables needed for authentication are all missing, skip it entirely.
-	if !setBasicAuth(req) {
-		setSessionIDCookie(req)
+	if err = prepareAuth(req); err != nil {
+		log.WithError(err).Fatal("Failed to prepare authentication for the HTTP request")
 	}
 
 	log.Debugf("request: %+v", req)
@@ -99,41 +96,4 @@ func main() {
 
 	log.WithField("resultsLength", len(data.Users)).Info("Scan completed. Skipping writing results to CAST DB...")
 	log.Info("Done.")
-}
-
-func setBasicAuth(req *http.Request) bool {
-	username := os.Getenv(usernameEnv)
-	if username == "" {
-		return false
-	}
-
-	password := os.Getenv(passwordEnv)
-	if password == "" {
-		return false
-	}
-
-	req.SetBasicAuth(username, password)
-	log.Info("Basic auth has been set up for the request!")
-	return true
-}
-
-func setSessionIDCookie(req *http.Request) {
-	cookie := os.Getenv(sessionIDEnv)
-	if cookie == "" {
-		return
-	}
-
-	parts := strings.Split(cookie, "=")
-	if len(parts) != 2 {
-		log.WithField(sessionIDEnv, cookie).Fatal("Jenkins Session ID cookie is not valid; both parts, before and after the equal sign, are required")
-	}
-
-	cookieName, cookieValue := parts[0], parts[1]
-
-	req.AddCookie(&http.Cookie{
-		Name:  cookieName,
-		Value: cookieValue,
-	})
-
-	log.Info("Session ID cookie has been set up for the request!")
 }

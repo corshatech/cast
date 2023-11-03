@@ -24,6 +24,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	// Environment variables holding the username and password for basic authentication.
+	usernameEnv = "JENKINS_USERNAME"
+	passwordEnv = "JENKINS_PASSWORD"
+
+	// Environment variable holding the session ID cookie for a user already authenticated with Jenkins.
+	sessionIDEnv = "JENKINS_SESSION_ID"
+)
+
 // prepareAuth prepares the request to authenticate with Jenkins if possible.
 // Basic auth is used if all required values are provided. If not, set the session ID cookie
 // if the required value is provided. If not, skip authentication entirely.

@@ -33,13 +33,6 @@ const (
 	// Environment variable holding the top level domain corresponding with the Jenkins instance.
 	tldEnv = "JENKINS_TLD"
 
-	// Environment variables holding the username and password for basic authentication.
-	usernameEnv = "JENKINS_USERNAME"
-	passwordEnv = "JENKINS_PASSWORD"
-
-	// Environment variable holding the session ID cookie for a user already authenticated with Jenkins.
-	sessionIDEnv = "JENKINS_SESSION_ID"
-
 	requestTimeout = 2 * time.Minute
 )
 

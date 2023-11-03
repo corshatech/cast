@@ -18,7 +18,7 @@ const LatLongContainer = ({
   isoCode,
   children,
   ...props
-}: Omit<Props, 'address'> & { children: React.ReactNode }) => (
+}: Omit<Props, 'address'> & { children?: React.ReactNode }) => (
   <Tooltip>
     <TooltipTrigger className="p-0 bg-[unset] flex items-center gap-4">
       <CountryFlag {...props} isoCode={isoCode} />

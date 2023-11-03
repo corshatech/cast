@@ -108,9 +108,9 @@ func sessionIDCookie() (string, string, error) {
 	}
 
 	parts := strings.Split(cookie, "=")
-	if len(parts) != 2 {
-		msg := "Jenkins Session ID cookie is not valid; both parts, before and after the equal sign, are required"
-		log.WithField(sessionIDEnv, cookie).Fatal(msg)
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		msg := "Jenkins Session ID cookie is not valid; both cookie name and value are required (before and after the equal sign)"
+		log.WithField(sessionIDEnv, cookie).Error(msg)
 		return "", "", errors.New(msg)
 	}
 

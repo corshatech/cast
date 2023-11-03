@@ -16,15 +16,10 @@ limitations under the License.
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"net/http"
 	"net/url"
 	"os"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -32,8 +27,6 @@ import (
 const (
 	// Environment variable holding the top level domain corresponding with the Jenkins instance.
 	tldEnv = "JENKINS_TLD"
-
-	requestTimeout = 2 * time.Minute
 )
 
 func main() {
@@ -47,38 +40,10 @@ func main() {
 		log.WithError(err).Fatal("Failed to initialize connection with Jenkins")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, requestURL, nil)
+	data, err := conn.QueryUsers()
 	if err != nil {
-		log.WithError(err).Fatal("Failed to create HTTP request")
+		log.WithError(err).Fatal("Failed to query Jenkins user data")
 	}
-
-	req.Header.Set("Accept", "application/json")
-
-	conn.Authenticate(req)
-
-	log.Debugf("request: %+v", req)
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.WithError(err).Fatal("Failed to execute HTTP request against Jenkins")
-	}
-	defer res.Body.Close()
-
-	resBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		log.WithError(err).Fatal("could not read response body")
-	}
-	log.Debugf("response body: %s", resBody)
-
-	var data Data
-	if err := json.Unmarshal(resBody, &data); err != nil {
-		log.WithError(err).Fatal("could not unmarshal user data")
-	}
-
-	log.Debugf("Jenkins user data: %+v", data)
 
 	log.WithField("resultsLength", len(data.Users)).Info("Scan completed. Skipping writing results to CAST DB...")
 	log.Info("Done.")

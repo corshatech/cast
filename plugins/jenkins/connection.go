@@ -1,6 +1,20 @@
 package main
 
-import "net/http"
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"time"
+
+	log "github.com/sirupsen/logrus"
+)
+
+const (
+	requestTimeout = 2 * time.Minute
+)
 
 type Connection struct {
 	userRequestURL string
@@ -19,12 +33,48 @@ func NewConnection(requestURL string) (*Connection, error) {
 	}, nil
 }
 
-func (c *Connection) Authenticate(req *http.Request) {
+func (c *Connection) QueryUsers() (*Data, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.userRequestURL, nil)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to create HTTP request: %v", err)
+		log.WithError(err).Error(msg)
+		return nil, errors.New(msg)
+	}
+
+	req.Header.Set("Accept", "application/json")
+
 	if c.authStrategy != nil {
 		c.authStrategy.Apply(req)
 	}
-}
 
-func (c *Connection) QueryUsers(req *http.Request) error {
-	return nil // TODO
+	log.Debugf("request: %+v", req)
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		msg := fmt.Sprintf("Failed to execute HTTP request against Jenkins: %v", err)
+		log.WithError(err).Error(msg)
+		return nil, errors.New(msg)
+	}
+	defer res.Body.Close()
+
+	resBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		msg := fmt.Sprintf("Could not read response body: %v", err)
+		log.WithError(err).Error(msg)
+		return nil, errors.New(msg)
+	}
+	log.Debugf("response body: %s", resBody)
+
+	var data Data
+	if err := json.Unmarshal(resBody, &data); err != nil {
+		msg := fmt.Sprintf("Could not unmarshal response body as user data JSON: %v", err)
+		log.WithError(err).Error(msg)
+		return nil, errors.New(msg)
+	}
+
+	log.Debugf("Jenkins user data: %+v", data)
+	return &data, nil
 }

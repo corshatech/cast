@@ -115,7 +115,7 @@ func groupByEmailDomain(users []*User) map[string][]*User {
 			log.WithFields(log.Fields{
 				"user.FullName": u.FullName,
 				"user.ID":       u.ID,
-			}).Warning("Invalid email address for this user: %q", u.EmailAddress)
+			}).Warningf("Invalid email address for this user: %q", u.EmailAddress)
 			continue
 		}
 

@@ -41,14 +41,9 @@ func TestUnsetBasicCredentials(t *testing.T) {
 			}
 			defer os.Clearenv() // ensure no test state is left behind
 
-			username, password := basicCredentials()
-
-			if got, want := username, ""; got != want {
-				t.Errorf("Wanted empty username, but got %q", got)
-			}
-
-			if got, want := password, ""; got != want {
-				t.Errorf("Wanted empty password, but got %q", got)
+			strat := basicCredentials()
+			if strat != nil {
+				t.Errorf("Wanted nil basic auth strategy, but got something else: %+v", strat)
 			}
 		})
 	}
@@ -67,13 +62,16 @@ func TestValidBasicCredentials(t *testing.T) {
 		t.Fatalf("Failed to set env var %q to %q: %v", passwordEnv, testPassword, err)
 	}
 
-	username, password := basicCredentials()
+	strat := basicCredentials()
+	if strat == nil {
+		t.Fatal("Expected non-nil basic auth strategy, but got nil")
+	}
 
-	if got, want := username, testUsername; got != want {
+	if got, want := strat.username, testUsername; got != want {
 		t.Errorf("Wanted username %q, but got %q", want, got)
 	}
 
-	if got, want := password, testPassword; got != want {
+	if got, want := strat.password, testPassword; got != want {
 		t.Errorf("Wanted password %q, but got %q", want, got)
 	}
 }
@@ -111,17 +109,13 @@ func TestPrepareAuthWithValidBasicCredentialsReturnsBasicAuthStrategy(t *testing
 }
 
 func TestUnsetSessionIDCookie(t *testing.T) {
-	name, value, err := sessionIDCookie()
+	strat, err := sessionIDCookie()
 	if err != nil {
 		t.Fatalf("Failed to get session ID cookie from environment: %v", err)
 	}
 
-	if got, want := name, ""; got != want {
-		t.Errorf("Wanted empty cookie name, but got %q", got)
-	}
-
-	if got, want := value, ""; got != want {
-		t.Errorf("Wanted empty cookie value, but got %q", got)
+	if strat != nil {
+		t.Fatalf("Expected nil cookie session auth strategy, but got something else: %+v", strat)
 	}
 }
 
@@ -136,16 +130,20 @@ func TestValidSessionIDCookie(t *testing.T) {
 	}
 	defer os.Clearenv() // ensure no test state is left behind
 
-	name, value, err := sessionIDCookie()
+	strat, err := sessionIDCookie()
 	if err != nil {
 		t.Fatalf("Failed to get session ID cookie from environment: %v", err)
 	}
 
-	if got, want := name, testCookieName; got != want {
+	if strat == nil {
+		t.Fatal("Expected non-nil basic auth strategy, but got nil")
+	}
+
+	if got, want := strat.cookieName, testCookieName; got != want {
 		t.Errorf("Wanted cookie name %q, but got %q", want, got)
 	}
 
-	if got, want := value, testCookieValue; got != want {
+	if got, want := strat.cookieValue, testCookieValue; got != want {
 		t.Errorf("Wanted cookie value %q, but got %q", want, got)
 	}
 }
@@ -178,9 +176,13 @@ func TestInvalidSessionIDCookie(t *testing.T) {
 			}
 			defer os.Clearenv() // ensure no test state is left behind
 
-			name, value, err := sessionIDCookie()
+			strat, err := sessionIDCookie()
 			if err == nil {
-				t.Errorf("Expected parsing session ID cookie to fail, but got success; cookieName=%q, cookieValue=%q", name, value)
+				t.Error("Expected parsing session ID cookie to fail, but got success")
+			}
+
+			if strat != nil {
+				t.Errorf("Expected nil session cookie auth strategy, but got something else: %+v", strat)
 			}
 		})
 	}

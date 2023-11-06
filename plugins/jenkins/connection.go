@@ -95,6 +95,10 @@ func (c *Connection) UsersByEmailDomain() (map[string][]*User, error) {
 		return nil, err
 	}
 
+	return groupByEmailDomain(users), nil
+}
+
+func groupByEmailDomain(users []*User) map[string][]*User {
 	result := map[string][]*User{}
 
 	for _, u := range users {
@@ -123,5 +127,5 @@ func (c *Connection) UsersByEmailDomain() (map[string][]*User, error) {
 		}
 	}
 
-	return result, nil
+	return result
 }

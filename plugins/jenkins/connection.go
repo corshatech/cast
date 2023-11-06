@@ -33,7 +33,7 @@ func NewConnection(requestURL string) (*Connection, error) {
 	}, nil
 }
 
-func (c *Connection) QueryUsers() (*Data, error) {
+func (c *Connection) QueryUsers() ([]*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
 
@@ -75,6 +75,5 @@ func (c *Connection) QueryUsers() (*Data, error) {
 		return nil, errors.New(msg)
 	}
 
-	log.Debugf("Jenkins user data: %+v", data)
-	return &data, nil
+	return data.TidyUsers(), nil
 }

@@ -42,20 +42,26 @@ func main() {
 		errLogger.WithError(err).Fatal("Failed to initialize connection with Jenkins")
 	}
 
-	users, err := conn.Users()
+	usersByDomain, err := conn.UsersByEmailDomain()
 	if err != nil {
-		errLogger.WithError(err).Fatal("Failed to query Jenkins user data")
+		errLogger.WithError(err).Fatal("Failed to list Jenkins users by email domain")
 	}
 
-	if len(users) == 0 {
-		errLogger.Warning("Found zero users for the provided Jenkins instance")
+	userCount := 0
+
+	if len(usersByDomain) == 0 {
+		errLogger.Warning("Found zero users with valid email addresses for the provided Jenkins instance")
 	} else {
-		for _, u := range users {
-			log.Infof("Found Jenkins user:\t%v", u)
+		for domain, usersList := range usersByDomain {
+			userCount += len(usersList)
+			log.Infof("For the domain %q, found %d Jenkins user account(s)", domain, len(usersList))
 		}
 	}
 
-	log.WithField("resultsLength", len(users)).Info("Scan completed. Skipping writing results to CAST DB...")
+	log.WithFields(log.Fields{
+		"userCount":   userCount,
+		"domainCount": len(usersByDomain),
+	}).Info("Scan completed. Skipping writing results to CAST DB...")
 	log.Info("Done.")
 }
 

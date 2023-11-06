@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -84,4 +85,43 @@ func (c *Connection) Users() ([]*User, error) {
 		return nil, err
 	}
 	return data.TidyUsers(), nil
+}
+
+// UsersByEmailDomain lists the useful info for all users associated with the configured Jenkins instance,
+// with the users grouped by the domain of their email addresses.
+func (c *Connection) UsersByEmailDomain() (map[string][]*User, error) {
+	users, err := c.Users()
+	if err != nil {
+		return nil, err
+	}
+
+	result := map[string][]*User{}
+
+	for _, u := range users {
+		if u.EmailAddress == "" {
+			log.WithFields(log.Fields{
+				"user.FullName": u.FullName,
+				"user.ID":       u.ID,
+			}).Warning("No email address set for this user")
+			continue
+		}
+
+		parts := strings.Split(u.EmailAddress, "@")
+		if len(parts) < 2 {
+			log.WithFields(log.Fields{
+				"user.FullName": u.FullName,
+				"user.ID":       u.ID,
+			}).Warning("Invalid email address for this user: %q", u.EmailAddress)
+			continue
+		}
+
+		domain := parts[len(parts)-1]
+		if usersSoFar, ok := result[domain]; ok {
+			result[domain] = append(usersSoFar, u)
+		} else {
+			result[domain] = []*User{u}
+		}
+	}
+
+	return result, nil
 }

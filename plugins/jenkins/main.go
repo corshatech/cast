@@ -42,7 +42,7 @@ func main() {
 		errLogger.WithError(err).Fatal("Failed to initialize connection with Jenkins")
 	}
 
-	users, err := conn.QueryUsers()
+	users, err := conn.Users()
 	if err != nil {
 		errLogger.WithError(err).Fatal("Failed to query Jenkins user data")
 	}

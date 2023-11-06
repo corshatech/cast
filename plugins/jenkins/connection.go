@@ -33,7 +33,7 @@ func NewConnection(requestURL string) (*Connection, error) {
 	}, nil
 }
 
-func (c *Connection) QueryUsers() ([]*User, error) {
+func (c *Connection) rawUserData() (*Data, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
 
@@ -74,6 +74,14 @@ func (c *Connection) QueryUsers() ([]*User, error) {
 		log.WithError(err).Error(msg)
 		return nil, errors.New(msg)
 	}
+	return &data, nil
+}
 
+// Users lists the useful info for all users associated with the configured Jenkins instance.
+func (c *Connection) Users() ([]*User, error) {
+	data, err := c.rawUserData()
+	if err != nil {
+		return nil, err
+	}
 	return data.TidyUsers(), nil
 }

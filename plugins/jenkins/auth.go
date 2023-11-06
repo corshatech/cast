@@ -67,53 +67,53 @@ func (a *sessionCookieAuth) Apply(req *http.Request) {
 // NOTE: There is a distinction between missing values and invalid values; missing is
 // acceptable whereas invalid will result in an error.
 func prepareAuth() (AuthStrategy, error) {
-	username, password := basicCredentials()
-	if username != "" && password != "" {
-		return &basicAuth{
-			username: username,
-			password: password,
-		}, nil
+	basic := basicCredentials()
+	if basic != nil {
+		return basic, nil
 	}
 
-	cookieName, cookieValue, err := sessionIDCookie()
+	sessionCookie, err := sessionIDCookie()
 	if err != nil {
 		return nil, err
 	}
 
-	if cookieName != "" && cookieValue != "" {
-		return &sessionCookieAuth{
-			cookieName:  cookieName,
-			cookieValue: cookieValue,
-		}, nil
+	if sessionCookie != nil {
+		return sessionCookie, nil
 	}
 
 	return nil, nil
 }
 
-func basicCredentials() (string, string) {
+func basicCredentials() *basicAuth {
 	username := os.Getenv(usernameEnv)
 	password := os.Getenv(passwordEnv)
 
-	if username == "" || password == "" {
-		return "", ""
+	if username != "" && password != "" {
+		return &basicAuth{
+			username: username,
+			password: password,
+		}
 	}
 
-	return username, password
+	return nil
 }
 
-func sessionIDCookie() (string, string, error) {
+func sessionIDCookie() (*sessionCookieAuth, error) {
 	cookie := os.Getenv(sessionIDEnv)
 	if cookie == "" {
-		return "", "", nil
+		return nil, nil
 	}
 
 	parts := strings.Split(cookie, "=")
 	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
 		msg := "Jenkins Session ID cookie is not valid; both cookie name and value are required (before and after the equal sign)"
 		log.WithField(sessionIDEnv, cookie).Error(msg)
-		return "", "", errors.New(msg)
+		return nil, errors.New(msg)
 	}
 
 	cookieName, cookieValue := parts[0], parts[1]
-	return cookieName, cookieValue, nil
+	return &sessionCookieAuth{
+		cookieName:  cookieName,
+		cookieValue: cookieValue,
+	}, nil
 }

@@ -43,17 +43,6 @@ export default function Dashboard() {
   const { data: analysesResponse, isLoading, error: analysesError } = useSWR<AnalysesResponse>('/api/analyses');
   const { data: enablements, error: enablementsError } = useSWR('/api/enablements', TypedFetch(CASTFeaturesListing))
 
-  /******************************
-   * TODO: REMOVE ME
-   *
-   * Remove refresh, this should be implemented as a scheduled job
-   ******************************/
-  useSWR(
-    '/api/matview-refresh?refresh=true',
-    (url) => fetch(url, { method: 'POST' }),
-    { refreshInterval: 1000 * 60 * 5 /* Every 5 minutes (ms) */ },
-  )
-
   const theme = useTheme();
 
   const summary =

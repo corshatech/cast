@@ -78,29 +78,29 @@ CREATE INDEX IF NOT EXISTS idx_auth_header ON traffic USING BTREE ((data->'reque
 CREATE INDEX IF NOT EXISTS idx_auth_header_src ON traffic USING BTREE ((data->'request'->'headers'->>'Authorization'), (data->'src'));
 CREATE INDEX IF NOT EXISTS idx_geo_ip_data_network ON geo_ip_data USING gist (network inet_ops);
 
-CREATE MATERIALIZED VIEW matview_traffic_ips AS
-    SELECT
-        id AS traffic_id,
-        'src' AS direction,
-        data->'src'->>'ip' AS ip_addr
-    FROM traffic
-    UNION
-    SELECT
-        id AS traffic_id,
-        'dst' AS direction,
-        data->'dst'->>'ip' AS ip_addr
-    FROM traffic
-    UNION
-    (SELECT
-        id AS traffic_id,
-        'src' AS direction,
-        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Forwarded-For', ',')), '"[] ') AS ip_addr
-    FROM traffic
-    WHERE data->'request'->'headers'->>'X-Forwarded-For' IS NOT NULL)
-    UNION
-    (SELECT
-        id AS traffic_id,
-        'src' AS direction,
-        TRIM(UNNEST(STRING_TO_ARRAY(data->'request'->'headers'->>'X-Real-Ip', ',')), '"[] ') AS ip_addr
-    FROM traffic
-    WHERE data->'request'->'headers'->>'X-Real-Ip' IS NOT NULL);
+CREATE TABLE traffic_ips (
+  traffic_id uuid REFERENCES traffic(id),
+  direction text,
+  ip_addr text
+);
+
+CREATE FUNCTION traffic_ips_insert() RETURNS TRIGGER
+  LANGUAGE PLPGSQL AS
+$$
+BEGIN
+  INSERT INTO traffic_ips VALUES(NEW.id, 'src', NEW.data->'src'->>'ip');
+  INSERT INTO traffic_ips VALUES(NEW.id, 'dst', NEW.data->'dst'->>'ip');
+  IF NEW.data->'request'->'headers'->>'X-Forwarded-For' IS NOT NULL THEN
+    INSERT INTO traffic_ips VALUES(NEW.id, 'src', TRIM(UNNEST(STRING_TO_ARRAY(NEW.data->'request'->'headers'->>'X-Forwarded-For', ',')), '"[] '));
+  END IF;
+  IF NEW.data->'request'->'headers'->>'X-Real-Ip' IS NOT NULL THEN
+    INSERT INTO traffic_ips VALUES(NEW.id, 'src', TRIM(UNNEST(STRING_TO_ARRAY(NEW.data->'request'->'headers'->>'X-Real-Ip', ',')), '"[] '));
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER traffic_ips_insert_trigger
+  AFTER INSERT ON traffic
+  FOR EACH ROW
+  EXECUTE PROCEDURE traffic_ips_insert();

@@ -64,7 +64,7 @@ WITH traffic_locations AS (
 	SELECT DISTINCT
     auth,
     traffic_id,
-    direction, 
+    direction,
     ip_addr,
     uri,
     port,
@@ -73,7 +73,7 @@ WITH traffic_locations AS (
     occurred_at,
     accuracy_radius AS error,
     country_iso_code AS country_code
-	FROM matview_traffic_ips 
+	FROM traffic_ips
 	LEFT JOIN (
 		SELECT
       id,
@@ -81,9 +81,9 @@ WITH traffic_locations AS (
       data->'request'->>'absoluteURI' AS uri,
       data->'src'->>'port' AS port,
       data->'request'->'headers'->>'Authorization' AS auth
-		FROM traffic 
+		FROM traffic
 		WHERE data->'request'->'headers'->>'Authorization' = ANY($1)
-	) trafficdata ON trafficdata.id = matview_traffic_ips.traffic_id
+	) trafficdata ON trafficdata.id = traffic_ips.traffic_id
 	LEFT JOIN geo_ip_data ON geo_ip_data.network >>= ip_addr::inet
 	LEFT JOIN geo_location_data ON geo_location_data.geoname_id = geo_ip_data.geoname_id
 ),
@@ -104,7 +104,7 @@ max_distances AS (
 -- Find error for maxes and join with all traffic data
 SELECT * FROM traffic_locations
 FULL JOIN(
-	SELECT DISTINCT 
+	SELECT DISTINCT
 		traffic_distances.auth AS max_auth,
 		max_distances.dist AS max_dist,
 		max_error
@@ -177,7 +177,7 @@ function rowsToFinding(detectedAt: string, reusedAuthRow: ReusedAuthRow, request
     }]
   })
 
-  const severity: IFinding['severity'] = 
+  const severity: IFinding['severity'] =
     maxDist && maxDist >= HIGH_SEVERITY_DISTANCE ?
       maxDist >= CRITICAL_SEVERITY_DISTANCE ?
         'critical'
@@ -225,10 +225,10 @@ export async function runnerPure(
     description:
       'Multiple clients were detected using the same Authorization HTTP ' +
       'header value. Clients who use the same authorization header could be ' +
-      'evidence of stolen credentials. Make use of short-lived, per-device ' + 
+      'evidence of stolen credentials. Make use of short-lived, per-device ' +
       'credentials and ensure they are not shared across sessions, ' +
       'workloads, or devices.',
-    severity: 
+    severity:
       findings.some(finding => finding.severity === 'high') ?
         findings.some(finding => finding.severity === 'critical') ?
           'critical'
@@ -247,6 +247,6 @@ export async function reusedAuthentication(): Promise<Analysis[]> {
     // Get destination IPs to filter requests to check in query
     const allSecrets = reusedAuthRows.map(i => i.auth);
     return (await conn.query(requestsQuery, [allSecrets])).rows;
-  } 
+  }
   return [await runnerPure(reusedAuthQueryFunction, requestsQueryFunction)];
 }

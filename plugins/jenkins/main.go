@@ -97,7 +97,7 @@ func queryJenkins(w http.ResponseWriter, r *http.Request, conn *Connection) {
 	} else {
 		for domain, usersList := range usersByDomain {
 			userCount += len(usersList)
-			log.Infof("For the domain %q, found %d Jenkins user account(s)", domain, len(usersList))
+			log.Debugf("For the domain %q, found %d Jenkins user account(s)", domain, len(usersList))
 		}
 	}
 

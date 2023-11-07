@@ -35,17 +35,33 @@ func main() {
 		log.WithError(err).Fatal("Failed to prepare URL for HTTP request")
 	}
 
+	errLogger := log.WithField("requestURL", requestURL)
+
 	conn, err := NewConnection(requestURL)
 	if err != nil {
-		log.WithError(err).Fatal("Failed to initialize connection with Jenkins")
+		errLogger.WithError(err).Fatal("Failed to initialize connection with Jenkins")
 	}
 
-	data, err := conn.QueryUsers()
+	usersByDomain, err := conn.UsersByEmailDomain()
 	if err != nil {
-		log.WithError(err).Fatal("Failed to query Jenkins user data")
+		errLogger.WithError(err).Fatal("Failed to list Jenkins users by email domain")
 	}
 
-	log.WithField("resultsLength", len(data.Users)).Info("Scan completed. Skipping writing results to CAST DB...")
+	userCount := 0
+
+	if len(usersByDomain) == 0 {
+		errLogger.Warning("Found zero users with valid email addresses for the provided Jenkins instance")
+	} else {
+		for domain, usersList := range usersByDomain {
+			userCount += len(usersList)
+			log.Infof("For the domain %q, found %d Jenkins user account(s)", domain, len(usersList))
+		}
+	}
+
+	log.WithFields(log.Fields{
+		"userCount":   userCount,
+		"domainCount": len(usersByDomain),
+	}).Info("Scan completed. Skipping writing results to CAST DB...")
 	log.Info("Done.")
 }
 

@@ -34,7 +34,7 @@ DISTINCT ON (traffic.id) traffic_id,
   ip2.latitude AS dest_lat,
   ip2.longitude AS dest_long,
   traffic.data->'timestamp' as timestamp
-FROM matview_traffic_ips as view
+FROM traffic_ips as view
 INNER JOIN feodo_banlist as banlist ON view.ip_addr = banlist.ip_address
 INNER JOIN traffic ON view.traffic_id = traffic.id
 LEFT JOIN geo_ip_data ip1 ON ip1.network >>= (data->'src'->>'ip')::inet

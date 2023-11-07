@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -33,7 +34,7 @@ func NewConnection(requestURL string) (*Connection, error) {
 	}, nil
 }
 
-func (c *Connection) QueryUsers() (*Data, error) {
+func (c *Connection) rawUserData() (*Data, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
 	defer cancel()
 
@@ -74,7 +75,73 @@ func (c *Connection) QueryUsers() (*Data, error) {
 		log.WithError(err).Error(msg)
 		return nil, errors.New(msg)
 	}
-
-	log.Debugf("Jenkins user data: %+v", data)
 	return &data, nil
+}
+
+// Users lists the useful info for all users associated with the configured Jenkins instance.
+func (c *Connection) Users() ([]*User, error) {
+	data, err := c.rawUserData()
+	if err != nil {
+		return nil, err
+	}
+	return data.TidyUsers(), nil
+}
+
+// UsersByEmailDomain lists the useful info for all users associated with the configured Jenkins instance,
+// with the users grouped by the domain of their email addresses.
+func (c *Connection) UsersByEmailDomain() (map[string][]*User, error) {
+	users, err := c.Users()
+	if err != nil {
+		return nil, err
+	}
+
+	return groupByEmailDomain(users), nil
+}
+
+func groupByEmailDomain(users []*User) map[string][]*User {
+	result := map[string][]*User{}
+
+	for _, u := range users {
+		if u.EmailAddress == "" {
+			log.WithFields(log.Fields{
+				"user.FullName": u.FullName,
+				"user.ID":       u.ID,
+			}).Warning("No email address set for this user")
+			continue
+		}
+
+		domain, err := domainFromEmailAddress(u.EmailAddress)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"user.FullName": u.FullName,
+				"user.ID":       u.ID,
+			}).Warningf("Invalid email address for this user: %q", u.EmailAddress)
+			continue
+		}
+
+		if usersSoFar, ok := result[domain]; ok {
+			result[domain] = append(usersSoFar, u)
+		} else {
+			result[domain] = []*User{u}
+		}
+	}
+
+	return result
+}
+
+// domainFromEmailAddress parses the given email address and returns only the domain portion.
+// See https://en.wikipedia.org/wiki/Email_address#Syntax for more info on valid syntax.
+// Especially note: email addresses can have multiple `@`, in which case the domain
+// follows the last one; an email address also may have an associated display name which
+// precedes the address, which then gets surrounded by angled brackets.
+func domainFromEmailAddress(email string) (string, error) {
+	parts := strings.Split(email, "@")
+	if len(parts) < 2 || parts[len(parts)-1] == "" {
+		return "", fmt.Errorf("invalid email address %q", email)
+	}
+
+	domain := parts[len(parts)-1]
+	domain = strings.Trim(domain, ">")
+
+	return domain, nil
 }

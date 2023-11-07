@@ -3,13 +3,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { CountryFlag, Props as CountryFlagProps } from '../CountryFlag';
+import { CountryFlag } from '../CountryFlag';
 
-type Props = Omit<CountryFlagProps, 'isoCode'> & {
-  address: string;
+type Props = {
+  className?: string;
   isoCode?: string;
   lat?: string;
   long?: string;
+  size: number | undefined;
 };
 
 const LatLongContainer = ({
@@ -18,7 +19,7 @@ const LatLongContainer = ({
   isoCode,
   children,
   ...props
-}: Omit<Props, 'address'> & { children?: React.ReactNode }) => (
+}: Props & { children?: React.ReactNode }) => (
   <Tooltip>
     <TooltipTrigger className="p-0 bg-[unset] flex items-center gap-4">
       <CountryFlag {...props} isoCode={isoCode} />
@@ -33,7 +34,7 @@ const LatLongContainer = ({
 export const IPAddress = ({
   address,
   ...props
-}: Props) => {
+}: Props & {address: string}) => {
   const inner = <p>{address}</p>
   if (props.lat && props.long && props.isoCode) {
     return (

@@ -77,13 +77,13 @@ interface Row {
   elapsed_time: number;
   src_ip: string;
   src_country_code: string | null;
-  src_lat: string;
-  src_long: string;
+  src_lat: string | null;
+  src_long: string | null;
   src_port: string;
   dest_ip: string;
   dest_country_code: string | null;
-  dest_lat: string;
-  dest_long: string;
+  dest_lat: string | null;
+  dest_long: string | null;
   dest_port: string;
   protocol: string;
   absolute_uri: string;

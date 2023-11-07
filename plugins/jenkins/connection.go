@@ -110,8 +110,8 @@ func groupByEmailDomain(users []*User) map[string][]*User {
 			continue
 		}
 
-		parts := strings.Split(u.EmailAddress, "@")
-		if len(parts) < 2 {
+		domain, err := domainFromEmailAddress(u.EmailAddress)
+		if err != nil {
 			log.WithFields(log.Fields{
 				"user.FullName": u.FullName,
 				"user.ID":       u.ID,
@@ -119,7 +119,6 @@ func groupByEmailDomain(users []*User) map[string][]*User {
 			continue
 		}
 
-		domain := parts[len(parts)-1]
 		if usersSoFar, ok := result[domain]; ok {
 			result[domain] = append(usersSoFar, u)
 		} else {
@@ -128,4 +127,21 @@ func groupByEmailDomain(users []*User) map[string][]*User {
 	}
 
 	return result
+}
+
+// domainFromEmailAddress parses the given email address and returns only the domain portion.
+// See https://en.wikipedia.org/wiki/Email_address#Syntax for more info on valid syntax.
+// Especially note: email addresses can have multiple `@`, in which case the domain
+// follows the last one; an email address also may have an associated display name which
+// precedes the address, which then gets surrounded by angled brackets.
+func domainFromEmailAddress(email string) (string, error) {
+	parts := strings.Split(email, "@")
+	if len(parts) < 2 || parts[len(parts)-1] == "" {
+		return "", fmt.Errorf("invalid email address %q", email)
+	}
+
+	domain := parts[len(parts)-1]
+	domain = strings.Trim(domain, ">")
+
+	return domain, nil
 }

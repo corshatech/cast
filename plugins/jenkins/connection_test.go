@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestGroupByEmailDomain(t *testing.T) {
 	testUsers := []*User{
@@ -57,5 +59,53 @@ func TestGroupByEmailDomain(t *testing.T) {
 
 	if got, want := usersCount, 3; got != want {
 		t.Errorf("Wanted %d total users, got %d users", want, got)
+	}
+}
+
+func TestDomainFromEmailAddress(t *testing.T) {
+	for _, test := range []struct {
+		description string
+		email       string
+		wantError   bool
+		wantDomain  string
+	}{
+		{
+			description: "multiple @ symbols",
+			email:       "user\"@wow@\"@website.com",
+			wantDomain:  "website.com",
+		},
+		{
+			description: "email with display name",
+			email:       "Real Name <silly-email@website.org>",
+			wantDomain:  "website.org",
+		},
+		{
+			description: "domain value missing",
+			email:       "user@",
+			wantError:   true,
+		},
+		{
+			description: "no @ symbol in email at all",
+			email:       "what-even-is-email",
+			wantError:   true,
+		},
+	} {
+		t.Run(test.description, func(t *testing.T) {
+			gotDomain, err := domainFromEmailAddress(test.email)
+
+			if err == nil && test.wantError {
+				t.Fatalf("Expected parsing domain from email %q to fail, but got success", test.email)
+			}
+
+			if !test.wantError {
+				if err != nil {
+					t.Fatalf("Expected parsing domain from email %q to succeed, but got error: %v", test.email, err)
+				}
+
+				if got, want := gotDomain, test.wantDomain; got != want {
+					t.Errorf("Expected domain %q from email %q, but got domain %q", want, test.email, got)
+				}
+			}
+		})
 	}
 }

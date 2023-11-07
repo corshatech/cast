@@ -73,14 +73,14 @@ type Data struct {
 
 // TidyUsers converts the JSON user data from Jenkins into just the usable pieces of data for each user account.
 func (d *Data) TidyUsers() []*User {
-	var users []*User
-	for _, u := range d.Users {
-		users = append(users, &User{
+	users := make([]*User, len(d.Users))
+	for i, u := range d.Users {
+		users[i] = &User{
 			FullName:     u.User.FullName,
 			ID:           u.User.ID,
 			EmailAddress: u.Email(),
 			LastChange:   u.LastChange,
-		})
+		}
 	}
 	return users
 }

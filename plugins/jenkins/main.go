@@ -106,13 +106,15 @@ func queryJenkins(w http.ResponseWriter, r *http.Request, conn *Connection) {
 		"domainCount": len(usersByDomain),
 	}).Info("Jenkins users query completed!")
 
-	usersJSON, err := json.Marshal(usersByDomain)
+	payload := PayloadFromMap(usersByDomain)
+
+	payloadJSON, err := json.Marshal(payload)
 	if err != nil {
 		log.WithError(err).Error("Failed to marshal Jenkins users to JSON")
 		fmt.Fprintf(w, "Failed to marshal Jenkins users to JSON: %v", err)
 		return
 	}
 
-	fmt.Fprintf(w, string(usersJSON))
-	log.Debug("Wrote users to response writer")
+	fmt.Fprintf(w, string(payloadJSON))
+	log.Debug("Wrote users payload to response writer")
 }

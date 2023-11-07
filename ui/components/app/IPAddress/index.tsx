@@ -10,7 +10,7 @@ type Props = {
   isoCode?: string;
   lat?: string;
   long?: string;
-  size: number | undefined;
+  size?: number | undefined;
 };
 
 const LatLongContainer = ({

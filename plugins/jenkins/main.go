@@ -16,8 +16,11 @@ limitations under the License.
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"html"
+	"net/http"
 	"net/url"
 	"os"
 
@@ -27,6 +30,8 @@ import (
 const (
 	// Environment variable holding the top level domain corresponding with the Jenkins instance.
 	tldEnv = "JENKINS_TLD"
+
+	localEndpoint = "/jenkins"
 )
 
 func main() {
@@ -42,27 +47,13 @@ func main() {
 		errLogger.WithError(err).Fatal("Failed to initialize connection with Jenkins")
 	}
 
-	usersByDomain, err := conn.UsersByEmailDomain()
-	if err != nil {
-		errLogger.WithError(err).Fatal("Failed to list Jenkins users by email domain")
-	}
+	http.HandleFunc(localEndpoint, func(w http.ResponseWriter, r *http.Request) {
+		queryJenkins(w, r, conn)
+	})
 
-	userCount := 0
+	log.Infof("Setup complete. Now listening on endpoint: %s", localEndpoint)
 
-	if len(usersByDomain) == 0 {
-		errLogger.Warning("Found zero users with valid email addresses for the provided Jenkins instance")
-	} else {
-		for domain, usersList := range usersByDomain {
-			userCount += len(usersList)
-			log.Infof("For the domain %q, found %d Jenkins user account(s)", domain, len(usersList))
-		}
-	}
-
-	log.WithFields(log.Fields{
-		"userCount":   userCount,
-		"domainCount": len(usersByDomain),
-	}).Info("Scan completed. Skipping writing results to CAST DB...")
-	log.Info("Done.")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func buildRequestURL() (string, error) {
@@ -87,4 +78,43 @@ func buildRequestURL() (string, error) {
 	log.WithField("requestURL", requestURL).Info("Built URL for querying Jenkins user data")
 
 	return requestURL, nil
+}
+
+func queryJenkins(w http.ResponseWriter, r *http.Request, conn *Connection) {
+	log.Debugf("Received request at endpoint: %s", html.EscapeString(r.URL.Path))
+
+	usersByDomain, err := conn.UsersByEmailDomain()
+	if err != nil {
+		log.WithError(err).Error("Failed to list Jenkins users by email domain")
+		fmt.Fprintf(w, "Failed to list Jenkins users by email domain: %v", err)
+		return
+	}
+
+	userCount := 0
+
+	if len(usersByDomain) == 0 {
+		log.Warning("Found zero users with valid email addresses for the Jenkins instance")
+	} else {
+		for domain, usersList := range usersByDomain {
+			userCount += len(usersList)
+			log.Debugf("For the domain %q, found %d Jenkins user account(s)", domain, len(usersList))
+		}
+	}
+
+	log.WithFields(log.Fields{
+		"userCount":   userCount,
+		"domainCount": len(usersByDomain),
+	}).Info("Jenkins users query completed!")
+
+	payload := PayloadFromMap(usersByDomain)
+
+	payloadJSON, err := json.Marshal(payload)
+	if err != nil {
+		log.WithError(err).Error("Failed to marshal Jenkins users to JSON")
+		fmt.Fprintf(w, "Failed to marshal Jenkins users to JSON: %v", err)
+		return
+	}
+
+	fmt.Fprintf(w, string(payloadJSON))
+	log.Debug("Wrote users payload to response writer")
 }

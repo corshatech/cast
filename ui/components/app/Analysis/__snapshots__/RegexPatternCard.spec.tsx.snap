@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PasswordInURLCard renders all passed props 1`] = `
+exports[`RegexPatternCard renders all passed props 1`] = `
 <DocumentFragment>
   <a
-    id="pass-in-url"
+    id="regex-pattern-Broken%20Authentication%3A%20Password%20in%20Query%20String"
   >
     <div
       aria-labelledby="title"

@@ -71,13 +71,14 @@ const Weakness: React.FC<{
       </Link>
     ) : null;
 
-const NoResults: React.FC<AnalysisProps> = ({
+const NoResults: React.FC<AnalysisProps & { anchorId?: string}> = ({
   description,
   reportedAt,
   weaknessLink,
   weaknessTitle,
   title,
   id,
+  anchorId,
 }) => {
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(false);
@@ -87,7 +88,7 @@ const NoResults: React.FC<AnalysisProps> = ({
   };
 
   return (
-    <a id={id}>
+    <a id={anchorId !== undefined ? anchorId : id}>
       <Card className='max-w-prose'>
         <CardContent className='flex items-center'>
           <Typography
@@ -129,7 +130,7 @@ const NoResults: React.FC<AnalysisProps> = ({
   )
 }
 
-export const AnalysisCard: React.FC<AnalysisProps> = ({
+export const AnalysisCard: React.FC<AnalysisProps & { anchorId?: string}> = ({
   description,
   reportedAt,
   weaknessLink,
@@ -140,6 +141,7 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
   children,
   exportButton,
   id,
+  anchorId,
 }) =>
   noResults ? (
     <NoResults
@@ -155,7 +157,7 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
       }}
     />
   ) : (
-    <a id={id}>
+    <a id={anchorId !== undefined ? anchorId : id}>
       <Card
         aria-labelledby="title"
         sx={{

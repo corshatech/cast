@@ -15,23 +15,28 @@ import { RegexPatternCard } from './RegexPatternCard';
 
 const reportedAt = new Date().toISOString();
 
-describe('PasswordInURLCard', () => {
+describe('RegexPatternCard', () => {
   it('renders all passed props', () => {
     const { asFragment } = render(<RegexPatternCard
-      id="pass-in-url"
+      anchorId='regex-pattern-Broken%20Authentication%3A%20Password%20in%20Query%20String'
+      id="regex-pattern"
       title="Test title"
       description="Test description"
       reportedAt={reportedAt}
       severity="high"
       findings={[{
-        type: 'XSS' as 'regex-pattern',
-        name: 'Test Finding',
+        type: 'regex-pattern',
+        name: 'PassInUrl',
         detectedAt: reportedAt,
         severity: 'high',
         data: {
           weaknessLink: 'https://google.com',
-          weaknessTitle: 'Cross Site Scripting',
-          regexName: 'XSS',
+          weaknessTitle: 'Broken Authentication: Password in Query String',
+          description: 'A password or credential was detected in a URL as a ' +
+            'query parameter. Using secure transport like HTTPS does not ' +
+            'resolve the issue, because the URL may become logged or leak to ' +
+            'third parties through e.g. the Referrer header. Do not include ' +
+            'credentials in any part of a URL.',
           inRequest: {
             at: reportedAt,
             destIp: '1.1.1.1',
@@ -41,7 +46,6 @@ describe('PasswordInURLCard', () => {
             srcPort: '5129',
             URI: 'https://example.com',
           },
-          queryParams: ['password'],
         },
       }]}
     />);

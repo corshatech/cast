@@ -16,7 +16,7 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 
-import { AnalysisOf, RegexPattern } from '@/lib/findings';
+import { AnalysisOf, RegexFinding } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 import { AnalysisCard, CsvExportButton } from './core';
@@ -37,7 +37,9 @@ const columns: GridColDef[] = [
 ];
 
 // IDs for RegexPatternCard will be the pattern name, and will not fit within the Analysis names
-export const RegexPatternCard: React.FC<Omit<AnalysisOf<RegexPattern>, 'id'> & {id: string}> = ({
+export const RegexPatternCard: React.FC<
+  AnalysisOf<RegexFinding> & { anchorId: string }
+> = ({
   findings,
   reportedAt,
   ...otherProps

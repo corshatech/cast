@@ -33,22 +33,22 @@ const Row = z.object({
   dst_port: z.string(),
   uri: z.string(),
   timestamp: z.date(),
-  findings: z.array(RegexFinding),
+  findings: z.array(RegexPattern),
 });
 
 export type Row = z.infer<typeof Row>;
 
-function rowToFinding(detectedAt: string, row: Row): RegexPattern[] {
+function rowToFinding(detectedAt: string, row: Row): RegexFinding[] {
   const at = new Date(row.timestamp).toISOString();
   const occurredAt = { at };
   return row.findings.map((finding) => ({
     type: 'regex-pattern',
     name: finding.Rule.title,
     severity: finding.Rule.severity,
-    description: finding.Rule.description,
     occurredAt,
     detectedAt,
     data: {
+      description: finding.Rule.description,
       weaknessLink: finding.Rule.weaknessLink ?? '',
       weaknessTitle: finding.Rule.weaknessTitle ?? '',
       inRequest: {
@@ -73,15 +73,15 @@ export type QueryFunction = () => Promise<Row[]>;
 export async function runnerPure(query: QueryFunction): Promise<Analysis[]> {
   const rows = z.array(Row).parse(await query());
   const reportedAt = new Date().toISOString();
-  const findings = rows.flatMap(row => rowToFinding(reportedAt, row));
+  const findings: RegexFinding[] = rows.flatMap(row => rowToFinding(reportedAt, row));
 
 
-  let groupedAnalyses = new Map<string, AnalysisOf<RegexPattern>>();
+  let groupedAnalyses = new Map<string, AnalysisOf<RegexFinding>>();
   findings.forEach((finding) => {
     let analysis = groupedAnalyses.get(finding.name) ?? {
         id: 'regex-pattern',
         title: finding.name,
-        description: finding.description ?? '',
+        description: finding.data.description,
         reportedAt,
         weaknessLink: finding.data.weaknessLink,
         weaknessTitle: finding.data.weaknessTitle,

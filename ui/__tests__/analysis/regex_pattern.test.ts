@@ -91,10 +91,10 @@ test('runner works', async () => {
             URI: 'http://example.com/url-1',
             at: '2023-01-18T13:12:01.000Z',
           },
+          description: 'A password or credential was detected in a URL as a query parameter. Using secure transport like HTTPS does not resolve the issue, because the URL may become logged or leak to third parties through e.g. the Referrer header. Do not include credentials in any part of a URL.',
           weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
           weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
         },
-        description: 'A password or credential was detected in a URL as a query parameter. Using secure transport like HTTPS does not resolve the issue, because the URL may become logged or leak to third parties through e.g. the Referrer header. Do not include credentials in any part of a URL.',
       },
       {
         type: 'regex-pattern',
@@ -112,10 +112,10 @@ test('runner works', async () => {
             URI: 'http://example.com/url-2',
             at: '2023-01-18T13:12:02.000Z',
           },
+          description: 'A password or credential was detected in a URL as a query parameter. Using secure transport like HTTPS does not resolve the issue, because the URL may become logged or leak to third parties through e.g. the Referrer header. Do not include credentials in any part of a URL.',
           weaknessLink: 'https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url',
           weaknessTitle: '(OWASP) Information Exposure through Query Strings in URL',
         },
-        description: 'A password or credential was detected in a URL as a query parameter. Using secure transport like HTTPS does not resolve the issue, because the URL may become logged or leak to third parties through e.g. the Referrer header. Do not include credentials in any part of a URL.',
       },
     ],
   }]);

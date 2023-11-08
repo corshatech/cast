@@ -7,7 +7,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
   >
     <div
       aria-labelledby="title"
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-1qo3px0-MuiPaper-root-MuiCard-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-irb29o-MuiPaper-root-MuiCard-root"
     >
       <div
         class="MuiCardContent-root p-0 last:pb-0 css-46bh2p-MuiCardContent-root"
@@ -113,7 +113,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
           style="height: 400px; width: 100%;"
         >
           <div
-            aria-colcount="5"
+            aria-colcount="7"
             aria-multiselectable="false"
             aria-rowcount="3"
             class="MuiDataGrid-root MuiDataGrid-root--densityStandard css-1e2bxag-MuiDataGrid-root"
@@ -467,7 +467,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                         aria-rowindex="2"
                         aria-selected="false"
                         class="MuiDataGrid-row"
-                        data-id="{"Timestamp":"","Severity":"medium","Matched Address":"1.1.1.1","Malware":"ILoveYou","Country":"US","URI":"https://example.com"}"
+                        data-id="{"Timestamp":"","Severity":"medium","Matched Address":"1.1.1.1","Malware":"ILoveYou","Country":"US","URI":"https://example.com","Src IP":"2.2.2.2","Dest IP":"1.1.1.1"}"
                         data-rowindex="0"
                         role="row"
                         style="max-height: 52px; min-height: 52px;"
@@ -521,7 +521,7 @@ exports[`IpBanlistCard renders all passed props 1`] = `
                         aria-rowindex="3"
                         aria-selected="false"
                         class="MuiDataGrid-row MuiDataGrid-row--lastVisible"
-                        data-id="{"Timestamp":"","Severity":"high","Matched Address":"2.3.4.5","URI":"https://example.com"}"
+                        data-id="{"Timestamp":"","Severity":"high","Matched Address":"2.3.4.5","URI":"https://example.com","Src IP":"2.2.2.2","Dest IP":"1.1.1.1"}"
                         data-rowindex="1"
                         role="row"
                         style="max-height: 52px; min-height: 52px;"

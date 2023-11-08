@@ -26,21 +26,37 @@ SELECT
 id,
   data->'src'->>'ip' as src_ip,
   data->'src'->>'port' as src_port,
-  data->'dst'->>'ip' as dst_ip,
-  data->'dst'->>'port' as dst_port,
+  location1.country_iso_code AS src_country_code,
+  ip1.latitude AS src_lat,
+  ip1.longitude AS src_long,
+  data->'dst'->>'ip' as dest_ip,
+  data->'dst'->>'port' as dest_port,
+  location2.country_iso_code AS dest_country_code,
+  ip2.latitude AS dest_lat,
+  ip2.longitude AS dest_long,
   meta->'PassInUrl'->'AbsoluteUri' as uri,
   occurred_at as timestamp,
   meta->'PassInUrl'->'QueryParams' as query_params
 FROM traffic
+LEFT JOIN geo_ip_data ip1 ON ip1.network >>= (data->'src'->>'ip')::inet
+LEFT JOIN geo_ip_data ip2 ON ip2.network >>= (data->'dst'->>'ip')::inet
+LEFT JOIN geo_location_data location1 ON location1.geoname_id = ip1.geoname_id
+LEFT JOIN geo_location_data location2 ON location2.geoname_id = ip2.geoname_id
 WHERE meta ? 'PassInUrl'
 ORDER BY occurred_at DESC
 `;
 
 interface Row {
   src_ip: string;
+  src_country_code: string | null;
+  src_lat: string | null;
+  src_long: string | null;
   src_port: string;
-  dst_ip: string;
-  dst_port: string;
+  dest_ip: string;
+  dest_country_code: string | null;
+  dest_lat: string | null;
+  dest_long: string | null;
+  dest_port: string;
   uri: string;
   timestamp: Date;
   query_params: string[];
@@ -59,10 +75,16 @@ function rowToFinding(detectedAt: string, row: Row): Finding {
       queryParams: row.query_params,
       inRequest: {
         srcIp: row.src_ip,
+        srcCountryCode: row.src_country_code ?? undefined,
+        srcLat: row.src_lat ?? undefined,
+        srcLong: row.src_long ?? undefined,
         srcPort: row.src_port,
         proto: 'tcp',
-        destIp: row.dst_ip,
-        destPort: row.dst_port,
+        destIp: row.dest_ip,
+        destCountryCode: row.dest_country_code ?? undefined,
+        destLat: row.dest_lat ?? undefined,
+        destLong: row.dest_long ?? undefined,
+        destPort: row.dest_port,
         URI: row.uri,
         at,
       },

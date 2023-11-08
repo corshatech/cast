@@ -20,6 +20,7 @@ import { AnalysisOf, PasswordInURL } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 import { AnalysisCard, CsvExportButton } from './core';
+import { IPAddress } from '../IPAddress';
 
 const columns: GridColDef[] = [
   {
@@ -31,8 +32,40 @@ const columns: GridColDef[] = [
     width: 200,
   },
   { field: 'Query Param(s)', headerName: 'Query Param(s)', width: 300 },
-  { field: 'Src IP', headerName: 'Src IP' },
-  { field: 'Dest IP', headerName: 'Dest IP' },
+  {
+    field: 'Src IP',
+    headerName: 'Source IP',
+    width: 175,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <IPAddress
+            className='mr-2'
+            size={30}
+            isoCode={params.row['Src Country Code']}
+            lat={params.row['Src Latitude']}
+            long={params.row['Src Longitude']}
+            address={params.value ?? '-'}
+        />
+      )
+    },
+  },
+  {
+    field: 'Dest IP',
+    headerName: 'Dest IP',
+    width: 175,
+    renderCell(params: GridRenderCellParams<string>) {
+      return (
+        <IPAddress
+            className='mr-2'
+            size={30}
+            isoCode={params.row['Dest Country Code']}
+            lat={params.row['Dest Latitude']}
+            long={params.row['Dest Longitude']}
+            address={params.value ?? '-'}
+        />
+      )
+    },
+  },
   { field: 'Dest Port', headerName: 'Dest Port' },
   { field: 'URI', headerName: 'URI', width: 400 },
 ];
@@ -48,8 +81,14 @@ export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
       inRequest: {
         at,
         srcIp,
+        srcCountryCode,
+        srcLat,
+        srcLong,
         URI,
         destIp,
+        destCountryCode,
+        destLat,
+        destLong,
         destPort,
       },
     },
@@ -59,8 +98,14 @@ export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
     'Query Param(s)': queryParams.map(s => `"${s}"`).join(', '),
     'Timestamp': at,
     'Src IP': srcIp,
+    'Src Country Code': srcCountryCode,
+    'Src Latitude': srcLat,
+    'Src Longitude': srcLong,
     'URI': URI,
     'Dest IP': destIp,
+    'Dest Country Code': destCountryCode,
+    'Dest Latitude': destLat,
+    'Dest Longitude': destLong,
     'Dest Port': destPort,
   }))
   return <AnalysisCard

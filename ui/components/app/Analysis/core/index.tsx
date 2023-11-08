@@ -189,6 +189,9 @@ export const AnalysisCard: React.FC<AnalysisProps> = ({
           '& .MuiTableCell-head': {
             background: 'hsl(196 71% 12%)',
           },
+          '& .MuiDataGrid-virtualScroller': {
+            overflow: 'unset !important',
+          },
         }}
         className='shadow-md'
         elevation={2}

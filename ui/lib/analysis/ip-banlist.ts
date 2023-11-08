@@ -25,12 +25,22 @@ DISTINCT ON (traffic.id) traffic_id,
   traffic.data->'protocol'->>'name' as proto,
   traffic.data->'src'->>'ip' as src_ip,
   traffic.data->'src'->>'port' as src_port,
-  traffic.data->'dst'->>'ip' as destination_ip,
-  traffic.data->'dst'->>'port' as destination_port,
+  location1.country_iso_code AS src_country_code,
+  ip1.latitude AS src_lat,
+  ip1.longitude AS src_long,
+  traffic.data->'dst'->>'ip' as dest_ip,
+  traffic.data->'dst'->>'port' as dest_port,
+  location2.country_iso_code AS dest_country_code,
+  ip2.latitude AS dest_lat,
+  ip2.longitude AS dest_long,
   traffic.data->'timestamp' as timestamp
 FROM traffic_ips as view
 INNER JOIN feodo_banlist as banlist ON view.ip_addr = banlist.ip_address
 INNER JOIN traffic ON view.traffic_id = traffic.id
+LEFT JOIN geo_ip_data ip1 ON ip1.network >>= (data->'src'->>'ip')::inet
+LEFT JOIN geo_ip_data ip2 ON ip2.network >>= (data->'dst'->>'ip')::inet
+LEFT JOIN geo_location_data location1 ON location1.geoname_id = ip1.geoname_id
+LEFT JOIN geo_location_data location2 ON location2.geoname_id = ip2.geoname_id
 ORDER BY traffic.id, view.ip_addr DESC NULLS LAST
 `;
 
@@ -41,9 +51,15 @@ export const Row = z.object({
   absolute_uri: z.string().nullable(),
   proto: z.string().nonempty(),
   src_ip: z.string().ip(),
+  src_country_code: z.string().nullable(),
+  src_lat: z.string().nullable(),
+  src_long: z.string().nullable(),
   src_port: z.string().nonempty(),
-  destination_ip: z.string().ip(),
-  destination_port: z.string().nonempty(),
+  dest_ip: z.string().ip(),
+  dest_country_code: z.string().nullable(),
+  dest_lat: z.string().nullable(),
+  dest_long: z.string().nullable(),
+  dest_port: z.string().nonempty(),
   timestamp: z.number().int(),
 }).transform(({
   specific_address,
@@ -52,9 +68,15 @@ export const Row = z.object({
   absolute_uri,
   proto,
   src_ip,
+  src_country_code,
+  src_lat,
+  src_long,
   src_port,
-  destination_ip,
-  destination_port,
+  dest_ip,
+  dest_country_code,
+  dest_lat,
+  dest_long,
+  dest_port,
   timestamp,
 }) => ({
   specificAddress: specific_address,
@@ -71,8 +93,14 @@ export const Row = z.object({
     ),
     srcIp: src_ip,
     srcPort: src_port,
-    destIp: destination_ip,
-    destPort: destination_port,
+    srcCountryCode: src_country_code ?? undefined,
+    srcLat: src_lat ?? undefined,
+    srcLong: src_long ?? undefined,
+    destCountryCode: dest_country_code ?? undefined,
+    destLat: dest_lat ?? undefined,
+    destLong: dest_long ?? undefined,
+    destIp: dest_ip,
+    destPort: dest_port,
     URI: absolute_uri ?? undefined,
   },
 } satisfies BanlistFinding['data']));

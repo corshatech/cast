@@ -35,6 +35,7 @@ import { AnalysisCard, CsvExportButton } from './core';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
+import { IPAddress } from '../IPAddress';
 
 type InRequestRow = {
   id: string;
@@ -73,7 +74,6 @@ const RequestsTable = ({row}: {row: RequestData}) => (
           <TableCell>IP Address</TableCell>
           <TableCell>URI</TableCell>
           <TableCell>Port</TableCell>
-          <TableCell>Location (Lat, Long in degrees)</TableCell>
           <TableCell>Error (km)</TableCell>
           <TableCell>ISO Country Code</TableCell>
         </TableRow>
@@ -101,15 +101,16 @@ const RequestsTable = ({row}: {row: RequestData}) => (
                 label={request.direction === 'src' ? 'Source' : 'Destination'}
               />
             </TableCell>
-            <TableCell>{request.ipAddr}</TableCell>
+            <TableCell>
+              <IPAddress
+                isoCode={request.countryCode}
+                lat={request.latitude}
+                long={request.longitude}
+                address={request.ipAddr}
+              />
+            </TableCell>
             <TableCell>{row.URI}</TableCell>
             <TableCell>{request.port}</TableCell>
-            <TableCell>{request.latitude ? (
-                <>
-                  <Public className='mr-2'/>
-                  {`${request.latitude}° ${request.longitude}°`}
-                </>
-              ): '-'}</TableCell>
             <TableCell>{request.error ?? '-'}</TableCell>
             <TableCell>{request.countryCode ?? '-'}</TableCell>
           </TableRow>

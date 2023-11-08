@@ -7,7 +7,7 @@ exports[`RegexPatternCard renders all passed props 1`] = `
   >
     <div
       aria-labelledby="title"
-      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-1qo3px0-MuiPaper-root-MuiCard-root"
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation2 MuiCard-root shadow-md css-irb29o-MuiPaper-root-MuiCard-root"
     >
       <div
         class="MuiCardContent-root p-0 last:pb-0 css-46bh2p-MuiCardContent-root"
@@ -113,7 +113,7 @@ exports[`RegexPatternCard renders all passed props 1`] = `
           style="height: 400px; width: 100%;"
         >
           <div
-            aria-colcount="5"
+            aria-colcount="6"
             aria-multiselectable="false"
             aria-rowcount="2"
             class="MuiDataGrid-root MuiDataGrid-root--densityStandard css-1e2bxag-MuiDataGrid-root"
@@ -243,12 +243,12 @@ exports[`RegexPatternCard renders all passed props 1`] = `
                     </div>
                     <div
                       aria-colindex="2"
-                      aria-label="Src IP"
+                      aria-label="Query Param(s)"
                       aria-sort="none"
                       class="MuiDataGrid-columnHeader MuiDataGrid-columnHeader--sortable"
-                      data-field="Src IP"
+                      data-field="Query Param(s)"
                       role="columnheader"
-                      style="height: 56px; width: 100px; min-width: 100px; max-width: 100px;"
+                      style="height: 56px; width: 300px; min-width: 300px; max-width: 300px;"
                       tabindex="-1"
                     >
                       <div
@@ -266,7 +266,7 @@ exports[`RegexPatternCard renders all passed props 1`] = `
                               class="MuiDataGrid-columnHeaderTitle css-1jbbcbn-MuiDataGrid-columnHeaderTitle"
                               data-mui-internal-clone-element="true"
                             >
-                              Src IP
+                              Query Param(s)
                             </div>
                           </div>
                           <div
@@ -345,12 +345,12 @@ exports[`RegexPatternCard renders all passed props 1`] = `
                     </div>
                     <div
                       aria-colindex="3"
-                      aria-label="Dest IP"
+                      aria-label="Source IP"
                       aria-sort="none"
                       class="MuiDataGrid-columnHeader MuiDataGrid-columnHeader--sortable"
-                      data-field="Dest IP"
+                      data-field="Src IP"
                       role="columnheader"
-                      style="height: 56px; width: 100px; min-width: 100px; max-width: 100px;"
+                      style="height: 56px; width: 175px; min-width: 175px; max-width: 175px;"
                       tabindex="-1"
                     >
                       <div
@@ -368,7 +368,7 @@ exports[`RegexPatternCard renders all passed props 1`] = `
                               class="MuiDataGrid-columnHeaderTitle css-1jbbcbn-MuiDataGrid-columnHeaderTitle"
                               data-mui-internal-clone-element="true"
                             >
-                              Dest IP
+                              Source IP
                             </div>
                           </div>
                           <div
@@ -489,34 +489,28 @@ exports[`RegexPatternCard renders all passed props 1`] = `
                           aria-colspan="1"
                           class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
                           data-colindex="1"
-                          data-field="Src IP"
+                          data-field="Query Param(s)"
                           role="cell"
-                          style="min-width: 100px; max-width: 100px; min-height: 52px; max-height: 52px;"
+                          style="min-width: 300px; max-width: 300px; min-height: 52px; max-height: 52px;"
                           tabindex="-1"
                         >
                           <div
                             class="MuiDataGrid-cellContent"
-                            title="2.2.2.2"
-                          >
-                            2.2.2.2
-                          </div>
+                          />
                         </div>
                         <div
                           aria-colindex="3"
                           aria-colspan="1"
-                          class="MuiDataGrid-cell MuiDataGrid-cell--textLeft"
+                          class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textLeft"
                           data-colindex="2"
-                          data-field="Dest IP"
+                          data-field="Src IP"
                           role="cell"
-                          style="min-width: 100px; max-width: 100px; min-height: 52px; max-height: 52px;"
+                          style="min-width: 175px; max-width: 175px; min-height: 52px; max-height: 52px;"
                           tabindex="-1"
                         >
-                          <div
-                            class="MuiDataGrid-cellContent"
-                            title="1.1.1.1"
-                          >
-                            1.1.1.1
-                          </div>
+                          <p>
+                            2.2.2.2
+                          </p>
                         </div>
                       </div>
                     </div>

@@ -106,6 +106,9 @@ export function makeFinding<
 export const RequestContext = z.object({
   srcIp: z.string().ip().describe('The source IP address'),
   srcPort: z.string().regex(/[0-9]+/).describe('The source port number'),
+  srcCountryCode: z.string().optional().describe('The source country code found from location data (if exists)'),
+  srcLat: z.string().optional().describe('Decimal number with WGS84 latitude for the source IP'),
+  srcLong: z.string().optional().describe('Decimal number with WGS84 longitude for the source IP'),
   proto: z.union([
     z.literal('tcp'),
     z.literal('udp'),
@@ -113,6 +116,9 @@ export const RequestContext = z.object({
   ]),
   destIp: z.string().ip().describe('The destination IP address'),
   destPort: z.string().regex(/[0-9]+/).describe('The destination port number'),
+  destCountryCode: z.string().optional().describe('The destination country code found from location data (if exists)'),
+  destLat: z.string().optional().describe('Decimal number with WGS84 latitude for the destination IP'),
+  destLong: z.string().optional().describe('Decimal number with WGS84 longitude for the destination IP'),
   URI: z.string().url().optional().describe('The resource URI being accessed, if applicable'),
   at: z.string().datetime().describe('The time this request occurred'),
 }).describe('The context describing an instance of an API request');

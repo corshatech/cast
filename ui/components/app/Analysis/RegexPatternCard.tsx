@@ -16,7 +16,7 @@ import {
   GridRenderCellParams,
 } from '@mui/x-data-grid';
 
-import { AnalysisOf, PasswordInURL } from '@/lib/findings';
+import { AnalysisOf, RegexFinding } from '@/lib/findings';
 import { FormattedDate } from '@/components/atoms/FormattedDate';
 
 import { AnalysisCard, CsvExportButton } from './core';
@@ -70,14 +70,16 @@ const columns: GridColDef[] = [
   { field: 'URI', headerName: 'URI', width: 400 },
 ];
 
-export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
+// IDs for RegexPatternCard will be the pattern name, and will not fit within the Analysis names
+export const RegexPatternCard: React.FC<
+  AnalysisOf<RegexFinding> & { anchorId: string }
+> = ({
   findings,
   reportedAt,
   ...otherProps
 }) => {
   const data = (findings ?? []).map(({
     data: {
-      queryParams,
       inRequest: {
         at,
         srcIp,
@@ -93,9 +95,8 @@ export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
       },
     },
   }) => ({
-    id: `${at}${srcIp}${destIp}${destPort}${URI}${queryParams}`,
+    id: `${at}${srcIp}${destIp}${destPort}${URI}`,
     // each param in quotes, joined by commas into a list
-    'Query Param(s)': queryParams.map(s => `"${s}"`).join(', '),
     'Timestamp': at,
     'Src IP': srcIp,
     'Src Country Code': srcCountryCode,
@@ -114,7 +115,7 @@ export const PasswordInURLCard: React.FC<AnalysisOf<PasswordInURL>> = ({
     exportButton={<CsvExportButton
       stripID
       data={data}
-      filename={`${reportedAt}-PasswordsInURL.csv`}
+      filename={`${reportedAt}-${otherProps.id}.csv`}
     />}
     noResults={data.length === 0}
   >

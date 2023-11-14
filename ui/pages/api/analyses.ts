@@ -13,7 +13,7 @@ import type { NextApiRequest } from 'next';
 
 import { Analysis, AnalysisFunction, runAllAnalyses } from '@/lib/findings';
 import { reusedAuthentication } from '@/lib/analysis/reused-authentication';
-import { passInUrl } from '@/lib/analysis/pass_in_url';
+import { regexPattern } from '@/lib/analysis/regex_pattern';
 import { expiredJwt } from '@/lib/analysis/expired-jwt';
 import { useOfBasicAuth } from '@/lib/analysis/useOfBasicAuth';
 import { kubesec } from '@/lib/analysis/kubesec';
@@ -27,7 +27,7 @@ const analysisFunctions: AnalysisFunction[] = [
   IpBanlist,
   kubesec,
   kubesecResources,
-  passInUrl,
+  regexPattern,
   requestTooSlow,
   reusedAuthentication,
   useOfBasicAuth,

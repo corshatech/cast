@@ -166,15 +166,35 @@ export const ExpiredJWT = makeFinding(
 
 export type ExpiredJWT = z.infer<typeof ExpiredJWT>;
 
-export const PasswordInURL = makeFinding(
-  'pass-in-url',
+export const RegexPattern = z.object({
+  'Id': z.string(),
+  'DetectedAt': z.string(),
+  'Rule': Analysis.pick({
+    title: true,
+    severity: true,
+    description: true,
+    weaknessLink: true,
+    weaknessTitle: true,
+  }).extend({
+    sensitive: z.boolean(),
+  }),
+  'MatchText': z.string(),
+  'AbsoluteUri': z.string(),
+})
+
+export type RegexPattern = z.infer<typeof RegexPattern>;
+
+export const RegexFinding = makeFinding(
+  'regex-pattern',
   z.object({
-    queryParams: z.array(z.string()).describe('The name of the query parameter suspected of containing a password'),
+    description: z.string(),
+    weaknessLink: z.string(),
+    weaknessTitle: z.string(),
     inRequest: RequestContext,
   }),
 );
 
-export type PasswordInURL = z.infer<typeof PasswordInURL>
+export type RegexFinding = z.infer<typeof RegexFinding>
 
 export const UseOfBasicAuth = makeFinding(
   'use-of-basic-auth',
@@ -210,7 +230,7 @@ export type IpBanlist = z.infer<typeof IpBanlist>;
 export type Finding =
   | ReusedAuthentication
   | ExpiredJWT
-  | PasswordInURL
+  | RegexFinding
   | UseOfBasicAuth
   | RequestTooSlow;
 

@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PasswordInURLCard renders all passed props 1`] = `
+exports[`RegexPatternCard renders all passed props 1`] = `
 <DocumentFragment>
   <a
-    id="pass-in-url"
+    id="regex-pattern-Broken%20Authentication%3A%20Password%20in%20Query%20String"
   >
     <div
       aria-labelledby="title"
@@ -467,7 +467,7 @@ exports[`PasswordInURLCard renders all passed props 1`] = `
                         aria-rowindex="2"
                         aria-selected="false"
                         class="MuiDataGrid-row MuiDataGrid-row--lastVisible"
-                        data-id="2023-01-17T13:12:00.000Z2.2.2.21.1.1.120https://example.compassword"
+                        data-id="2023-01-17T13:12:00.000Z2.2.2.21.1.1.120https://example.com"
                         data-rowindex="0"
                         role="row"
                         style="max-height: 52px; min-height: 52px;"
@@ -496,10 +496,7 @@ exports[`PasswordInURLCard renders all passed props 1`] = `
                         >
                           <div
                             class="MuiDataGrid-cellContent"
-                            title=""password""
-                          >
-                            "password"
-                          </div>
+                          />
                         </div>
                         <div
                           aria-colindex="3"

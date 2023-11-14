@@ -11,24 +11,32 @@
 
 import { render } from '@testing-library/react';
 
-import { PasswordInURLCard } from './PasswordInURLCard';
+import { RegexPatternCard } from './RegexPatternCard';
 
 const reportedAt = new Date().toISOString();
 
-describe('PasswordInURLCard', () => {
+describe('RegexPatternCard', () => {
   it('renders all passed props', () => {
-    const { asFragment } = render(<PasswordInURLCard
-      id="pass-in-url"
+    const { asFragment } = render(<RegexPatternCard
+      anchorId='regex-pattern-Broken%20Authentication%3A%20Password%20in%20Query%20String'
+      id="regex-pattern"
       title="Test title"
       description="Test description"
       reportedAt={reportedAt}
       severity="high"
       findings={[{
-        type: 'pass-in-url',
-        name: 'Test Finding',
+        type: 'regex-pattern',
+        name: 'PassInUrl',
         detectedAt: reportedAt,
         severity: 'high',
         data: {
+          weaknessLink: 'https://google.com',
+          weaknessTitle: 'Broken Authentication: Password in Query String',
+          description: 'A password or credential was detected in a URL as a ' +
+            'query parameter. Using secure transport like HTTPS does not ' +
+            'resolve the issue, because the URL may become logged or leak to ' +
+            'third parties through e.g. the Referrer header. Do not include ' +
+            'credentials in any part of a URL.',
           inRequest: {
             at: reportedAt,
             destIp: '1.1.1.1',
@@ -38,7 +46,6 @@ describe('PasswordInURLCard', () => {
             srcPort: '5129',
             URI: 'https://example.com',
           },
-          queryParams: ['password'],
         },
       }]}
     />);

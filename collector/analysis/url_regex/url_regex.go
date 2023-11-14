@@ -27,7 +27,7 @@ type CastRegexpDbEntry struct {
 
 	// Title is a human-readable title for the detection as a whole, e.g.
 	//    "Javascript Keywords in URL"
-	Title string
+	Title string `json:"title"`
 
 	// A cvss severity word, all lowercase, describing the severity of this
 	// finding when encountered; i.e. exactly one of:
@@ -36,7 +36,7 @@ type CastRegexpDbEntry struct {
 	// "medium"
 	// "high"
 	// "critical"
-	Severity string
+	Severity string `json:"severity"`
 
 	// Description is a human-readable text description of the finding and its
 	// purpose. A good description should include the general structure of the
@@ -50,20 +50,20 @@ type CastRegexpDbEntry struct {
 	//    	vulnerable to a Reflected XSS Attack using this request parameter.
 	//      You may also consider banning the client performing this suspicious
 	//      behavior."
-	Description string
+	Description string `json:"description"`
 
 	// WeaknessLink is the URL linked to for displaying a relevant software
 	// weakness related to this scan; e.g. the proper OWASP control that applies
-	WeaknessLink string
+	WeaknessLink string `json:"weaknessLink"`
 
 	// WeaknessTitle is the human-readable link text used for displaying
 	// relevant software weakness info
-	WeaknessTitle string
+	WeaknessTitle string `json:"weaknessTitle"`
 
 	// Sensitive == true indicates the full MatchText should not be captured
 	// and the URL should be suppressed in the UI. This should be used e.g.
 	// if matching possible credentials
-	Sensitive bool
+	Sensitive bool `json:"sensitive"`
 }
 
 // CastRegexpDatabase is a map of regex rule ID -> RegexpDbEntry structs
@@ -88,6 +88,8 @@ type CastRegexpDbMatch struct {
 	// DetectedAt is the moment that CAST encountered this issue, used
 	// for reporting purposes.
 	DetectedAt time.Time
+	// AbsoluteUri is the AbsoluteUri without a query string
+	AbsoluteUri string
 }
 
 var RegexDb CastRegexpDatabase
@@ -99,7 +101,7 @@ func init() {
 	// customizable rather than hardcoded.
 	RegexDb["PassInUrl"] = CastRegexpDbEntry{
 		regex:         regexp.MustCompile("(password|pass|pwd|auth|api[ -_]*key|session|session[ -_]*key)="),
-		Title:         "Password in Query String",
+		Title:         "Broken Authentication: Password in Query String",
 		Severity:      "high",
 		Description:   "A password or credential was detected in a URL as a query parameter. Using secure transport like HTTPS does not resolve the issue, because the URL may become logged or leak to third parties through e.g. the Referrer header. Do not include credentials in any part of a URL.",
 		WeaknessLink:  "https://owasp.org/www-community/vulnerabilities/Information_exposure_through_query_strings_in_url",
@@ -111,7 +113,7 @@ func init() {
 		regex:         regexp.MustCompile(`(url=.*)|(file=.*)`),
 		Title:         "Server Side Request Forgery",
 		Severity:      "none",
-		Description:   "Requests in which the URL has been modified to potentially connect and retrieve data from internal unprotected services that were not previously exposed.",
+		Description:   "A request was detected whose URL has patterns that match Server Side Request Forgery attacks. Requests in which the URL has been modified to potentially connect and retrieve data from internal unprotected services that were not previously exposed. Check that services that accept URLs reject any references to internal resources.",
 		WeaknessLink:  "https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/",
 		WeaknessTitle: "(OWASP) API7:2023 Server Side Request Forgery",
 		Sensitive:     false,
@@ -121,7 +123,7 @@ func init() {
 		regex:         regexp.MustCompile(`((;|%3B)(\s|%20)*--|("|%22)(\s|%20)*[Oo][Rr](\s|%20|\+)*("|%22){2}(%3D|=)("|%22))`),
 		Title:         "SQL Injection",
 		Severity:      "medium",
-		Description:   "Any input that is eventually sent to a backend service with a SQL query may not be properly sanitized and can be accessed by crafting a response that will allow the attacker to execute any query.",
+		Description:   "A request was detected whose URL has patterns that match SQL Injection attacks. Any input that is eventually sent to a backend service with a SQL query may not be properly sanitized and can be accessed by crafting a response that will allow the attacker to execute any query. Ensure that all queries to databases have sanitized inputs and use prepared statements.",
 		WeaknessLink:  "https://owasp.org/Top10/A03_2021-Injection/",
 		WeaknessTitle: "(OWASP) A03:2021 – Injection",
 		Sensitive:     false,
@@ -131,7 +133,7 @@ func init() {
 		regex:         regexp.MustCompile(`\$\{`),
 		Title:         "Log4Shell",
 		Severity:      "medium",
-		Description:   "A vulnerability in a commonly used Java logging library, Log4J, allows for remote code execution with calls to JNDI servers.",
+		Description:   "A request was detected whose URL has patterns that match the Log4Shell attack. A vulnerability in a commonly used Java logging library, Log4J, allows for remote code execution with calls to JNDI servers. Apply all available security updates to Log4J and Java.",
 		WeaknessLink:  "https://nvd.nist.gov/vuln/detail/CVE-2021-44228",
 		WeaknessTitle: "CVE-2021-44228",
 		Sensitive:     false,
@@ -139,9 +141,9 @@ func init() {
 
 	RegexDb["XSS"] = CastRegexpDbEntry{
 		regex:         regexp.MustCompile("(?:(?:(?:\"|%22|'|\\]|%5D|\\}|%7D|\\\\|%5C|\\d|(?:NaN|Infinity|true|false|null|undefined|Symbol|Math)|\\`|%60|\\-|\\+|%2B)(?:\\.|;|%3B))+[)]*(?:;|%3B)?((?:\\s|-|~|!|{}|%7B%7D|\\|\\||%7C%7C|\\+|%2B)*.*(?:.*=.*)))|(?:(=|%3D)[^\n]*(<|%3C)[^\n]+(>|%3E))"),
-		Title:         "Cross-site Scripting",
+		Title:         "Cross Site Scripting",
 		Severity:      "medium",
-		Description:   "A Cross-Site Scripting attack occurs when malicious code is sent to a user from a seemingly trusted source. This code can access session details as well as rewrite parts of the page being accessed.",
+		Description:   "A request was detected whose URL has patterns that match Cross Site Scripting attacks. A Cross Site Scripting attack occurs when malicious code is sent to a user from a seemingly trusted source. This code can access session details as well as rewrite parts of the page being accessed. Ensure that your content security policy only contains references to trusted resources.",
 		WeaknessLink:  "https://owasp.org/www-community/attacks/xss/",
 		WeaknessTitle: "(OWASP) Cross Site Scripting (XSS)",
 		Sensitive:     false,
@@ -161,17 +163,18 @@ func Detect(url string) []CastRegexpDbMatch {
  * URLs, returning a slice of matches against rules. An empty or nil list
  * indicates no findings were generated.
  */
-func DetectTime(url string, now time.Time) []CastRegexpDbMatch {
+func DetectTime(requestUrl string, now time.Time) []CastRegexpDbMatch {
+
 	r := make([]CastRegexpDbMatch, 0, len(RegexDb))
 
 	for key := range RegexDb {
 		rule := RegexDb[key]
-		matchIndex := rule.regex.FindStringIndex(url)
+		matchIndex := rule.regex.FindStringIndex(requestUrl)
 		if matchIndex != nil {
 			var matchString string
 
 			if !rule.Sensitive {
-				matchString = url[matchIndex[0]:matchIndex[1]]
+				matchString = requestUrl[matchIndex[0]:matchIndex[1]]
 			}
 
 			r = append(r, CastRegexpDbMatch{

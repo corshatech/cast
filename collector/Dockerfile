@@ -1,6 +1,6 @@
 ARG APP=collector
 
-FROM golang:1.19 as build
+FROM golang:1.22 as build
 
 ENV GO111MODULE=on
 
@@ -14,7 +14,7 @@ COPY ./go.sum .
 RUN go mod download
 
 COPY collector ./collector
-RUN go build -o ./bin ./collector
+RUN GOOS=linux GOARCH=amd64 go build -o ./bin ./collector
 
 FROM registry.access.redhat.com/ubi8:8.7
 

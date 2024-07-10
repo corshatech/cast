@@ -52,7 +52,8 @@ CREATE TABLE IF NOT EXISTS geo_ip_data (
   postal_code text,
   latitude numeric,
   longitude numeric,
-  accuracy_radius int
+  accuracy_radius int,
+  is_anycast bool
 );
 
 CREATE TABLE geo_location_data (
